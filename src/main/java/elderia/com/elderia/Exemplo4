@@ -1,0 +1,23 @@
+
+        // Exemplo 4 de botões do abimael
+//        javafx.scene.control.Button btn1 = new javafx.scene.control.Button("Com handler");
+//        javafx.scene.control.Button btn2 = new javafx.scene.control.Button("Com Lambda function");
+//        btn1.setOnAction(new EventHandler<ActionEvent>() {
+//            public void handle(ActionEvent event) {
+//                System.out.println("Btn1 - com handler ");
+//            }
+//        });
+//        btn2.setOnAction((ActionEvent e) -> {
+//            System.out.println("Btn2 - Lambda ");
+//        });
+//
+//        Text lb1 = new Text("Nome");
+//        javafx.scene.control.TextField tf1 = new TextField("texto");
+//
+//        GridPane gp = new GridPane();
+//
+//        gp.setAlignment(Pos.CENTER);
+//        gp.add(lb1, 0,0);
+//        gp.add(tf1, 1, 0);
+//        gp.add(btn1, 0,1);
+//        gp.add(btn2, 1,1);

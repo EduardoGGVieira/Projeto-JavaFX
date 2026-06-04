@@ -1,0 +1,43 @@
+public class Exemplo13 {
+
+    public static void teste() throws MinhaExcecao {
+        System.out.println("Teste com MinhaExcecao");
+        try {
+            System.out.println(10 / 0);
+        } catch (Exception e){
+            throw new MinhaExcecao("Lançando MinhaExceção ", e);
+        }
+
+    }
+
+
+    public static void main(String[] args){
+        try{
+            teste();
+        } catch (MinhaExcecao e){
+            System.out.println(e.getMessage());
+
+        }
+
+    }
+
+}
+
+// OUTRO ARQUIVO COM RAIO AMARELO ( EXECEÇÃO
+public class MinhaExcecao extends Exception {
+
+    public MinhaExcecao(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    @Override
+    public String getMessage() {
+        String s = "\n";
+        s += "+------------------------------------+\nEsta é a minha exceção!!!!!! \n" ;
+        s += super.getMessage();
+        s += "\n";
+        s+= "+------------------------------------+";
+
+        return s;
+    }
+}
