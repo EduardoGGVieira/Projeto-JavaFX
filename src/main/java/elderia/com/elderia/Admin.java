@@ -37,13 +37,15 @@ public class Admin {
 
     // MÉTODO 2: Remove um Profissional da lista do sistema baseado no ID
 
-    public boolean deletarProfissional(int idProfissional, List<Profissional> listaProfissionais) {
-        if (listaProfissionais == null || listaProfissionais.isEmpty()) {
-            return false;
-        }
-        // Utiliza expressão lambda para remover o profissional correspondente
-        return listaProfissionais.removeIf(prof -> prof.getIdProfissional() == idProfissional);
-    }
+    // nao funfa pq list Profissional n existe nem idProfissionall
+
+//    public boolean deletarProfissional(int idProfissional, List<Profissional> listaProfissionais) {
+//        if (listaProfissionais == null || listaProfissionais.isEmpty()) {
+//            return false;
+//        }
+//        // Utiliza expressão lambda para remover o profissional correspondente
+//        return listaProfissionais.removeIf(prof -> prof.getIdProfissional() == idProfissional);
+//    }
 
 
     public String getNome() {

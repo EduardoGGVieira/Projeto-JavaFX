@@ -1,6 +1,7 @@
 package elderia.com.elderia;
 
 import java.time.LocalDate;
+import java.time.Period;
 
 
 // TODOS TEM QUE EXTENDES DE USUARIO?
@@ -13,7 +14,7 @@ public class Proffisional {
     private LocalDate dataEmissaoCertificado;
 
 
-    public Profissional(int idProfissional, String registroProfissional, String specialty,
+    public void Profissional(int idProfissional, String registroProfissional, String specialty,
                         String localizacao, String biografia, LocalDate dataEmissaoCertificado) {
         this.idProfissional = idProfissional;
         this.registroProfissional = registroProfissional;

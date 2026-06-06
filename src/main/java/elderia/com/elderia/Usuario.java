@@ -1,18 +1,19 @@
 package elderia.com.elderia;
 
-public class Usuario {
+import java.io.Serializable; // Essa bomba o chat q mandou
+
+public class Usuario implements Serializable { // Essa bomba o chat q mandou
+    private static final long serialVersionUID = 1L; // Essa bomba o chat q mandou
+
     private int idUsuario;
     private String nome;
-    // QUAL TIPO?
-    private int cpf;
+    private String cpf;
     private String email;
     private String telefone;
-    private String tipoUsuario; // 'idoso', 'profissional' ou 'admin'
+    private String tipoUsuario;
 
 
-
-    // CPF É INT OU STRING?
-    public Usuario(int idUsuario, String nome, int cpf, String email, String telefone, String tipoUsuario) {
+    public Usuario(int idUsuario, String nome, String cpf, String email, String telefone, String tipoUsuario) {
         this.idUsuario = idUsuario;
         this.nome = nome;
         this.cpf = cpf;
@@ -20,7 +21,6 @@ public class Usuario {
         this.telefone = telefone;
         this.tipoUsuario = tipoUsuario;
     }
-
 
     // MÉTODO 1: Validação simples se o formato do e-mail possui '@' e '.'
 
@@ -48,14 +48,9 @@ public class Usuario {
     }
 
 
-    // GETS E SET A PARTIR DO GENERATE
-    public String getNome() {
-        return nome;
-    }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    // GETTERS E SETTERS ATUALIZADOS
+
 
     public int getIdUsuario() {
         return idUsuario;
@@ -65,11 +60,19 @@ public class Usuario {
         this.idUsuario = idUsuario;
     }
 
-    public int getCpf() {
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getCpf() {
         return cpf;
     }
 
-    public void setCpf(int cpf) {
+    public void setCpf(String cpf) {
         this.cpf = cpf;
     }
 
@@ -95,5 +98,10 @@ public class Usuario {
 
     public void setTipoUsuario(String tipoUsuario) {
         this.tipoUsuario = tipoUsuario;
+    }
+
+    @Override
+    public String toString() {
+        return this.nome + " (CPF: " + this.cpf + ")";
     }
 }
