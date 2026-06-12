@@ -53,7 +53,7 @@ public class Elderia extends Application {
         box3.setSpacing(20);
         box3.setAlignment(Pos.CENTER);
         box3.getChildren().add(lbl3);
-        
+
         // area de cadastro
         Label lbl4 = new Label("Cadastro");
         lbl4.setFont (new Font("Arial",50));

@@ -10,8 +10,6 @@ public class Consulta {
     private String status;
     private String resumoAtendimento;
 
-
-
     public Consulta(int idConsulta, int idIdoso, int idProfissional, LocalDateTime dataHora, String status) {
         this.idConsulta = idConsulta;
         this.idIdoso = idIdoso;
@@ -21,76 +19,41 @@ public class Consulta {
         this.resumoAtendimento = "";
     }
 
-    // MÉTODO 1: Verifica se a consulta foi marcada para uma data/hora válida no futuro
-
+    // Verifica se a consulta foi marcada para uma data/hora válida no futuro
     public boolean validarDataFutura() {
-        if (this.dataHora == null) return false;
-        return this.dataHora.isAfter(LocalDateTime.now());
+        if (this.dataHora == null) {
+            return false;
+        } else {
+            return this.dataHora.isAfter(LocalDateTime.now());
+        }
     }
 
-
-    // MÉTODO 2: Conclui o atendimento inserindo a ficha de resumo clínica
-
+    // Conclui o atendimento inserindo a ficha de resumo clínica
     public void finalizarConsulta(String resumo) {
         if (resumo == null || resumo.trim().isEmpty()) {
-            throw new IllegalArgumentException("O resumo clínico do atendimento não pode estar vazio.");
+            throw new IllegalArgumentException("O resumo clínico do atendimento não pode estar váio.");
+        } else {
+            this.resumoAtendimento = resumo;
+            this.status = "realizada";
         }
-        this.resumoAtendimento = resumo;
-        this.status = "realizada";
     }
 
+    // Setters e getters
+    public void setIdConsulta(int idConsulta) { this.idConsulta = idConsulta; }
+    public int getIdConsulta() { return idConsulta; }
 
+    public void setIdIdoso(int idIdoso) { this.idIdoso = idIdoso; }
+    public int getIdIdoso() { return idIdoso; }
 
+    public void setIdProfissional(int idProfissional) { this.idProfissional = idProfissional; }
+    public int getIdProfissional() { return idProfissional; }
 
+    public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
+    public LocalDateTime getDataHora() { return dataHora; }
 
+    public void setStatus(String status) { this.status = status; }
+    public String getStatus() { return status; }
 
-    
-
-    public int getIdConsulta() {
-        return idConsulta;
-    }
-
-    public void setIdConsulta(int idConsulta) {
-        this.idConsulta = idConsulta;
-    }
-
-    public int getIdIdoso() {
-        return idIdoso;
-    }
-
-    public void setIdIdoso(int idIdoso) {
-        this.idIdoso = idIdoso;
-    }
-
-    public int getIdProfissional() {
-        return idProfissional;
-    }
-
-    public void setIdProfissional(int idProfissional) {
-        this.idProfissional = idProfissional;
-    }
-
-    public LocalDateTime getDataHora() {
-        return dataHora;
-    }
-
-    public void setDataHora(LocalDateTime dataHora) {
-        this.dataHora = dataHora;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public String getResumoAtendimento() {
-        return resumoAtendimento;
-    }
-
-    public void setResumoAtendimento(String resumoAtendimento) {
-        this.resumoAtendimento = resumoAtendimento;
-    }
+    public void setResumoAtendimento(String resumoAtendimento) { this.resumoAtendimento = resumoAtendimento; }
+    public String getResumoAtendimento() { return resumoAtendimento; }
 }

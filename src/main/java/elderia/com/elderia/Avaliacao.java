@@ -1,7 +1,6 @@
 package elderia.com.elderia;
 
 public class Avaliacao {
-
     private int idAvaliacao;
     private int idConsulta;
     private int nota;
@@ -11,15 +10,14 @@ public class Avaliacao {
     public Avaliacao(int idAvaliacao, int idConsulta, int nota, String comentario) {
         this.idAvaliacao = idAvaliacao;
         this.idConsulta = idConsulta;
-        setNota(nota);
+        this.nota = nota;
         this.comentario = comentario;
         this.statusModeracao = "pendente";
     }
 
     // isso aq é full cha, não entendi a parte de Avaliaçao
 
-    // MÉTODO 1: Retorna a nota convertida visualmente em caracteres de estrelas
-
+    // Retorna a nota convertida visualmente em caracteres de estrelas
     public String obterEstrelasVisuais() {
         StringBuilder estrelas = new StringBuilder();
         for (int i = 0; i < this.nota; i++) {
@@ -40,11 +38,17 @@ public class Avaliacao {
     }
 
     // Getters e Setters com validação de consistência no Setter da nota
-    public int getIdAvaliacao() { return idAvaliacao; }
     public void setIdAvaliacao(int idAvaliacao) { this.idAvaliacao = idAvaliacao; }
-    public int getIdConsulta() { return idConsulta; }
+    public int getIdAvaliacao() { return idAvaliacao; }
+
     public void setIdConsulta(int idConsulta) { this.idConsulta = idConsulta; }
-    public int getNota() { return nota; }
+    public int getIdConsulta() { return idConsulta; }
+
+    public void setComentario(String comentario) { this.comentario = comentario; }
+    public String getComentario() { return comentario; }
+
+    public void setStatusModeracao(String statusModeracao) { this.statusModeracao = statusModeracao; }
+    public String getStatusModeracao() { return statusModeracao; }
 
     public void setNota(int nota) {
         if (nota < 1 || nota > 5) {
@@ -52,9 +56,5 @@ public class Avaliacao {
         }
         this.nota = nota;
     }
-
-    public String getComentario() { return comentario; }
-    public void setComentario(String comentario) { this.comentario = comentario; }
-    public String getStatusModeracao() { return statusModeracao; }
-    public void setStatusModeracao(String statusModeracao) { this.statusModeracao = statusModeracao; }
+    public int getNota() { return nota; }
 }
