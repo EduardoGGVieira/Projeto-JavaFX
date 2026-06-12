@@ -12,6 +12,10 @@ public class Profissional {
     private String biografia;
 
 
+    // Criar isso em todas as classe que forem ser usadas o Seriazable para n dar merda
+    public Profissional() {
+    }
+
     public Profissional(int idProfissional, String nomeProfissional, String registroProfissional, String specialty,
                         String localizacao, String biografia) {
         this.idProfissional = idProfissional;

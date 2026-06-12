@@ -1,13 +1,15 @@
 package elderia.com.elderia;
 
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -17,6 +19,9 @@ import java.util.List;
 
 
 public class Elderia extends Application {
+
+    private TableView<Usuario> tabelaUsuarios;
+    private ObservableList<Usuario> dadosTabela;
 
     @Override
     public void start(Stage stage) throws Exception {
@@ -64,15 +69,18 @@ public class Elderia extends Application {
         box4.setAlignment(Pos.TOP_CENTER);
         box4.getChildren().add(lbl4);
 
-        // area de  PRINTAR os dados do idoso.
+
+        // area de mostrar os dados cadastrados
         Label lbl5 = new Label("Dados dos Usuários");
-        lbl5.setFont (new Font("Arial",50));
+        lbl5.setFont(new Font("Arial", 30));
         lbl5.setAlignment(Pos.TOP_CENTER);
 
         VBox box5 = new VBox();
-        box5.setSpacing(20);
+        box5.setSpacing(15);
+        box5.setPadding(new Insets(20));
         box5.setAlignment(Pos.TOP_CENTER);
         box5.getChildren().add(lbl5);
+
 
         // area inicial
         Scene scene = new Scene(box1, 900,600);
@@ -167,8 +175,48 @@ public class Elderia extends Application {
 
         box4.getChildren().add(linhaSenha);
 
+        //--------------------- TABELA DE PESSOAS CADASTRADAS --------------
+
+        tabelaUsuarios = new TableView<>(); // cria a tabela
+        dadosTabela = FXCollections.observableArrayList(); // este aq é tipo eventelistner,
+        // ele fica esperando os dados da tabela mudar pra lançar um aviso
+
+        tabelaUsuarios.setItems(dadosTabela); // atualiza tudo q acontece com a tabela, tipo um link
+        tabelaUsuarios.setPrefHeight(400); // tamanho da tabela "preferencialmente"
+
+        // Criação das da tabela de excel dos usuarios cadastrados
+        TableColumn<Usuario, Integer> colId = new TableColumn<>("ID em ordem");
+        colId.setCellValueFactory(new PropertyValueFactory<>("idUsuario"));
+        colId.setPrefWidth(50);
+
+        // para fazer cada parte do cabecalho da tabela só copiar este
+        TableColumn<Usuario, String> colNome = new TableColumn<>("Nome");
+        colNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        colNome.setPrefWidth(200); // tamanho do campo q a info que vai aparecer
+
+        TableColumn<Usuario, String> colCpf = new TableColumn<>("CPF");
+        colCpf.setCellValueFactory(new PropertyValueFactory<>("cpf"));
+        colCpf.setPrefWidth(100);
+
+        TableColumn<Usuario, String> colEmail = new TableColumn<>("E-mail");
+        colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        colEmail.setPrefWidth(150);
+
+        TableColumn<Usuario, String> colTelefone = new TableColumn<>("Data Nasc / Tel");
+        colTelefone.setCellValueFactory(new PropertyValueFactory<>("telefone"));
+        colTelefone.setPrefWidth(120);
+
+        TableColumn<Usuario, String> colTipo = new TableColumn<>("Perfil");
+        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipoUsuario"));
+        colTipo.setPrefWidth(90);
+
+        // Coloca os dados da tabela criada na ordem correta
+        tabelaUsuarios.getColumns().addAll(colId, colNome, colCpf, colEmail, colTelefone, colTipo);
+        box5.getChildren().add(tabelaUsuarios);
+
         // ObjectOutputStream = saída
         // ObjectInputStream = entrada lê os dados
+
 
         // botão de salvar os dados
         // fiz metade, o resto da lógica não funcionou
@@ -182,7 +230,7 @@ public class Elderia extends Application {
                     String cpf = txtCPF.getText().trim();
                     String email = txtEmail.getText().trim();
                     String senha = txtSenha.getText().trim();
-                    String dataNasc = txtDataNascimento.getText().trim(); // pode mapear no model depois
+                    String dataNasc = txtDataNascimento.getText().trim();
 
                     // não pode deixar nada em branco
                     if (nome.isEmpty() || cpf.isEmpty() || email.isEmpty()) {
@@ -196,7 +244,7 @@ public class Elderia extends Application {
                     UsuarioRepository.salvarTodos(listaAtual);
 
                     // feedback visual e no console
-                    System.out.println("\n=== DADOS SALVOS COM SUCESSO NO ARQUIVO .DAT ===");
+                    System.out.println("\n Deu tudo CERTIN confia .DAT");
                     System.out.println("Nome: " + nome + " | CPF: " + cpf + " | Total cadastrados: " + listaAtual.size());
                     
                     // depois de salvar tudo, limpa os inputs
@@ -231,12 +279,15 @@ public class Elderia extends Application {
         box1.getChildren().add(cadastrar);
 
 
-        // Botão de mostar os dados dos idosos
-        Button mostrarDados = new Button();
-        mostrarDados.setText("Pessoas Cadastradas");
+        Button mostrarDados = new Button("Pessoas Cadastradas");
         mostrarDados.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+
+                // acha o trem de bytes do arquivo e atualiza a lista da tabela
+                List<Usuario> listaDoArquivo = UsuarioRepository.listarTodos();
+                dadosTabela.setAll(listaDoArquivo);
+
                 stage.setScene(scene4);
             }
         });

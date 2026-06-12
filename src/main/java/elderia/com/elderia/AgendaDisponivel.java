@@ -10,7 +10,7 @@ public class AgendaDisponivel extends Profissional {
     private LocalTime horario;
 
 
-    public AgendaDisponivel(int idAgenda, int idProfissional, String diaSemana, LocalTime horario) {
+    public  AgendaDisponivel(int idAgenda, int idProfissional, String diaSemana, LocalTime horario) {
         this.idAgenda = idAgenda;
         this.idProfissional = idProfissional;
         this.diaSemana = diaSemana;
