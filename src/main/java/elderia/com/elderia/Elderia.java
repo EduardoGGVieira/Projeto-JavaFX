@@ -20,11 +20,12 @@ public class Elderia extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        stage.setTitle("Elderia");
+        stage.setTitle("ELDERIA");
 
         Label lbl1 = new Label("ELDERIA");
         lbl1.setFont (new Font("Arial",30));
         lbl1.setAlignment(Pos.TOP_CENTER);
+        lbl1.setStyle("-fx-background-color: rgb(0, 102, 102);");
 
         VBox box1 = new VBox();
         box1.setSpacing(20);
@@ -32,7 +33,7 @@ public class Elderia extends Application {
         box1.getChildren().add(lbl1);
 
         // monitor que mostrou isso
-        box1.setStyle("-fx-background-color: gray;");
+        box1.setStyle("-fx-background-color: rgb(0, 153, 153);");
 
         // botão de ir para idoso
         Label lbl2 = new Label("Area idoso");
@@ -64,6 +65,16 @@ public class Elderia extends Application {
         box4.setAlignment(Pos.TOP_CENTER);
         box4.getChildren().add(lbl4);
 
+        // area de avaliacao
+        Label lblAvaliacao = new Label("Avaliação");
+        lblAvaliacao.setFont(new Font("Arial", 50));
+        lblAvaliacao.setAlignment(Pos.TOP_CENTER);
+
+        VBox boxAvaliacao = new VBox();
+        boxAvaliacao.setSpacing(20);
+        boxAvaliacao.setAlignment((Pos.TOP_CENTER));
+        boxAvaliacao.getChildren().add(lblAvaliacao);
+
         // area inicial
         Scene scene = new Scene(box1, 900,600);
 
@@ -75,6 +86,9 @@ public class Elderia extends Application {
 
         // parte de cadastro
         Scene scene3 = new Scene(box4, 900,900);
+
+        // parte de avaliacao
+        Scene sceneAvaliacao = new Scene(boxAvaliacao, 900, 600);
 
         // input de busca para profissional
         Label lblInput = new Label("Busque aqui seu profissional:");
@@ -284,6 +298,17 @@ public class Elderia extends Application {
             }
         });
         box3.getChildren().add(btn6);
+
+        // botões de avaliar
+        Button btnAvaliar = new Button();
+        btnAvaliar.setText("Avaliar");
+        btnAvaliar.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(sceneAvaliacao);
+            }
+        });
+        box1.getChildren().add(btnAvaliar);
 
         Button close = new Button("Fechar");
         close.setOnAction(new EventHandler<ActionEvent>() {
