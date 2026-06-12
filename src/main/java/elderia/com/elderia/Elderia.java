@@ -22,7 +22,7 @@ public class Elderia extends Application {
     public void start(Stage stage) throws Exception {
         stage.setTitle("Elderia");
 
-        Label lbl1 = new Label("Elderia");
+        Label lbl1 = new Label("ELDERIA");
         lbl1.setFont (new Font("Arial",30));
         lbl1.setAlignment(Pos.TOP_CENTER);
 
@@ -31,10 +31,10 @@ public class Elderia extends Application {
         box1.setAlignment(Pos.CENTER);
         box1.getChildren().add(lbl1);
 
-        // monitor q mostrou isso
-        box1.setStyle("-fx-background-color: blue;");
+        // monitor que mostrou isso
+        box1.setStyle("-fx-background-color: gray;");
 
-        // botao de ir para idoso
+        // botão de ir para idoso
         Label lbl2 = new Label("Area idoso");
         lbl2.setFont (new Font("Arial",20));
         lbl2.setAlignment(Pos.TOP_CENTER);
@@ -44,7 +44,7 @@ public class Elderia extends Application {
         box2.setAlignment(Pos.CENTER);
         box2.getChildren().add(lbl2);
 
-        // botão de ir pra profissa
+        // botão de ir para profissao
         Label lbl3 = new Label("Area Profissional");
         lbl3.setFont (new Font("Arial",20));
         lbl3.setAlignment(Pos.TOP_CENTER);
@@ -53,9 +53,8 @@ public class Elderia extends Application {
         box3.setSpacing(20);
         box3.setAlignment(Pos.CENTER);
         box3.getChildren().add(lbl3);
-
-
-        // Area de Cadastro
+        
+        // area de cadastro
         Label lbl4 = new Label("Cadastro");
         lbl4.setFont (new Font("Arial",50));
         lbl4.setAlignment(Pos.TOP_CENTER);
@@ -65,24 +64,19 @@ public class Elderia extends Application {
         box4.setAlignment(Pos.TOP_CENTER);
         box4.getChildren().add(lbl4);
 
-
-
-        // Area inicial
+        // area inicial
         Scene scene = new Scene(box1, 900,600);
 
-        // essa cena vamos usar pra printar os dados do idoso ou sei lá
+        // essa cena vamos usar para printar os dados do idoso
         Scene scene1 = new Scene(box2, 500,400);
 
-        // essa cena vamos usar pra printar os dados do Profissional.
+        // essa cena vamos usar pra printar os dados do profissional
         Scene scene2 = new Scene(box3, 500,400);
 
         // parte de cadastro
         Scene scene3 = new Scene(box4, 900,900);
 
-
-
-
-        // INPUT de busca para profissional
+        // input de busca para profissional
         Label lblInput = new Label("Busque aqui seu profissional:");
         box3.getChildren().add(lblInput);
         TextField txtEspecializacao = new TextField();
@@ -91,86 +85,80 @@ public class Elderia extends Application {
         box3.getChildren().add(txtEspecializacao);
 
 
-        // Inputs do cadastro - TODOS OS INPUTS
-        // Caso queira arrumar tem que usar GridPane ao inves de HBox, mas ai foi a IA
+        // inputs do cadastro - todos os inputs
+        // caso queira arrumar tem que usar GridPane ao invés de HBox
 
-        // -- NOME --
+        // -- nome --
         Label lblInputNome = new Label("Nome:");
         TextField txtNome = new TextField();
         txtNome.setPromptText("Ex: Eduardo Guilherme");
         txtNome.setMaxWidth(200);
         // css básico
         HBox linhaNome = new HBox();
-        linhaNome.setSpacing(10); // um little spaco entre o input e o nome
+        linhaNome.setSpacing(10); // um little espaço entre o input e o nome
         linhaNome.setAlignment(Pos.CENTER);
         linhaNome.getChildren().addAll(lblInputNome, txtNome);
 
 
         box4.getChildren().add(linhaNome);
 
-        // -- CPF --
-
+        // -- cpf --
         Label lblInputCPF = new Label("CPF:");
         TextField txtCPF = new TextField();
         txtCPF.setPromptText("Ex: 123.269.789-35"); // tipo o placeholder
-        txtCPF.setMaxWidth(200); // tamanho do imput
+        txtCPF.setMaxWidth(200); // tamanho do input
         // css básico
         HBox linhaCPF = new HBox();
-        linhaCPF.setSpacing(10); // um little spaco entre o input e o nome
+        linhaCPF.setSpacing(10); // um little espaço entre o input e o nome
         linhaCPF.setAlignment(Pos.CENTER);
         linhaCPF.getChildren().addAll(lblInputCPF, txtCPF);
 
         box4.getChildren().add(linhaCPF);
 
-        // -- data de Nascimento --
-
+        // -- data de nascimento --
         Label lblInputDataNascimento = new Label("Data Nascimento:");
         TextField txtDataNascimento = new TextField();
         txtDataNascimento.setPromptText("Ex: 11/11/2001"); // tipo o placeholder
-        txtDataNascimento.setMaxWidth(200); // tamanho do imput
+        txtDataNascimento.setMaxWidth(200); // tamanho do input
         // css básico
         HBox linhaDataNasc = new HBox();
-        linhaDataNasc.setSpacing(10); // um little spaco entre o input e o nome
+        linhaDataNasc.setSpacing(10); // um little espaço entre o input e o nome
         linhaDataNasc.setAlignment(Pos.CENTER);
         linhaDataNasc.getChildren().addAll(lblInputDataNascimento, txtDataNascimento);
 
         box4.getChildren().add(linhaDataNasc);
 
-        // -- EMAIL --
-
+        // -- e-mail --
         Label lblInputEmail = new Label("Email:");
         TextField txtEmail = new TextField();
         txtEmail.setPromptText("Ex: eduardoggv@gmail.com"); // tipo o placeholder
-        txtEmail.setMaxWidth(200); // tamanho do imput
+        txtEmail.setMaxWidth(200); // tamanho do input
         // css básico
         HBox linhaEmail = new HBox();
-        linhaEmail.setSpacing(10); // um little spaco entre o input e o nome
+        linhaEmail.setSpacing(10); // um little espaço entre o input e o nome
         linhaEmail.setAlignment(Pos.CENTER);
         linhaEmail.getChildren().addAll(lblInputEmail, txtEmail);
 
         box4.getChildren().add(linhaEmail);
 
-
-        // -- SENHA --
-
+        // -- senha --
         Label lblInputSenha = new Label("Senha:");
         TextField txtSenha = new TextField();
         txtSenha.setPromptText("Ex: POOMelhorMateria"); // tipo o placeholder
-        txtSenha.setMaxWidth(200); // tamanho do imput
+        txtSenha.setMaxWidth(200); // tamanho do input
         // css básico
         HBox linhaSenha = new HBox();
-        linhaSenha.setSpacing(10); // um little spaco entre o input e o nome
+        linhaSenha.setSpacing(10); // um little espaço entre o input e o nome
         linhaSenha.setAlignment(Pos.CENTER);
         linhaSenha.getChildren().addAll(lblInputSenha, txtSenha);
 
         box4.getChildren().add(linhaSenha);
 
+        // ObjectOutputStream = saída
+        // ObjectInputStream = entrada lê os dados
 
-        // ObjectOutputStream = saida
-        // ObjectInputStream = entrada le os dados
-
-        // Botão de salvar os dados
-        // FIZ METADE, O RESTO DA LOGICA N FUNCIONOU.
+        // botão de salvar os dados
+        // fiz metade, o resto da lógica não funcionou
         Button salvardados = new Button();
         salvardados.setText("Salvar seus dados");
         salvardados.setOnAction(new EventHandler<ActionEvent>() {
@@ -181,7 +169,7 @@ public class Elderia extends Application {
                     String cpf = txtCPF.getText().trim();
                     String email = txtEmail.getText().trim();
                     String senha = txtSenha.getText().trim();
-                    String dataNasc = txtDataNascimento.getText().trim(); // Pode mapear no model depois
+                    String dataNasc = txtDataNascimento.getText().trim(); // pode mapear no model depois
 
                     // não pode deixar nada em branco
                     if (nome.isEmpty() || cpf.isEmpty() || email.isEmpty()) {
@@ -194,19 +182,18 @@ public class Elderia extends Application {
                     listaAtual.add(novoUsuario);
                     UsuarioRepository.salvarTodos(listaAtual);
 
-                    // Feedback visual e no console
+                    // feedback visual e no console
                     System.out.println("\n=== DADOS SALVOS COM SUCESSO NO ARQUIVO .DAT ===");
                     System.out.println("Nome: " + nome + " | CPF: " + cpf + " | Total cadastrados: " + listaAtual.size());
-
                     
-                    // Depois de SALVAR tudo, limpa os inputs
+                    // depois de salvar tudo, limpa os inputs
                     txtNome.clear();
                     txtCPF.clear();
                     txtEmail.clear();
                     txtSenha.clear();
                     txtDataNascimento.clear();
 
-                    // VOLTA PARA A TELA INICIAL SOZINHO, depois de salvar
+                    // volta para a tela inicial automaticamente depois de salvar
                     stage.setScene(scene);
 
                 } catch (IllegalArgumentException y) {
@@ -219,32 +206,7 @@ public class Elderia extends Application {
 
         box4.getChildren().add(salvardados);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Botões de cadastrar
+        // botões de cadastrar
         Button cadastrar = new Button();
         cadastrar.setText("Cadastre-se");
         cadastrar.setOnAction(new EventHandler<ActionEvent>() {
@@ -254,8 +216,8 @@ public class Elderia extends Application {
             }
         });
         box1.getChildren().add(cadastrar);
-        
-// botão de voltar do cadastro
+
+        // botão de voltar do cadastro
         Button voltarcadastro = new Button();
         voltarcadastro.setText("Voltar");
         voltarcadastro.setOnAction(new EventHandler<ActionEvent>() {
@@ -266,8 +228,7 @@ public class Elderia extends Application {
         });
         box4.getChildren().add(voltarcadastro);
 
-
-// Exemplo de um botão que printa alguma coisa
+        // Exemplo de um botão que printa alguma coisa
 //        Button btn1 = new Button();
 //        btn1.setText("PRINT DE MENSAGEM");
 //        btn1.setOnAction(new EventHandler<ActionEvent>() {
@@ -278,8 +239,7 @@ public class Elderia extends Application {
 //        });
 //        box1.getChildren().add(btn1);
 
-
-// botao de ir para a area do idoso
+        // botão de ir para a area do idoso
         Button btn3 = new Button();
         btn3.setText("Aba de idoso");
         btn3.setOnAction(new EventHandler<ActionEvent>() {
@@ -291,7 +251,7 @@ public class Elderia extends Application {
         });
         box1.getChildren().add(btn3);
 
-// botão de voltar da area do idoso
+        // botão de voltar da area do idoso
         Button btn4 = new Button();
         btn4.setText("Voltar");
         btn4.setOnAction(new EventHandler<ActionEvent>() {
@@ -301,7 +261,6 @@ public class Elderia extends Application {
             }
         });
         box2.getChildren().add(btn4);
-
 
         // botão para ir para area de profissional
         Button btn5 = new Button();
@@ -326,8 +285,6 @@ public class Elderia extends Application {
         });
         box3.getChildren().add(btn6);
 
-
-
         Button close = new Button("Fechar");
         close.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -337,19 +294,10 @@ public class Elderia extends Application {
         });
         box1.getChildren().add(close);
 
-
-
-
         stage.setScene(scene);
         stage.show();
-
     }
-
-
-
-
     public static void main (String[] args){
         launch();
     }
-
 }

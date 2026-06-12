@@ -16,11 +16,7 @@ public class Avaliacao {
         this.statusModeracao = "pendente";
     }
 
-
-
-
     // isso aq é full cha, não entendi a parte de Avaliaçao
-
 
     // MÉTODO 1: Retorna a nota convertida visualmente em caracteres de estrelas
 
@@ -31,7 +27,6 @@ public class Avaliacao {
         }
         return estrelas.toString();
     }
-
 
     // MÉTODO 2: Filtro de segurança contra palavras ofensivas (Moderação Automática)
 
@@ -51,7 +46,7 @@ public class Avaliacao {
     public void setIdConsulta(int idConsulta) { this.idConsulta = idConsulta; }
     public int getNota() { return nota; }
 
-    public final void setNota(int nota) {
+    public void setNota(int nota) {
         if (nota < 1 || nota > 5) {
             throw new IllegalArgumentException("A nota da avaliação deve ser obrigatoriamente entre 1 e 5 estrelas.");
         }
@@ -62,6 +57,4 @@ public class Avaliacao {
     public void setComentario(String comentario) { this.comentario = comentario; }
     public String getStatusModeracao() { return statusModeracao; }
     public void setStatusModeracao(String statusModeracao) { this.statusModeracao = statusModeracao; }
-
-    
 }
