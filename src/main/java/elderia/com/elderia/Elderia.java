@@ -31,6 +31,9 @@ public class Elderia extends Application {
         box1.setAlignment(Pos.CENTER);
         box1.getChildren().add(lbl1);
 
+        // monitor q mostrou isso
+        box1.setStyle("-fx-background-color: blue;");
+
         // botao de ir para idoso
         Label lbl2 = new Label("Area idoso");
         lbl2.setFont (new Font("Arial",20));
@@ -65,7 +68,7 @@ public class Elderia extends Application {
 
 
         // Area inicial
-        Scene scene = new Scene(box1, 900,900);
+        Scene scene = new Scene(box1, 900,600);
 
         // essa cena vamos usar pra printar os dados do idoso ou sei lá
         Scene scene1 = new Scene(box2, 500,400);
@@ -163,6 +166,8 @@ public class Elderia extends Application {
         box4.getChildren().add(linhaSenha);
 
 
+        // ObjectOutputStream = saida
+        // ObjectInputStream = entrada le os dados
 
         // Botão de salvar os dados
         // FIZ METADE, O RESTO DA LOGICA N FUNCIONOU.
@@ -182,8 +187,6 @@ public class Elderia extends Application {
                     if (nome.isEmpty() || cpf.isEmpty() || email.isEmpty()) {
                         throw new IllegalArgumentException("NANANINANÃO, faltou algo ali amigão");
                     }
-
-                    // AQUI EU PAREI DE ENTENDER
 
                     List<Usuario> listaAtual = UsuarioRepository.listarTodos();
                     int novoId = listaAtual.size() + 1;
@@ -206,10 +209,10 @@ public class Elderia extends Application {
                     // VOLTA PARA A TELA INICIAL SOZINHO, depois de salvar
                     stage.setScene(scene);
 
-                } catch (IllegalArgumentException ex) {
-                    System.err.println("Erro de Validação: " + ex.getMessage());
-                } catch (Exception ex) {
-                    System.err.println("Erro inesperado do sistema: " + ex.getMessage());
+                } catch (IllegalArgumentException y) {
+                    System.err.println("Erro de Validação: " + y.getMessage());
+                } catch (Exception y) {
+                    System.err.println("Erro inesperado do sistema: " + y.getMessage());
                 }
             }
         });

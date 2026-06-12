@@ -1,9 +1,9 @@
 package elderia.com.elderia;
 
-import java.io.Serializable; // Essa bomba o chat q mandou
+import java.io.Serializable;
 
-public class Usuario implements Serializable { // Essa bomba o chat q mandou
-    private static final long serialVersionUID = 1L; // Essa bomba o chat q mandou
+public class Usuario implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private int idUsuario;
     private String nome;
