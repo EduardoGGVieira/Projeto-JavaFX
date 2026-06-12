@@ -64,6 +64,16 @@ public class Elderia extends Application {
         box4.setAlignment(Pos.TOP_CENTER);
         box4.getChildren().add(lbl4);
 
+        // area de  PRINTAR os dados do idoso.
+        Label lbl5 = new Label("Dados dos Usuários");
+        lbl5.setFont (new Font("Arial",50));
+        lbl5.setAlignment(Pos.TOP_CENTER);
+
+        VBox box5 = new VBox();
+        box5.setSpacing(20);
+        box5.setAlignment(Pos.TOP_CENTER);
+        box5.getChildren().add(lbl5);
+
         // area inicial
         Scene scene = new Scene(box1, 900,600);
 
@@ -75,6 +85,9 @@ public class Elderia extends Application {
 
         // parte de cadastro
         Scene scene3 = new Scene(box4, 900,900);
+
+        // parte de mostrar os dados cadastrados
+        Scene scene4 = new Scene(box5, 900,900);
 
         // input de busca para profissional
         Label lblInput = new Label("Busque aqui seu profissional:");
@@ -216,6 +229,30 @@ public class Elderia extends Application {
             }
         });
         box1.getChildren().add(cadastrar);
+
+
+        // Botão de mostar os dados dos idosos
+        Button mostrarDados = new Button();
+        mostrarDados.setText("Pessoas Cadastradas");
+        mostrarDados.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(scene4);
+            }
+        });
+        box4.getChildren().add(mostrarDados);
+
+
+        // Botão de Voltar de dados dos idosos
+        Button voltardados = new Button();
+        voltardados.setText("Voltar");
+        voltardados.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(scene3);
+            }
+        });
+        box5.getChildren().add(voltardados);
 
         // botão de voltar do cadastro
         Button voltarcadastro = new Button();
