@@ -3,7 +3,7 @@ package elderia.com.elderia;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-public class AgendaDisponivel extends Proffisional{
+public class AgendaDisponivel extends Profissional {
     private int idAgenda;
     private int idProfissional;
     private String diaSemana;

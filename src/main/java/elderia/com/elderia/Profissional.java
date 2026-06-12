@@ -5,7 +5,7 @@ import java.time.Period;
 
 
 // TODOS TEM QUE EXTENDES DE USUARIO?
-public class Proffisional {
+public class Profissional {
     private int idProfissional;
     private String registroProfissional; // CRM ou COREN
     private String especialidade;
