@@ -112,7 +112,7 @@ public class Elderia extends Application {
         // -- nome --
         Label lblInputNome = new Label("Nome:");
         TextField txtNome = new TextField();
-        txtNome.setPromptText("Ex: Eduardo Guilherme");
+        txtNome.setPromptText("Ex: Eduardo Guilherme"); // tipo o placeholder
         txtNome.setMaxWidth(200);
         // css básico
         HBox linhaNome = new HBox();
@@ -210,8 +210,62 @@ public class Elderia extends Application {
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipoUsuario"));
         colTipo.setPrefWidth(90);
 
-        // Coloca os dados da tabela criada na ordem correta
-        tabelaUsuarios.getColumns().addAll(colId, colNome, colCpf, colEmail, colTelefone, colTipo);
+
+
+        // Botão de deletar dentro da coluna da para tirar se quiser
+        TableColumn<Usuario, Void> colDeletar = new TableColumn<>("Descanse em Paz");
+        colDeletar.setPrefWidth(100);
+
+        // tem que add o botão dentro da coluna, faz isso
+        colDeletar.setCellFactory(param -> new TableCell<Usuario, Void>() {
+            private final Button btnDeletar = new Button("Deletar");
+
+            {
+                // Botaão VERMELHO para indicar perigo
+                btnDeletar.setStyle("-fx-background-color: #ff4d4d; -fx-text-fill: white; -fx-font-weight: bold;");
+
+                btnDeletar.setOnAction(event -> {
+                    // Pega o objeto Usuario correspondente à linha onde o botão foi clicado
+                    Usuario usuarioSelecionado = getTableView().getItems().get(getIndex()); // CASTING!!!!
+
+                    if (usuarioSelecionado != null) {
+                        try {
+                            // Tira da tabela, mas só a parte visual
+                            dadosTabela.remove(usuarioSelecionado);
+
+                            // Apaga literalmente da do arquivo data
+                            List<Usuario> listaCompleta = UsuarioRepository.listarTodos();
+
+                            // Remove da lista do arquivo o usuário que possui o mesmo ID
+                            listaCompleta.removeIf(u -> u.getIdUsuario() == usuarioSelecionado.getIdUsuario());
+
+                            // Grava o trem de bytes atualizado de volta no arquivo permanente
+                            UsuarioRepository.salvarTodos(listaCompleta);
+
+                            System.out.println("Usuário " + usuarioSelecionado.getNome() + " Se despende alegremente!");
+
+                        } catch (Exception e) {
+                            System.err.println("Deu bostica, não foi o delete ;-; " + e.getMessage());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                // Se a linha estiver vazia, não mostra o botão
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnDeletar); // Injeta o botão na célula
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
+        // Pega tudo e add na tabela criada
+        tabelaUsuarios.getColumns().addAll(colId, colNome, colCpf, colEmail, colTelefone, colTipo, colDeletar);
         box5.getChildren().add(tabelaUsuarios);
 
         // ObjectOutputStream = saída

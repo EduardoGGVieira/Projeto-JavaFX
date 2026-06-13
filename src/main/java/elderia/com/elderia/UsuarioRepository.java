@@ -30,7 +30,7 @@ public class UsuarioRepository {
             // leitor do trem de byts!!
             listaRecuperada = (List<Usuario>) objectInput.readObject();
 
-
+            // avisos para caso de tudo errado!
         } catch (FileNotFoundException e) {
             System.err.println("Arquivo de persistência não encontrado: " + e.getMessage());
         } catch (IOException e) {
@@ -38,7 +38,7 @@ public class UsuarioRepository {
             System.err.println("Erro de Entrada/Saída ao ler o fluxo de bytes: " + e.getMessage());
         } catch (ClassNotFoundException e) {
 
-            System.err.println("Classe de domínio não mapeada para deserialização: " + e.getMessage());
+            System.err.println("Falto muita coisa, deu titica: " + e.getMessage());
         } finally {
 
             // O BLOCO FINALLY garante que o isso aqui vai acontecer idependete de qualquer coisa
