@@ -74,8 +74,8 @@ public class Elderia extends Application {
         lbl3.setFont(new Font("Arial", 24));
         lbl3.setAlignment(Pos.CENTER);
 
-        VBox box3 = criarTelaBase();
-        box3.getChildren().addAll(lbl3, new Separator());
+        VBox boxNENHUMA = criarTelaBase();
+        boxNENHUMA.getChildren().addAll(lbl3, new Separator());
 
         // input de busca para profissional
         Label lblInput = new Label("Busque aqui seu profissional:");
@@ -88,10 +88,7 @@ public class Elderia extends Application {
         // agora fica em hbox so pra alinhar melhor
         HBox linhaBuscaProfissional = criarLinha();
         linhaBuscaProfissional.getChildren().addAll(lblInput, txtEspecializacao);
-        box3.getChildren().add(linhaBuscaProfissional);
-
-        // essa cena vamos usar pra printar os dados do profissional
-        Scene scene2 = new Scene(box3, 900, 600);
+        boxNENHUMA.getChildren().add(linhaBuscaProfissional);
 
         // ---------------- CADASTRO ----------------
         // area de cadastro
@@ -188,6 +185,86 @@ public class Elderia extends Application {
 
         // parte de mostrar os dados cadastrados
         Scene scene4 = new Scene(box5, 1000, 700);
+
+        // ---------------- Cadastro do proffisional-----------
+
+        //titulo da pagina/scene
+        Label lblCadastroProfissa = new Label("Cadastro do Profissional");
+        lblCadastroProfissa.setFont(new Font("Arial", 28));
+        lblCadastroProfissa.setAlignment(Pos.CENTER);
+
+        //subtitulo
+        Label lblCadastroProfissaInformacoes = new Label("Preencha seus dados de profissional abaixo:");
+        lblCadastroProfissaInformacoes.setFont(new Font("Arial", 14));
+
+        VBox box3 = criarTelaBase();
+        box3.getChildren().addAll(lblCadastroProfissa, lblCadastroProfissaInformacoes, new Separator());
+
+
+        // essa cena vamos usar pro cadastro do profissional
+        Scene scene2 = new Scene(box3, 900, 700);
+
+        // formulário
+        GridPane formularioProfissa = new GridPane();
+        formularioProfissa.setHgap(10);
+        formularioProfissa.setVgap(12);
+        formularioProfissa.setAlignment(Pos.CENTER);
+
+        // Nome
+        Label lblNomeProfissa = new Label("Nome:");
+
+        TextField txtNomeProfissa = new TextField();
+        txtNomeProfissa.setPromptText("Ex: Dr. Nefario de Carvalhão");
+        txtNomeProfissa.setPrefWidth(250);
+
+        // CRM/COREN/registro do proffisional
+        Label lblRegistroProfissa = new Label("CRM/COREN:");
+
+        TextField txtRegistroProfissa = new TextField();
+        txtRegistroProfissa.setPromptText("Ex: 12345");
+        txtRegistroProfissa.setPrefWidth(250);
+
+        // Especialidade do proffisional
+        Label lblEspecialidadeProfissa = new Label("Especialidade:");
+
+        TextField txtEspecialidadeProfissa = new TextField();
+        txtEspecialidadeProfissa.setPromptText("Ex: Urologista");
+        txtEspecialidadeProfissa.setPrefWidth(250);
+
+        // Localização do proffisional
+        Label lblLocalizacaoProfissa = new Label("Localização:");
+
+        TextField txtLocalizacaoProfissa = new TextField();
+        txtLocalizacaoProfissa.setPromptText("Ex: Where Judas lost his boots - PQP");
+        txtLocalizacaoProfissa.setPrefWidth(250);
+
+        // Biografia do Proffisional
+        Label lblBiografiaProfissa = new Label("Biografia:");
+
+        TextArea txtBiografiaProfissa = new TextArea();
+        txtBiografiaProfissa.setPromptText("Descreva sua experiência profissional...");
+        txtBiografiaProfissa.setPrefWidth(250);
+        txtBiografiaProfissa.setPrefRowCount(4); //define quantas linhas vai aparecer antes de aparecer o scrollzinho.
+
+        // Bota no gridpane que eu criei la em cima.
+        // coluna 0 = label
+        // coluna 1 = campo (Importante lembrar pra nao confundir igual o bobo aqui)
+        formularioProfissa.add(lblNomeProfissa, 0, 0);
+        formularioProfissa.add(txtNomeProfissa, 1, 0);
+
+        formularioProfissa.add(lblRegistroProfissa, 0, 1);
+        formularioProfissa.add(txtRegistroProfissa, 1, 1);
+
+        formularioProfissa.add(lblEspecialidadeProfissa, 0, 2);
+        formularioProfissa.add(txtEspecialidadeProfissa, 1, 2);
+
+        formularioProfissa.add(lblLocalizacaoProfissa, 0, 3);
+        formularioProfissa.add(txtLocalizacaoProfissa, 1, 3);
+
+        formularioProfissa.add(lblBiografiaProfissa, 0, 4);
+        formularioProfissa.add(txtBiografiaProfissa, 1, 4);
+
+        box3.getChildren().add(formularioProfissa);
 
         // ---------------- AREA DE AVALIACAO ----------------
         // atualizacao importante da branch demo:
@@ -394,13 +471,77 @@ public class Elderia extends Application {
 
         box4.getChildren().addAll(new Separator(), botoesCadastro);
 
+        // ------ butao da tela do cadastro do profissional-----------
+        Button btnCadastrarProfissa = new Button("Cadastrar-se");
+        btnCadastrarProfissa.setPrefWidth(180);
+
+        btnCadastrarProfissa.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    String nome = txtNomeProfissa.getText().trim();
+                    String registro = txtRegistroProfissa.getText().trim();
+                    String especialidade = txtEspecialidadeProfissa.getText().trim();
+                    String localizacao = txtLocalizacaoProfissa.getText().trim();
+                    String biografia = txtBiografiaProfissa.getText().trim();
+
+                    // valida se nao ta faltando coisa
+                    if (nome.isEmpty() || registro.isEmpty() || especialidade.isEmpty() || localizacao.isEmpty() || biografia.isEmpty()) {
+                        throw new IllegalArgumentException(
+                                "Calma ai paizão, ta faltando coisa nesse formulario.");
+                    }
+                    List<Profissional> listaAtual = ProfissionalRepository.listarTodos();
+
+                    // bota um id novo
+                    int novoId = listaAtual.size() + 1;
+
+                    // cria o profissional cadastrado no formulario lindo
+                    Profissional novoProfissional = new Profissional(novoId, nome, registro, especialidade, localizacao, biografia);
+
+                    listaAtual.add(novoProfissional);
+
+                    ProfissionalRepository.salvarTodos(listaAtual);
+
+                    System.out.println("\n= Ta salvo pai :P =");
+
+                    System.out.println("Nome: " + nome + " | CRM/COREN: " + registro + " | Total de profissionais cadastrados: " + listaAtual.size());
+
+                    txtNomeProfissa.clear();
+                    txtRegistroProfissa.clear();
+                    txtEspecialidadeProfissa.clear();
+                    txtLocalizacaoProfissa.clear();
+                    txtBiografiaProfissa.clear();
+
+                    stage.setScene(scene);
+
+                } catch (IllegalArgumentException y) {
+                    System.err.println("Deu Erro de Validação aqui: " + y.getMessage());
+                } catch (Exception y) {
+                    System.err.println("Erro inesperado do sistema: " + y.getMessage());
+                }
+            }
+        });
+
+        HBox boxBotaoProfissa = new HBox(btnCadastrarProfissa);
+        boxBotaoProfissa.setAlignment(Pos.CENTER);
+
+        box3.getChildren().add(boxBotaoProfissa);
+
+
+
+
+
+
+
+
+
         // ---------------- BOTOES TELA INICIAL ----------------
         // aqui ficam os botoes principais do menu inicial
         // atualizacao: mantive os botoes de cadastro, idoso, profissional e fechar
         // tambem mantive o botao avaliar da demo e o botao certificados da nossa parte
 
         // botao de cadastrar
-        Button cadastrar = new Button("Cadastre-se");
+        Button cadastrar = new Button("Cadastrar-se como Usuário.");
         cadastrar.setPrefWidth(220);
 
         cadastrar.setOnAction(new EventHandler<ActionEvent>() {
@@ -410,27 +551,28 @@ public class Elderia extends Application {
             }
         });
 
-        // botao de ir para a area do idoso
-        Button btn3 = new Button("Aba de idoso");
+        // botao para ir para area de profissional
+        Button btn3 = new Button("Cadastrar-se como Profissional");
         btn3.setPrefWidth(220);
 
         btn3.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(scene2);
+            }
+        });
+
+        // botao de ir para a area do idoso
+        Button btn5 = new Button("Aba de idoso");
+        btn5.setPrefWidth(220);
+
+        btn5.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 stage.setScene(scene1);
             }
         });
 
-        // botao para ir para area de profissional
-        Button btn5 = new Button("Profissional");
-        btn5.setPrefWidth(220);
-
-        btn5.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                stage.setScene(scene2);
-            }
-        });
 
         // botao de avaliar
         // isso veio da branch demo, entao nao pode sumir
