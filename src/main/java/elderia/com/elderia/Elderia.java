@@ -83,19 +83,19 @@ public class Elderia extends Application {
 
 
         // area inicial
-        Scene scene = new Scene(box1, 900,600);
+        Scene scene = new Scene(box1, 1280,720);
 
         // essa cena vamos usar para printar os dados do idoso
-        Scene scene1 = new Scene(box2, 500,400);
+        Scene scene1 = new Scene(box2, 1280,720);
 
         // essa cena vamos usar pra printar os dados do profissional
-        Scene scene2 = new Scene(box3, 500,400);
+        Scene scene2 = new Scene(box3, 1280,720);
 
         // parte de cadastro
-        Scene scene3 = new Scene(box4, 900,900);
+        Scene scene3 = new Scene(box4, 1280,720);
 
         // parte de mostrar os dados cadastrados
-        Scene scene4 = new Scene(box5, 900,900);
+        Scene scene4 = new Scene(box5, 1280,720);
 
         // input de busca para profissional
         Label lblInput = new Label("Busque aqui seu profissional:");
