@@ -3,49 +3,43 @@ package elderia.com.elderia;
 import java.time.LocalDate;
 import java.time.Period;
 
-
-// TODOS TEM QUE EXTENDES DE USUARIO?
 public class Profissional {
     private int idProfissional;
+    private String nomeProfissional;
     private String registroProfissional; // CRM ou COREN
     private String especialidade;
     private String localizacao;
     private String biografia;
-    private LocalDate dataEmissaoCertificado;
 
 
-    public void Profissional(int idProfissional, String registroProfissional, String specialty,
-                        String localizacao, String biografia, LocalDate dataEmissaoCertificado) {
+    // Criar isso em todas as classe que forem ser usadas o Seriazable para n dar merda
+    public Profissional() {
+    }
+
+    public Profissional(int idProfissional, String nomeProfissional, String registroProfissional, String specialty,
+                        String localizacao, String biografia) {
         this.idProfissional = idProfissional;
+        this.nomeProfissional = nomeProfissional;
         this.registroProfissional = registroProfissional;
         this.especialidade = specialty;
         this.localizacao = localizacao;
         this.biografia = biografia;
-        this.dataEmissaoCertificado = dataEmissaoCertificado;
     }
 
 
-
-    // MÉTODO 1: Verifica o tempo de expedição do documento (Ex: Alerta se > 10 anos)
-    public boolean necessitaRecertificacao() {
-        if (this.dataEmissaoCertificado == null) {
-            return true;
+    public String obterIniciaisNomedoProfissional() {
+        if (this.nomeProfissional == null || this.nomeProfissional.trim().isEmpty()) {
+            return "??";
         }
-        int anosExpedicao = Period.between(this.dataEmissaoCertificado, LocalDate.now()).getYears();
-        return anosExpedicao >= 10; // Exige revisão caso o documento tenha mais de uma década
+        String[] partes = this.nomeProfissional.trim().split("\\s+");
+        StringBuilder iniciais = new StringBuilder();
+        for (int i = 0; i < Math.min(partes.length, 2); i++) {
+            if (!partes[i].isEmpty()) {
+                iniciais.append(partes[i].substring(0, 1).toUpperCase()).append(". ");
+            }
+        }
+        return iniciais.toString().trim();
     }
-
-
-    // MÉTODO 2: Gera uma apresentação comercial curta para os cards do JavaFX
-    public String obterCartaoApresentacao() {
-        return String.format("Dr(a). %s | Registro: %s\nEspecialidade: %s\nAtendimento em: %s",
-                this.especialidade,
-                this.registroProfissional,
-                this.especialidade,
-                this.localizacao.isEmpty() ? "Não informada" : this.localizacao);
-    }
-
-
 
 
     public String getRegistroProfissional() {
@@ -54,6 +48,14 @@ public class Profissional {
 
     public void setRegistroProfissional(String registroProfissional) {
         this.registroProfissional = registroProfissional;
+    }
+
+    public String getNomeProfissional() {
+        return nomeProfissional;
+    }
+
+    public void setNomeProfissional(String nomeProfissional) {
+        this.nomeProfissional = nomeProfissional;
     }
 
     public int getIdProfissional() {
@@ -86,13 +88,5 @@ public class Profissional {
 
     public void setBiografia(String biografia) {
         this.biografia = biografia;
-    }
-
-    public LocalDate getDataEmissaoCertificado() {
-        return dataEmissaoCertificado;
-    }
-
-    public void setDataEmissaoCertificado(LocalDate dataEmissaoCertificado) {
-        this.dataEmissaoCertificado = dataEmissaoCertificado;
     }
 }
