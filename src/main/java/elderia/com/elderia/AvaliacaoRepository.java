@@ -44,4 +44,27 @@ public class AvaliacaoRepository {
 
         return listaRecuperada;
     }
+
+    public static void salvarTodos(List<Avaliacao> lista) {
+        FileOutputStream fileOutput = null;
+        ObjectOutputStream objectOutput = null;
+
+        try {
+            fileOutput = new FileOutputStream(NOME_ARQUIVO);
+            objectOutput = new ObjectOutputStream(fileOutput);
+
+            objectOutput.writeObject(lista);
+
+            System.out.println("Avaliações salvas com sucesso. Total: " + lista.size());
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar as avaliações.\nErro: " + e.getMessage());
+        } finally {
+            try {
+                if (objectOutput != null) objectOutput.close();
+                if (fileOutput != null) fileOutput.close();
+            } catch (IOException e) {
+                System.err.println("Falha ao fechar as avaliações.\nErro: " + e.getMessage());
+            }
+        }
+    }
 }

@@ -46,7 +46,7 @@ public class Elderia extends Application {
         box1.getChildren().addAll(lblTitulo, lblSubtitulo, new Separator());
 
         // area inicial
-        Scene sceneInicial = new Scene(box1, 900, 600);
+        Scene sceneInicial = new Scene(box1, 1280, 720);
 
         // ---------------- AREA IDOSO ----------------
         // botao de ir para idoso manda pra essa scene aqui
@@ -63,7 +63,7 @@ public class Elderia extends Application {
         boxIdoso.getChildren().addAll(lblIdoso, txtIdoso, new Separator());
 
         // essa cena vamos usar para printar os dados do idoso
-        Scene sceneIdoso = new Scene(boxIdoso, 900, 600);
+        Scene sceneIdoso = new Scene(boxIdoso, 1280, 720);
 
         // ---------------- AREA PROFISSIONAL ----------------
         // botao de ir para profissional manda pra essa scene aqui
@@ -105,7 +105,7 @@ public class Elderia extends Application {
         boxFormCadastro.getChildren().addAll(lbl4, lblCadastroInfo, new Separator());
 
         // parte de cadastro
-        Scene scene3 = new Scene(boxFormCadastro, 900, 700);
+        Scene scene3 = new Scene(boxFormCadastro, 1280, 720);
 
         // inputs do cadastro - todos os inputs
         // antes cada campo era um hbox separado
@@ -183,16 +183,16 @@ public class Elderia extends Application {
         boxDadosUsuarios.getChildren().addAll(lbl5, new Separator());
 
         // parte de mostrar os dados cadastrados
-        Scene scene4 = new Scene(boxDadosUsuarios, 1000, 700);
+        Scene scene4 = new Scene(boxDadosUsuarios, 1280, 720);
 
-        // ---------------- Cadastro do proffisional-----------
+        // ---------------- Cadastro do profissional-----------
 
         //titulo da pagina/scene
         Label lblCadastroProfissional = new Label("Cadastro do Profissional");
         lblCadastroProfissional.setFont(new Font("Arial", 28));
         lblCadastroProfissional.setAlignment(Pos.CENTER);
 
-        //subtitulo
+        //subtítulo
         Label lblCadastroProfissionalInfo = new Label("Preencha seus dados de profissional abaixo:");
         lblCadastroProfissionalInfo.setFont(new Font("Arial", 14));
 
@@ -201,7 +201,7 @@ public class Elderia extends Application {
 
 
         // essa cena vamos usar pro cadastro do profissional
-        Scene scene2 = new Scene(boxCadastroProfissional, 900, 700);
+        Scene scene2 = new Scene(boxCadastroProfissional, 1280, 720);
 
         // formulário
         GridPane formularioProfissional = new GridPane();
@@ -216,36 +216,36 @@ public class Elderia extends Application {
         txtNomeProfissional.setPromptText("Ex: Dr. Nefario de Carvalhão");
         txtNomeProfissional.setPrefWidth(250);
 
-        // CRM/COREN/registro do proffisional
+        // CRM/COREN/registro do profissional
         Label lblRegistroProfissional = new Label("CRM/COREN:");
 
         TextField txtRegistroProfissional = new TextField();
         txtRegistroProfissional.setPromptText("Ex: 12345");
         txtRegistroProfissional.setPrefWidth(250);
 
-        // Especialidade do proffisional
+        // Especialidade do profissional
         Label lblEspecialidadeProfissional = new Label("Especialidade:");
 
         TextField txtEspecialidadeProfissional = new TextField();
         txtEspecialidadeProfissional.setPromptText("Ex: Urologista");
         txtEspecialidadeProfissional.setPrefWidth(250);
 
-        // Localização do proffisional
+        // Localização do profissional
         Label lblLocalizacaoProfissional = new Label("Localização:");
 
         TextField txtLocalizacaoProfissional = new TextField();
         txtLocalizacaoProfissional.setPromptText("Ex: Where Judas lost his boots - PQP");
         txtLocalizacaoProfissional.setPrefWidth(250);
 
-        // Biografia do Proffisional
+        // Biografia do profissional
         Label lblBiografiaProfissional = new Label("Biografia:");
 
         TextArea txtBiografiaProfissional = new TextArea();
         txtBiografiaProfissional.setPromptText("Descreva sua experiência profissional...");
         txtBiografiaProfissional.setPrefWidth(250);
-        txtBiografiaProfissional.setPrefRowCount(4); //define quantas linhas vai aparecer antes de aparecer o scrollzinho.
+        txtBiografiaProfissional.setPrefRowCount(4); //define quantas linhas vai aparecer antes de aparecer o scroll
 
-        // Bota no gridpane que eu criei la em cima.
+        // Bota no GridPane que eu criei la em cima
         // coluna 0 = label
         // coluna 1 = campo (Importante lembrar pra nao confundir igual o bobo aqui)
         formularioProfissional.add(lblNomeProfissional, 0, 0);
@@ -282,12 +282,26 @@ public class Elderia extends Application {
 
         // mostra o nome dos profissionais cadastrados - Pierre
         Label lblSelecionarProfissional = new Label("Selecione o Profissional:");
-        ComboBox<String> cbProfissional = new ComboBox<>();
+        ComboBox<Profissional> cbProfissional = new ComboBox<>();
+        cbProfissional.getItems().addAll(ProfissionalRepository.listarTodos());
+        cbProfissional.setPromptText("Escolha um profissional...");
+        cbProfissional.setPrefWidth(250);
 
-        List<Profissional> profissionais = ProfissionalRepository.listarTodos();
-        for (Profissional p : profissionais) {
-            cbProfissional.getItems().add(p.getNomeProfissional());
-        }
+        // isso aqui faz o ComboBox mostrar o nome - Pierre
+        cbProfissional.setCellFactory(lv -> new ListCell<Profissional>() {
+            @Override
+            protected void updateItem(Profissional p, boolean empty) {
+                super.updateItem(p, empty);
+                setText(empty || p == null ? null : p.getNomeProfissional());
+            }
+        });
+        cbProfissional.setButtonCell(new ListCell<Profissional>() {
+            @Override
+            protected void updateItem(Profissional p, boolean empty) {
+                super.updateItem(p, empty);
+                setText(empty || p == null ? null : p.getNomeProfissional());
+            }
+        });
 
         cbProfissional.setPromptText("Escolha um Profissional:");
         cbProfissional.setPrefWidth(250);
@@ -297,9 +311,9 @@ public class Elderia extends Application {
         Slider sliderNota = new Slider(1, 5, 3);
         sliderNota.setMajorTickUnit(1);
         sliderNota.setMinorTickCount(0);
-        sliderNota.snapToTicksProperty();
-        sliderNota.showTickLabelsProperty();
-        sliderNota.showTickMarksProperty();
+        sliderNota.setSnapToTicks(true);
+        sliderNota.setShowTickLabels(true);
+        sliderNota.setShowTickMarks(true);
         sliderNota.setPrefWidth(250);
 
         // aqui o usuário/idoso pode fazer um comentário avaliando o profissional - Pierre
@@ -320,14 +334,14 @@ public class Elderia extends Application {
         formularioAvaliacao.add(lblNota, 0, 1);
         formularioAvaliacao.add(sliderNota, 1, 1);
         formularioAvaliacao.add(lblComentario, 0, 2);
-        formularioProfissional.add(txtComentario, 1, 2);
+        formularioAvaliacao.add(txtComentario, 1, 2);
 
         // btn de enviar avaliação - Pierre
         Button btnEnviarAvaliacao = new Button("Enviar Avaliação");
         btnEnviarAvaliacao.setPrefWidth(180);
 
         btnEnviarAvaliacao.setOnAction(e -> {
-            String profissionalSelecionado = cbProfissional.getValue();
+            Profissional profissionalSelecionado = cbProfissional.getValue();
             int nota = (int) sliderNota.getValue();
             String comentario = txtComentario.getText().trim();
 
@@ -350,25 +364,27 @@ public class Elderia extends Application {
             stage.setScene(sceneInicial);
         });
 
+        boxAvaliacao.getChildren().add(formularioAvaliacao);
+
         HBox boxBotaoAvaliacao = new HBox(btnEnviarAvaliacao);
         boxBotaoAvaliacao.setAlignment(Pos.CENTER);
 
         boxAvaliacao.getChildren().add(boxBotaoAvaliacao);
 
         // --------------------- TABELA DE PESSOAS CADASTRADAS --------------
-        // cria a tabela que vai listar os usuarios cadastrados
+        // cria a tabela que vai listar os usuários cadastrados
 
         tabelaUsuarios = new TableView<>();
 
-        // este aq e tipo eventelistner
-        // ele fica esperando os dados da tabela mudar pra atualizar visualmente
+        // este aq e tipo eventListener
+        // ele fica esperando os dados da tabela mudar para atualizar visualmente
         dadosTabela = FXCollections.observableArrayList();
 
         // conecta a lista na tabela
         tabelaUsuarios.setItems(dadosTabela);
         tabelaUsuarios.setPrefHeight(400);
 
-        // criacao das colunas da tabela dos usuarios cadastrados
+        // criação das colunas da tabela dos usuários cadastrados
 
         TableColumn<Usuario, Integer> colId = new TableColumn<>("ID");
         colId.setCellValueFactory(new PropertyValueFactory<>("idUsuario"));
@@ -394,11 +410,11 @@ public class Elderia extends Application {
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipoUsuario"));
         colTipo.setPrefWidth(100);
 
-        // botao de deletar dentro da coluna
+        // botão de delete dentro da coluna
         TableColumn<Usuario, Void> colDeletar = new TableColumn<>("Ação");
         colDeletar.setPrefWidth(100);
 
-        // tem que add o botao dentro da coluna
+        // tem que add o botão dentro da coluna
         colDeletar.setCellFactory(param -> new TableCell<Usuario, Void>() {
             private final Button btnDeletar = new Button("Deletar");
 
@@ -434,11 +450,11 @@ public class Elderia extends Application {
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
 
-                // se a linha estiver vazia, nao mostra o botao
+                // se a linha estiver vazia, não mostra o botão
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    setGraphic(btnDeletar); // injeta o botao na celula
+                    setGraphic(btnDeletar); // injeta o botão na célula
                     setAlignment(Pos.CENTER);
                 }
             }
@@ -448,15 +464,15 @@ public class Elderia extends Application {
         tabelaUsuarios.getColumns().addAll(colId, colNome, colCpf, colEmail, colTelefone, colTipo, colDeletar);
         boxDadosUsuarios.getChildren().add(tabelaUsuarios);
 
-        // ObjectOutputStream = saida
+        // ObjectOutputStream = saída
         // ObjectInputStream = entrada, le os dados
 
-        // ---------------- BOTOES DO CADASTRO ----------------
-        // aqui ficam os botoes da tela de cadastro
-        // atualizacao: antes os botoes eram adicionados um por um no boxFormCadastro
+        // ---------------- BOTÕES DO CADASTRO ----------------
+        // aqui ficam os botões da tela de cadastro
+        // atualização: antes os botões eram adicionados um por um no boxFormCadastro
         // agora eles ficam na mesma linha
 
-        // botao de salvar os dados
+        // botão de salvar os dados
         Button btnSalvarDadosIdoso = new Button("Confirmar Cadastro");
         btnSalvarDadosIdoso.setPrefWidth(180);
 
@@ -469,8 +485,8 @@ public class Elderia extends Application {
                     String email = txtEmail.getText().trim();
                     String dataNasc = txtDataNascimento.getText().trim(); // pode mapear no model depois
 
-                    // nao pode deixar nada em branco
-                    // obs: mantive a mesma validacao que ja tinha antes
+                    // não pode deixar nada em branco
+                    // obs: mantive a mesma validação que já tinha antes
                     if (nome.isEmpty() || cpf.isEmpty() || email.isEmpty()) {
                         throw new IllegalArgumentException("Erro: Falta de informações para cadastro de usuário. Por favor, tente novamente.");
                     }
@@ -481,7 +497,7 @@ public class Elderia extends Application {
                     // cria um id novo baseado no tamanho da lista
                     int novoId = listaAtual.size() + 1;
 
-                    // cria um usuario novo
+                    // cria um usuário novo
                     // obs: mantive dataNasc indo no lugar de telefone pq era assim que ja tava funcionando
                     Usuario novoUsuario = new Usuario(novoId, nome, cpf, email, dataNasc, "idoso");
 
@@ -502,7 +518,7 @@ public class Elderia extends Application {
                     txtSenha.clear();
                     txtDataNascimento.clear();
 
-                    // volta para a tela inicial automaticamente depois de salvar
+                    // volta para a tela inicial automaticamente após salvar
                     stage.setScene(sceneInicial);
 
                 } catch (IllegalArgumentException y) {
@@ -542,7 +558,7 @@ public class Elderia extends Application {
 
         boxFormCadastro.getChildren().addAll(new Separator(), botoesCadastro);
 
-        // ------ butao da tela do cadastro do profissional-----------
+        // ------ botão da tela do cadastro do profissional-----------
         Button btnSalvarDadosProfissional = new Button("Confirmar Cadastro");
         btnSalvarDadosProfissional.setPrefWidth(180);
 
@@ -556,7 +572,7 @@ public class Elderia extends Application {
                     String localizacao = txtLocalizacaoProfissional.getText().trim();
                     String biografia = txtBiografiaProfissional.getText().trim();
 
-                    // valida se nao ta faltando coisa
+                    // valida se falta algo
                     if (nome.isEmpty() || registro.isEmpty() || especialidade.isEmpty() || localizacao.isEmpty() || biografia.isEmpty()) {
                         throw new IllegalArgumentException(
                                 "Calma ai paizão, ta faltando coisa nesse formulario.");
@@ -598,12 +614,12 @@ public class Elderia extends Application {
 
         boxCadastroProfissional.getChildren().add(boxBotaoProfissional);
 
-        // ---------------- BOTOES TELA INICIAL ----------------
-        // aqui ficam os botoes principais do menu inicial
-        // atualizacao: mantive os botoes de cadastro, idoso, profissional e fechar
-        // tambem mantive o botao avaliar da demo e o botao certificados da nossa parte
+        // ---------------- BOTÕES TELA INICIAL ----------------
+        // aqui ficam os botões principais do menu inicial
+        // atualização: mantive os botões de cadastro, idoso, profissional e fechar
+        // também mantive o botão avaliar da demo e o botão certificados da nossa parte
 
-        // botao de cadastrar
+        // botão de cadastrar
         Button btnCadastrarUsuario = new Button("Cadastrar-se como Usuário");
         btnCadastrarUsuario.setPrefWidth(220);
 
@@ -614,7 +630,7 @@ public class Elderia extends Application {
             }
         });
 
-        // botao para ir para area de profissional
+        // botão para ir para area de profissional
         Button btnCadastrarProfissional = new Button("Cadastrar-se como Profissional");
         btnCadastrarProfissional.setPrefWidth(220);
 
@@ -625,7 +641,7 @@ public class Elderia extends Application {
             }
         });
 
-        // botao de ir para a area do idoso
+        // botão de ir para a area do idoso
         Button btnAbaIdoso = new Button("Área do Idoso");
         btnAbaIdoso.setPrefWidth(220);
 
@@ -637,8 +653,8 @@ public class Elderia extends Application {
         });
 
 
-        // botao de avaliar
-        // isso veio da branch demo, entao nao pode sumir
+        // botão de avaliar
+        // isso veio da branch demo, então não pode sumir
         Button btnAvaliar = new Button("Avaliar");
         btnAvaliar.setPrefWidth(220);
 
@@ -649,7 +665,7 @@ public class Elderia extends Application {
             }
         });
 
-        // botao para ir para area de certificados
+        // botão para ir para area de certificados
         // isso e a nossa parte nova
         Button btnCertificados = new Button("Certificados");
         btnCertificados.setPrefWidth(220);
@@ -679,24 +695,24 @@ public class Elderia extends Application {
 
         box1.getChildren().add(menuPrincipal);
 
-        // ---------------- BOTOES DE VOLTAR ----------------
-        // esses botoes so mandam de volta para a scene anterior
-        // mantive a mesma logica de navegacao por stage.setScene()
+        // ---------------- BOTÕES DE VOLTAR ----------------
+        // esses botões so mandam de volta para a scene anterior
+        // mantive a lógica de navegação por stage.setScene()
 
-        // botao de voltar da area do idoso
-        Button btn4 = new Button("Voltar");
-        btn4.setPrefWidth(180);
+        // botão de voltar da area do idoso
+        Button btnVoltarAreaIdoso = new Button("Voltar");
+        btnVoltarAreaIdoso.setPrefWidth(180);
 
-        btn4.setOnAction(new EventHandler<ActionEvent>() {
+        btnVoltarAreaIdoso.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 stage.setScene(sceneInicial);
             }
         });
 
-        boxIdoso.getChildren().add(btn4);
+        boxIdoso.getChildren().add(btnVoltarAreaIdoso);
 
-        // botao de voltar da area do profissional
+        // botão de voltar da area do profissional
         Button btnVoltarAreaProfissional = new Button("Voltar");
         btnVoltarAreaProfissional.setPrefWidth(180);
 
@@ -709,22 +725,22 @@ public class Elderia extends Application {
 
         boxCadastroProfissional.getChildren().add(btnVoltarAreaProfissional);
 
-        // botao de voltar da tela de dados dos usuarios
-        Button voltardados = new Button("Voltar");
-        voltardados.setPrefWidth(180);
+        // botão de voltar da tela de dados dos usuários
+        Button btnVoltarDados = new Button("Voltar");
+        btnVoltarDados.setPrefWidth(180);
 
-        voltardados.setOnAction(new EventHandler<ActionEvent>() {
+        btnVoltarDados.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 stage.setScene(scene3);
             }
         });
 
-        boxDadosUsuarios.getChildren().add(voltardados);
+        boxDadosUsuarios.getChildren().add(btnVoltarDados);
 
-        // botao de voltar da tela de avaliacao
-        // atualizacao: a demo tinha tela de avaliacao, mas nao tinha botao de voltar
-        // coloquei um voltar simples pra nao prender o usuario na tela
+        // botão de voltar da tela de avaliação
+        // atualização: a demo tinha tela de avaliação, mas não tinha botão de voltar
+        // coloquei um voltar simples para não prender o usuário na tela
         Button voltarAvaliacao = new Button("Voltar");
         voltarAvaliacao.setPrefWidth(180);
 
@@ -741,8 +757,8 @@ public class Elderia extends Application {
         stage.show();
     }
 
-    // metodo auxiliar pra criar uma tela base
-    // atualizacao: isso evita ficar repetindo spacing, padding e alinhamento em toda vbox
+    // método auxiliar para criar uma tela base
+    // atualização: isso evita ficar repetindo spacing, padding e alinhamento em toda vbox
     private VBox criarTelaBase() {
         VBox box = new VBox();
         box.setSpacing(18);
@@ -751,9 +767,9 @@ public class Elderia extends Application {
         return box;
     }
 
-    // metodo auxiliar pra criar linhas centralizadas
-    // atualizacao: usado na busca de profissional e nos botoes do cadastro
-    // deixa o codigo menos repetido
+    // método auxiliar pra criar linhas centralizadas
+    // atualização: usado na busca de profissional e nos botões do cadastro
+    // deixa o código menos repetido
     private HBox criarLinha() {
         HBox linha = new HBox();
         linha.setSpacing(10);
