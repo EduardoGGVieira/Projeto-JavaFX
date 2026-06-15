@@ -390,20 +390,30 @@ public class Elderia extends Application {
             }
         });
 
+        // configura para aparecer o nome - Pierre
+        cbFiltro.setButtonCell(new ListCell<Profissional>() {
+            @Override
+            protected void updateItem(Profissional p, boolean empty) {
+                super.updateItem(p, empty);
+                setText(empty || p == null ? null : p.getNomeProfissional());
+            }
+        });
+
         // tabela de avaliações - Pierre
         TableView<Avaliacao> tabelaAvaliacoes = new TableView<>();
+        tabelaAvaliacoes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<Avaliacao, Integer> colIdAv = new TableColumn<>("ID");
         colIdAv.setCellValueFactory(new PropertyValueFactory<>("idAvaliacao"));
         colIdAv.setPrefWidth(50);
 
         TableColumn<Avaliacao, Integer> colNota = new TableColumn<>("Nota");
-        colIdAv.setCellValueFactory(new PropertyValueFactory<>("nota"));
-        colIdAv.setPrefWidth(80);
+        colNota.setCellValueFactory(new PropertyValueFactory<>("nota"));
+        colNota.setPrefWidth(80);
 
         TableColumn<Avaliacao, String> colComentario = new TableColumn<>("Comentário");
-        colIdAv.setCellValueFactory(new PropertyValueFactory<>("comentario"));
-        colIdAv.setPrefWidth(400);
+        colComentario.setCellValueFactory(new PropertyValueFactory<>("comentario"));
+        colComentario.setPrefWidth(400);
 
         tabelaAvaliacoes.getColumns().addAll(colIdAv, colNota, colComentario);
         tabelaAvaliacoes.setPrefHeight(400);
@@ -442,8 +452,8 @@ public class Elderia extends Application {
         btnVerAvaliacoes.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                stage.setScene(sceneListaAvaliacoes);
                 cbFiltro.getItems().setAll(ProfissionalRepository.listarTodos());
+                stage.setScene(sceneListaAvaliacoes);
             }
         });
 
@@ -745,6 +755,7 @@ public class Elderia extends Application {
         btnAvaliar.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                cbProfissional.getItems().setAll(ProfissionalRepository.listarTodos());
                 stage.setScene(sceneAvaliacao);
             }
         });
