@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Elderia extends Application {
@@ -364,10 +365,93 @@ public class Elderia extends Application {
             stage.setScene(sceneInicial);
         });
 
+        // ---------------- ÁREA DE AVALIAÇÃO ----------------
+        // feito por Pierre
+        Label lblListaAvaliacoes = new Label("Avaliações por Profissional");
+        lblListaAvaliacoes.setFont(new Font("Arial", 24));
+
+        VBox boxListaAvaliacoes = criarTelaBase();
+        boxListaAvaliacoes.getChildren().addAll(lblListaAvaliacoes, new Separator());
+
+        Scene sceneListaAvaliacoes = new Scene(boxListaAvaliacoes, 1280, 720);
+
+        // ComboBox para filtrar cada profissional - Pierre
+        Label lblFiltro = new Label("Profissional:");
+        ComboBox<Profissional> cbFiltro = new ComboBox<>();
+        cbFiltro.getItems().addAll(ProfissionalRepository.listarTodos());
+        cbFiltro.setPromptText("Selecione um profissional");
+        cbFiltro.setPrefWidth(250);
+
+        cbFiltro.setCellFactory(lv -> new ListCell<Profissional>() {
+            @Override
+            protected void updateItem(Profissional p, boolean empty) {
+                super.updateItem(p, empty);
+                setText(empty || p == null ? null : p.getNomeProfissional());
+            }
+        });
+
+        // tabela de avaliações - Pierre
+        TableView<Avaliacao> tabelaAvaliacoes = new TableView<>();
+
+        TableColumn<Avaliacao, Integer> colIdAv = new TableColumn<>("ID");
+        colIdAv.setCellValueFactory(new PropertyValueFactory<>("idAvaliacao"));
+        colIdAv.setPrefWidth(50);
+
+        TableColumn<Avaliacao, Integer> colNota = new TableColumn<>("Nota");
+        colIdAv.setCellValueFactory(new PropertyValueFactory<>("nota"));
+        colIdAv.setPrefWidth(80);
+
+        TableColumn<Avaliacao, String> colComentario = new TableColumn<>("Comentário");
+        colIdAv.setCellValueFactory(new PropertyValueFactory<>("comentario"));
+        colIdAv.setPrefWidth(400);
+
+        tabelaAvaliacoes.getColumns().addAll(colIdAv, colNota, colComentario);
+        tabelaAvaliacoes.setPrefHeight(400);
+
+        // filtra as avaliações ao selecionar o profissional - Pierre
+        cbFiltro.setOnAction(e -> {
+            Profissional profissionalSelecionado = cbFiltro.getValue();
+            if (profissionalSelecionado == null) return;
+
+            List<Avaliacao> todas = AvaliacaoRepository.listarTodos();
+            List<Avaliacao> filtradas = new ArrayList<>();
+
+            for (Avaliacao av : todas) {
+                if (av.getIdConsulta() == profissionalSelecionado.getIdProfissional()) {
+                    filtradas.add(av);
+                }
+            }
+
+            tabelaAvaliacoes.setItems(FXCollections.observableArrayList(filtradas));
+        });
+
+        HBox linhaFiltro = criarLinha();
+        linhaFiltro.getChildren().addAll(lblFiltro, cbFiltro);
+
+        boxListaAvaliacoes.getChildren().addAll(linhaFiltro, tabelaAvaliacoes);
+
+        // botão de voltar para a sceneAvaliacao
+        Button btnVoltarLista = new Button("Voltar");
+        btnVoltarLista.setPrefWidth(180);
+        btnVoltarLista.setOnAction(e -> stage.setScene(sceneAvaliacao));
+        boxListaAvaliacoes.getChildren().add(btnVoltarLista);
+
+        // botão de ver avaliações - Pierre
+        Button btnVerAvaliacoes = new Button("Avaliações");
+        btnVerAvaliacoes.setPrefWidth(180);
+        btnVerAvaliacoes.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(sceneListaAvaliacoes);
+                cbFiltro.getItems().setAll(ProfissionalRepository.listarTodos());
+            }
+        });
+
         boxAvaliacao.getChildren().add(formularioAvaliacao);
 
-        HBox boxBotaoAvaliacao = new HBox(btnEnviarAvaliacao);
+        HBox boxBotaoAvaliacao = new HBox(10);
         boxBotaoAvaliacao.setAlignment(Pos.CENTER);
+        boxBotaoAvaliacao.getChildren().addAll(btnEnviarAvaliacao, btnVerAvaliacoes);
 
         boxAvaliacao.getChildren().add(boxBotaoAvaliacao);
 
