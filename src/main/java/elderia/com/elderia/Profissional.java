@@ -1,9 +1,10 @@
 package elderia.com.elderia;
 
-import java.time.LocalDate;
-import java.time.Period;
+import java.io.Serializable;
 
-public class Profissional {
+public class Profissional implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int idProfissional;
     private String nomeProfissional;
     private String registroProfissional; // CRM ou COREN
@@ -16,12 +17,12 @@ public class Profissional {
     public Profissional() {
     }
 
-    public Profissional(int idProfissional, String nomeProfissional, String registroProfissional, String specialty,
+    public Profissional(int idProfissional, String nomeProfissional, String registroProfissional, String especialidade,
                         String localizacao, String biografia) {
         this.idProfissional = idProfissional;
         this.nomeProfissional = nomeProfissional;
         this.registroProfissional = registroProfissional;
-        this.especialidade = specialty;
+        this.especialidade = especialidade;
         this.localizacao = localizacao;
         this.biografia = biografia;
     }

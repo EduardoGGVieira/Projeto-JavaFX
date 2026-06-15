@@ -1,18 +1,18 @@
 package elderia.com.elderia;
 
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.Period;
 
-public class Certificado {
+public class Certificado implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int idCertificado;
     private int idProfissional;
     private String titulo;
     private LocalDate dataEmissao;
 
-    // Caminho local do ficheiro PDF tem que usar o local completo
+    // Caminho local do arquivo PDF
     private String urlDocumento;
-
-
 
     public Certificado(int idCertificado, int idProfissional, String titulo, LocalDate dataEmissao, String urlDocumento) {
         this.idCertificado = idCertificado;
@@ -22,36 +22,12 @@ public class Certificado {
         this.urlDocumento = urlDocumento;
     }
 
-
     // MÉTODO 1: Valida se o documento anexado possui extensão .pdf
-
     public boolean validarExtensaoPdf() {
         if (this.urlDocumento == null || this.urlDocumento.isEmpty()) {
             return false;
         }
         return this.urlDocumento.toLowerCase().endsWith(".pdf");
-    }
-
-
-    // MÉTODO 2: Retorna o tempo total de emissão em anos
-
-    public int obterAnosDesdeEmissao() {
-        if (this.dataEmissao == null) {
-            return 0;
-        }
-        return Period.between(this.dataEmissao, LocalDate.now()).getYears();
-    }
-
-
-    
-
-
-    public int getIdProfissional() {
-        return idProfissional;
-    }
-
-    public void setIdProfissional(int idProfissional) {
-        this.idProfissional = idProfissional;
     }
 
     public int getIdCertificado() {
@@ -60,6 +36,14 @@ public class Certificado {
 
     public void setIdCertificado(int idCertificado) {
         this.idCertificado = idCertificado;
+    }
+
+    public int getIdProfissional() {
+        return idProfissional;
+    }
+
+    public void setIdProfissional(int idProfissional) {
+        this.idProfissional = idProfissional;
     }
 
     public String getTitulo() {
