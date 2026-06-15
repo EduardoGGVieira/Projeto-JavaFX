@@ -859,7 +859,230 @@ public class Elderia extends Application {
         boxCadastroProfissional.getChildren().add(btnTabelaProfissa);
 
 
-                // ---------------- BOTÕES TELA INICIAL ----------------
+        // ---------------- CADASTRO ADMIN ----------------
+        // tela de cadastro de administrador
+        // segue o mesmo padrão do cadastro de usuário
+
+        Label lblAdmin = new Label("Cadastro de Administrador");
+        lblAdmin.setFont(new Font("Arial", 28));
+        lblAdmin.setAlignment(Pos.CENTER);
+
+        Label lblAdminInfo = new Label("Preencha os dados abaixo:");
+        lblAdminInfo.setFont(new Font("Arial", 14));
+
+        VBox boxAdmin = criarTelaBase();
+        boxAdmin.getChildren().addAll(lblAdmin, lblAdminInfo, new Separator());
+
+        Scene sceneAdmin = new Scene(boxAdmin, 1280, 720);
+
+        // formulário no mesmo esquema do cadastro de usuário
+        GridPane formularioAdmin = new GridPane();
+        formularioAdmin.setHgap(10);
+        formularioAdmin.setVgap(12);
+        formularioAdmin.setAlignment(Pos.CENTER);
+
+        // -- nome --
+        Label lblInputNomeAdmin = new Label("Nome:");
+
+        TextField txtNomeAdmin = new TextField();
+        txtNomeAdmin.setPromptText("Ex: Maria Administradora");
+        txtNomeAdmin.setPrefWidth(250);
+
+        // -- e-mail --
+        Label lblInputEmailAdmin = new Label("Email:");
+
+        TextField txtEmailAdmin = new TextField();
+        txtEmailAdmin.setPromptText("Ex: admin@elderia.com");
+        txtEmailAdmin.setPrefWidth(250);
+
+        // coluna 0 = label
+        // coluna 1 = campo
+        formularioAdmin.add(lblInputNomeAdmin, 0, 0);
+        formularioAdmin.add(txtNomeAdmin, 1, 0);
+
+        formularioAdmin.add(lblInputEmailAdmin, 0, 1);
+        formularioAdmin.add(txtEmailAdmin, 1, 1);
+
+        boxAdmin.getChildren().add(formularioAdmin);
+
+        // --------------------- TABELA DE ADMINS CADASTRADOS ---------------------
+        // cria a tabela que vai listar os administradores cadastrados
+
+        Label lblTituloTabelaAdmin = new Label("Administradores Cadastrados");
+        lblTituloTabelaAdmin.setFont(new Font("Arial", 26));
+        lblTituloTabelaAdmin.setAlignment(Pos.CENTER);
+
+        VBox boxDadosAdmin = criarTelaBase();
+        boxDadosAdmin.getChildren().addAll(lblTituloTabelaAdmin, new Separator());
+
+        Scene sceneDadosAdmin = new Scene(boxDadosAdmin, 1280, 720);
+
+        // lista conectada na tabela
+        ObservableList<Admin> dadosTabelaAdmin = FXCollections.observableArrayList();
+
+        TableView<Admin> tabelaAdmin = new TableView<>();
+        tabelaAdmin.setItems(dadosTabelaAdmin);
+        tabelaAdmin.setPrefHeight(400);
+
+        // criação das colunas da tabela de administradores
+        TableColumn<Admin, Integer> colIdAdmin = new TableColumn<>("ID");
+        colIdAdmin.setCellValueFactory(new PropertyValueFactory<>("idAdmin"));
+        colIdAdmin.setPrefWidth(60);
+
+        TableColumn<Admin, String> colNomeAdmin = new TableColumn<>("Nome");
+        colNomeAdmin.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        colNomeAdmin.setPrefWidth(200);
+
+        TableColumn<Admin, String> colEmailAdmin = new TableColumn<>("E-mail");
+        colEmailAdmin.setCellValueFactory(new PropertyValueFactory<>("email"));
+        colEmailAdmin.setPrefWidth(250);
+
+        // botão de delete dentro da coluna, igual ao da tabela de usuários
+        TableColumn<Admin, Void> colDeletarAdmin = new TableColumn<>("Ação");
+        colDeletarAdmin.setPrefWidth(100);
+
+        colDeletarAdmin.setCellFactory(param -> new TableCell<Admin, Void>() {
+            private final Button btnDeletarAdmin = new Button("Deletar");
+
+            {
+                btnDeletarAdmin.setOnAction(event -> {
+                    // pega o objeto admin correspondente a linha onde o botao foi clicado
+                    Admin adminSelecionado = getTableView().getItems().get(getIndex());
+
+                    if (adminSelecionado != null) {
+                        try {
+                            // tira da tabela, mas so a parte visual
+                            dadosTabelaAdmin.remove(adminSelecionado);
+
+                            // apaga literalmente do arquivo .dat
+                            List<Admin> listaCompleta = AdminRepository.listarTodos();
+
+                            // remove da lista o admin que possui o mesmo id
+                            listaCompleta.removeIf(a -> a.getIdAdmin() == adminSelecionado.getIdAdmin());
+
+                            // grava o trem de bytes atualizado de volta no arquivo permanente
+                            AdminRepository.salvarTodos(listaCompleta);
+
+                            System.out.println("Administrador '" + adminSelecionado.getNome() + "' foi excluído do sistema.");
+
+                        } catch (Exception e) {
+                            System.err.println("Erro ao excluir administrador. Código: " + e.getMessage());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+
+                // se a linha estiver vazia, não mostra o botão
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnDeletarAdmin);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
+        tabelaAdmin.getColumns().addAll(colIdAdmin, colNomeAdmin, colEmailAdmin, colDeletarAdmin);
+        boxDadosAdmin.getChildren().add(tabelaAdmin);
+
+        // botão de voltar da tela de admins cadastrados
+        Button btnVoltarDadosAdmin = new Button("Voltar");
+        btnVoltarDadosAdmin.setPrefWidth(180);
+
+        btnVoltarDadosAdmin.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(sceneAdmin);
+            }
+        });
+
+        boxDadosAdmin.getChildren().add(btnVoltarDadosAdmin);
+
+        // ---------------- BOTÕES DO CADASTRO DE ADMIN ----------------
+        // botão de salvar os dados do admin
+        Button btnSalvarDadosAdmin = new Button("Confirmar Cadastro");
+        btnSalvarDadosAdmin.setPrefWidth(180);
+
+        btnSalvarDadosAdmin.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    String nome = txtNomeAdmin.getText().trim();
+                    String email = txtEmailAdmin.getText().trim();
+
+                    // não pode deixar nada em branco
+                    if (nome.isEmpty() || email.isEmpty()) {
+                        throw new IllegalArgumentException("Erro: Falta de informações para cadastro de administrador. Por favor, tente novamente.");
+                    }
+
+                    // pega a lista atual do arquivo
+                    List<Admin> listaAtual = AdminRepository.listarTodos();
+
+                    // cria um id novo baseado no tamanho da lista
+                    int novoId = listaAtual.size() + 1;
+
+                    // cria um admin novo
+                    Admin novoAdmin = new Admin(novoId, nome, email);
+
+                    // adiciona na lista
+                    listaAtual.add(novoAdmin);
+
+                    // salva tudo de volta no .dat
+                    AdminRepository.salvarTodos(listaAtual);
+
+                    System.out.println("\n=== ADMIN SALVO COM SUCESSO NO ARQUIVO .DAT ===");
+                    System.out.println("Nome: " + nome + " | Total cadastrados: " + listaAtual.size());
+
+                    // depois de salvar tudo, limpa os inputs
+                    txtNomeAdmin.clear();
+                    txtEmailAdmin.clear();
+
+                    // volta para a tela inicial automaticamente após salvar
+                    stage.setScene(sceneInicial);
+
+                } catch (IllegalArgumentException y) {
+                    System.err.println("Erro de Validação: " + y.getMessage());
+                } catch (Exception y) {
+                    System.err.println("Erro inesperado do sistema: " + y.getMessage());
+                }
+            }
+        });
+
+        // botão de ver admins cadastrados
+        Button btnMostrarAdmins = new Button("Administradores Cadastrados");
+        btnMostrarAdmins.setPrefWidth(180);
+
+        btnMostrarAdmins.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // acha o trem de bytes do arquivo e atualiza a lista da tabela
+                List<Admin> listaDoArquivo = AdminRepository.listarTodos();
+                dadosTabelaAdmin.setAll(listaDoArquivo);
+
+                stage.setScene(sceneDadosAdmin);
+            }
+        });
+
+        Button btnVoltarAdmin = new Button("Voltar");
+        btnVoltarAdmin.setPrefWidth(180);
+
+        btnVoltarAdmin.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(sceneInicial);
+            }
+        });
+
+        HBox botoesAdmin = criarLinha();
+        botoesAdmin.getChildren().addAll(btnSalvarDadosAdmin, btnMostrarAdmins, btnVoltarAdmin);
+
+        boxAdmin.getChildren().addAll(new Separator(), botoesAdmin);
+
+        // ---------------- BOTÕES TELA INICIAL ----------------
         // aqui ficam os botões principais do menu inicial
         // atualização: mantive os botões de cadastro, idoso, profissional e fechar
         // também mantive o botão avaliar da demo e o botão certificados da nossa parte
@@ -934,10 +1157,14 @@ public class Elderia extends Application {
             }
         });
 
+        Button btnCadastrarAdmin = new Button("Cadastrar como Administrador");
+        btnCadastrarAdmin.setPrefWidth(220);
+        btnCadastrarAdmin.setOnAction(e -> stage.setScene(sceneAdmin));
+
         VBox menuPrincipal = new VBox();
         menuPrincipal.setSpacing(10);
         menuPrincipal.setAlignment(Pos.CENTER);
-        menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastrarProfissional, btnAbaIdoso, btnAvaliar, btnCertificados, close);
+        menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastrarProfissional, btnCadastrarAdmin, btnAbaIdoso, btnAvaliar, btnCertificados, close);
 
         box1.getChildren().add(menuPrincipal);
 

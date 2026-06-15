@@ -1,11 +1,14 @@
 package elderia.com.elderia;
 
+import java.io.Serializable;
 import java.util.List;
 
 
 
 // TODOS TEM QUE EXTENDES DE USUARIO?
-public class Admin {
+public class Admin implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private int idAdmin;
     private String nome;
     private String email;
