@@ -1,6 +1,8 @@
 package elderia.com.elderia;
 
-public class Avaliacao {
+import java.io.Serializable;
+
+public class Avaliacao implements Serializable {
     private int idAvaliacao;
     private int idConsulta;
     private int nota;

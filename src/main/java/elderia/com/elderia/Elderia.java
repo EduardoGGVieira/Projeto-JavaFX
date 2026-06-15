@@ -83,7 +83,7 @@ public class Elderia extends Application {
         txtEspecializacao.setPromptText("Ex: Geriatra"); // tipo o placeholder
         txtEspecializacao.setMaxWidth(250); // tamanho do input
 
-        // atualizacao: antes o label e o input eram adicionados direto no box3
+        // atualizacao: antes o label e o input eram adicionados direto no boxCadastroProfissional
         // agora fica em hbox so pra alinhar melhor
         HBox linhaBuscaProfissional = criarLinha();
         linhaBuscaProfissional.getChildren().addAll(lblInputProfissional, txtEspecializacao);
@@ -179,11 +179,11 @@ public class Elderia extends Application {
         lbl5.setFont(new Font("Arial", 26));
         lbl5.setAlignment(Pos.CENTER);
 
-        VBox box5 = criarTelaBase();
-        box5.getChildren().addAll(lbl5, new Separator());
+        VBox boxDadosUsuarios = criarTelaBase();
+        boxDadosUsuarios.getChildren().addAll(lbl5, new Separator());
 
         // parte de mostrar os dados cadastrados
-        Scene scene4 = new Scene(box5, 1000, 700);
+        Scene scene4 = new Scene(boxDadosUsuarios, 1000, 700);
 
         // ---------------- Cadastro do proffisional-----------
 
@@ -196,12 +196,12 @@ public class Elderia extends Application {
         Label lblCadastroProfissionalInfo = new Label("Preencha seus dados de profissional abaixo:");
         lblCadastroProfissionalInfo.setFont(new Font("Arial", 14));
 
-        VBox box3 = criarTelaBase();
-        box3.getChildren().addAll(lblCadastroProfissional, lblCadastroProfissionalInfo, new Separator());
+        VBox boxCadastroProfissional = criarTelaBase();
+        boxCadastroProfissional.getChildren().addAll(lblCadastroProfissional, lblCadastroProfissionalInfo, new Separator());
 
 
         // essa cena vamos usar pro cadastro do profissional
-        Scene scene2 = new Scene(box3, 900, 700);
+        Scene scene2 = new Scene(boxCadastroProfissional, 900, 700);
 
         // formulário
         GridPane formularioProfissional = new GridPane();
@@ -263,7 +263,7 @@ public class Elderia extends Application {
         formularioProfissional.add(lblBiografiaProfissional, 0, 4);
         formularioProfissional.add(txtBiografiaProfissional, 1, 4);
 
-        box3.getChildren().add(formularioProfissional);
+        boxCadastroProfissional.getChildren().add(formularioProfissional);
 
         // ---------------- ÁREA DE AVALIAÇÃO ----------------
         // feito pelo Pierre
@@ -278,7 +278,7 @@ public class Elderia extends Application {
         boxAvaliacao.getChildren().addAll(lblAvaliacao, textoAvaliacao, new Separator());
 
         // parte de avaliação
-        Scene sceneAvaliacao = new Scene(boxAvaliacao, 900, 600);
+        Scene sceneAvaliacao = new Scene(boxAvaliacao, 1280, 720);
 
         // mostra o nome dos profissionais cadastrados - Pierre
         Label lblSelecionarProfissional = new Label("Selecione o Profissional:");
@@ -337,8 +337,11 @@ public class Elderia extends Application {
             }
 
             // salva a avaliação do usuário/idoso
-            System.out.println("Avaliação enviada!");
-            System.out.println("Profissional: '" + profissionalSelecionado + "' | Nota: " + nota + " | Comentário: '" + comentario);
+            List<Avaliacao> listaAtual = AvaliacaoRepository.listarTodos();
+            int novoId = listaAtual.size() + 1;
+            Avaliacao nova = new Avaliacao(novoId, profissionalSelecionado.getIdProfissional(), nota, comentario);
+            listaAtual.add(nova);
+            AvaliacaoRepository.salvarTodos(listaAtual);
 
             cbProfissional.setValue(null);
             sliderNota.setValue(3);
@@ -443,7 +446,7 @@ public class Elderia extends Application {
 
         // pega tudo e add na tabela criada
         tabelaUsuarios.getColumns().addAll(colId, colNome, colCpf, colEmail, colTelefone, colTipo, colDeletar);
-        box5.getChildren().add(tabelaUsuarios);
+        boxDadosUsuarios.getChildren().add(tabelaUsuarios);
 
         // ObjectOutputStream = saida
         // ObjectInputStream = entrada, le os dados
@@ -593,7 +596,7 @@ public class Elderia extends Application {
         HBox boxBotaoProfissional = new HBox(btnSalvarDadosProfissional);
         boxBotaoProfissional.setAlignment(Pos.CENTER);
 
-        box3.getChildren().add(boxBotaoProfissional);
+        boxCadastroProfissional.getChildren().add(boxBotaoProfissional);
 
         // ---------------- BOTOES TELA INICIAL ----------------
         // aqui ficam os botoes principais do menu inicial
@@ -694,17 +697,17 @@ public class Elderia extends Application {
         boxIdoso.getChildren().add(btn4);
 
         // botao de voltar da area do profissional
-        Button btn6 = new Button("Voltar");
-        btn6.setPrefWidth(180);
+        Button btnVoltarAreaProfissional = new Button("Voltar");
+        btnVoltarAreaProfissional.setPrefWidth(180);
 
-        btn6.setOnAction(new EventHandler<ActionEvent>() {
+        btnVoltarAreaProfissional.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 stage.setScene(sceneInicial);
             }
         });
 
-        box3.getChildren().add(btn6);
+        boxCadastroProfissional.getChildren().add(btnVoltarAreaProfissional);
 
         // botao de voltar da tela de dados dos usuarios
         Button voltardados = new Button("Voltar");
@@ -717,7 +720,7 @@ public class Elderia extends Application {
             }
         });
 
-        box5.getChildren().add(voltardados);
+        boxDadosUsuarios.getChildren().add(voltardados);
 
         // botao de voltar da tela de avaliacao
         // atualizacao: a demo tinha tela de avaliacao, mas nao tinha botao de voltar
