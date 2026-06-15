@@ -210,66 +210,63 @@ public class Elderia extends Application {
         formularioProfissional.setAlignment(Pos.CENTER);
 
         // Nome
-        Label lblNomeProfissa = new Label("Nome:");
+        Label lblNomeProfissional = new Label("Nome:");
 
-        TextField txtNomeProfissa = new TextField();
-        txtNomeProfissa.setPromptText("Ex: Dr. Nefario de Carvalhão");
-        txtNomeProfissa.setPrefWidth(250);
+        TextField txtNomeProfissional = new TextField();
+        txtNomeProfissional.setPromptText("Ex: Dr. Nefario de Carvalhão");
+        txtNomeProfissional.setPrefWidth(250);
 
         // CRM/COREN/registro do proffisional
-        Label lblRegistroProfissa = new Label("CRM/COREN:");
+        Label lblRegistroProfissional = new Label("CRM/COREN:");
 
-        TextField txtRegistroProfissa = new TextField();
-        txtRegistroProfissa.setPromptText("Ex: 12345");
-        txtRegistroProfissa.setPrefWidth(250);
+        TextField txtRegistroProfissional = new TextField();
+        txtRegistroProfissional.setPromptText("Ex: 12345");
+        txtRegistroProfissional.setPrefWidth(250);
 
         // Especialidade do proffisional
-        Label lblEspecialidadeProfissa = new Label("Especialidade:");
+        Label lblEspecialidadeProfissional = new Label("Especialidade:");
 
-        TextField txtEspecialidadeProfissa = new TextField();
-        txtEspecialidadeProfissa.setPromptText("Ex: Urologista");
-        txtEspecialidadeProfissa.setPrefWidth(250);
+        TextField txtEspecialidadeProfissional = new TextField();
+        txtEspecialidadeProfissional.setPromptText("Ex: Urologista");
+        txtEspecialidadeProfissional.setPrefWidth(250);
 
         // Localização do proffisional
-        Label lblLocalizacaoProfissa = new Label("Localização:");
+        Label lblLocalizacaoProfissional = new Label("Localização:");
 
-        TextField txtLocalizacaoProfissa = new TextField();
-        txtLocalizacaoProfissa.setPromptText("Ex: Where Judas lost his boots - PQP");
-        txtLocalizacaoProfissa.setPrefWidth(250);
+        TextField txtLocalizacaoProfissional = new TextField();
+        txtLocalizacaoProfissional.setPromptText("Ex: Where Judas lost his boots - PQP");
+        txtLocalizacaoProfissional.setPrefWidth(250);
 
         // Biografia do Proffisional
-        Label lblBiografiaProfissa = new Label("Biografia:");
+        Label lblBiografiaProfissional = new Label("Biografia:");
 
-        TextArea txtBiografiaProfissa = new TextArea();
-        txtBiografiaProfissa.setPromptText("Descreva sua experiência profissional...");
-        txtBiografiaProfissa.setPrefWidth(250);
-        txtBiografiaProfissa.setPrefRowCount(4); //define quantas linhas vai aparecer antes de aparecer o scrollzinho.
+        TextArea txtBiografiaProfissional = new TextArea();
+        txtBiografiaProfissional.setPromptText("Descreva sua experiência profissional...");
+        txtBiografiaProfissional.setPrefWidth(250);
+        txtBiografiaProfissional.setPrefRowCount(4); //define quantas linhas vai aparecer antes de aparecer o scrollzinho.
 
         // Bota no gridpane que eu criei la em cima.
         // coluna 0 = label
         // coluna 1 = campo (Importante lembrar pra nao confundir igual o bobo aqui)
-        formularioProfissional.add(lblNomeProfissa, 0, 0);
-        formularioProfissional.add(txtNomeProfissa, 1, 0);
+        formularioProfissional.add(lblNomeProfissional, 0, 0);
+        formularioProfissional.add(txtNomeProfissional, 1, 0);
 
-        formularioProfissional.add(lblRegistroProfissa, 0, 1);
-        formularioProfissional.add(txtRegistroProfissa, 1, 1);
+        formularioProfissional.add(lblRegistroProfissional, 0, 1);
+        formularioProfissional.add(txtRegistroProfissional, 1, 1);
 
-        formularioProfissional.add(lblEspecialidadeProfissa, 0, 2);
-        formularioProfissional.add(txtEspecialidadeProfissa, 1, 2);
+        formularioProfissional.add(lblEspecialidadeProfissional, 0, 2);
+        formularioProfissional.add(txtEspecialidadeProfissional, 1, 2);
 
-        formularioProfissional.add(lblLocalizacaoProfissa, 0, 3);
-        formularioProfissional.add(txtLocalizacaoProfissa, 1, 3);
+        formularioProfissional.add(lblLocalizacaoProfissional, 0, 3);
+        formularioProfissional.add(txtLocalizacaoProfissional, 1, 3);
 
-        formularioProfissional.add(lblBiografiaProfissa, 0, 4);
-        formularioProfissional.add(txtBiografiaProfissa, 1, 4);
+        formularioProfissional.add(lblBiografiaProfissional, 0, 4);
+        formularioProfissional.add(txtBiografiaProfissional, 1, 4);
 
         box3.getChildren().add(formularioProfissional);
 
-        // ---------------- AREA DE AVALIACAO ----------------
-        // atualizacao importante da branch demo:
-        // a demo tinha uma tela e um botao de avaliacao, entao coloquei de volta aqui
-        // deixei simples igual as outras areas, sem mexer na logica de quem for fazer avaliacao
-
+        // ---------------- ÁREA DE AVALIAÇÃO ----------------
+        // feito pelo Pierre
         Label lblAvaliacao = new Label("Avaliação");
         lblAvaliacao.setFont(new Font("Arial", 28));
         lblAvaliacao.setAlignment(Pos.CENTER);
@@ -280,8 +277,80 @@ public class Elderia extends Application {
         VBox boxAvaliacao = criarTelaBase();
         boxAvaliacao.getChildren().addAll(lblAvaliacao, textoAvaliacao, new Separator());
 
-        // parte de avaliacao
+        // parte de avaliação
         Scene sceneAvaliacao = new Scene(boxAvaliacao, 900, 600);
+
+        // mostra o nome dos profissionais cadastrados - Pierre
+        Label lblSelecionarProfissional = new Label("Selecione o Profissional:");
+        ComboBox<String> cbProfissional = new ComboBox<>();
+
+        List<Profissional> profissionais = ProfissionalRepository.listarTodos();
+        for (Profissional p : profissionais) {
+            cbProfissional.getItems().add(p.getNomeProfissional());
+        }
+
+        cbProfissional.setPromptText("Escolha um Profissional:");
+        cbProfissional.setPrefWidth(250);
+
+        // nota de 1 a 5 - Pierre
+        Label lblNota = new Label("Nota (1 a 5):");
+        Slider sliderNota = new Slider(1, 5, 3);
+        sliderNota.setMajorTickUnit(1);
+        sliderNota.setMinorTickCount(0);
+        sliderNota.snapToTicksProperty();
+        sliderNota.showTickLabelsProperty();
+        sliderNota.showTickMarksProperty();
+        sliderNota.setPrefWidth(250);
+
+        // aqui o usuário/idoso pode fazer um comentário avaliando o profissional - Pierre
+        Label lblComentario = new Label("Comentário");
+        TextArea txtComentario = new TextArea();
+        txtComentario.setPromptText("Comente sobre sua experiência!");
+        txtComentario.setPrefWidth(250);
+        txtComentario.setPrefRowCount(4);
+
+        // GridPane para organizar igual o form do cadastro - Pierre
+        GridPane formularioAvaliacao = new GridPane();
+        formularioAvaliacao.setHgap(10);
+        formularioAvaliacao.setVgap(12);
+        formularioAvaliacao.setAlignment(Pos.CENTER);
+
+        formularioAvaliacao.add(lblSelecionarProfissional, 0, 0);
+        formularioAvaliacao.add(cbProfissional, 1, 0);
+        formularioAvaliacao.add(lblNota, 0, 1);
+        formularioAvaliacao.add(sliderNota, 1, 1);
+        formularioAvaliacao.add(lblComentario, 0, 2);
+        formularioProfissional.add(txtComentario, 1, 2);
+
+        // btn de enviar avaliação - Pierre
+        Button btnEnviarAvaliacao = new Button("Enviar Avaliação");
+        btnEnviarAvaliacao.setPrefWidth(180);
+
+        btnEnviarAvaliacao.setOnAction(e -> {
+            String profissionalSelecionado = cbProfissional.getValue();
+            int nota = (int) sliderNota.getValue();
+            String comentario = txtComentario.getText().trim();
+
+            if (profissionalSelecionado == null || comentario.isEmpty()) {
+                System.err.println("Erro: Selecione um profissional cadastrado e escreva um comentário.");
+                return;
+            }
+
+            // salva a avaliação do usuário/idoso
+            System.out.println("Avaliação enviada!");
+            System.out.println("Profissional: '" + profissionalSelecionado + "' | Nota: " + nota + " | Comentário: '" + comentario);
+
+            cbProfissional.setValue(null);
+            sliderNota.setValue(3);
+            txtComentario.clear();
+
+            stage.setScene(sceneInicial);
+        });
+
+        HBox boxBotaoAvaliacao = new HBox(btnEnviarAvaliacao);
+        boxBotaoAvaliacao.setAlignment(Pos.CENTER);
+
+        boxAvaliacao.getChildren().add(boxBotaoAvaliacao);
 
         // --------------------- TABELA DE PESSOAS CADASTRADAS --------------
         // cria a tabela que vai listar os usuarios cadastrados
@@ -349,10 +418,10 @@ public class Elderia extends Application {
                             // grava o trem de bytes atualizado de volta no arquivo permanente
                             UsuarioRepository.salvarTodos(listaCompleta);
 
-                            System.out.println("Usuário " + usuarioSelecionado.getNome() + " Se despende alegremente!");
+                            System.out.println("Usuário '" + usuarioSelecionado.getNome() + "' foi excluído do sistema.");
 
                         } catch (Exception e) {
-                            System.err.println("Deu bostica, não foi o delete ;-; " + e.getMessage());
+                            System.err.println("Erro ao excluir usuário. Código: " + e.getMessage());
                         }
                     }
                 });
@@ -400,7 +469,7 @@ public class Elderia extends Application {
                     // nao pode deixar nada em branco
                     // obs: mantive a mesma validacao que ja tinha antes
                     if (nome.isEmpty() || cpf.isEmpty() || email.isEmpty()) {
-                        throw new IllegalArgumentException("NANANINANÃO, faltou algo ali amigão");
+                        throw new IllegalArgumentException("Erro: Falta de informações para cadastro de usuário. Por favor, tente novamente.");
                     }
 
                     // pega a lista atual do arquivo
@@ -478,11 +547,11 @@ public class Elderia extends Application {
             @Override
             public void handle(ActionEvent event) {
                 try {
-                    String nome = txtNomeProfissa.getText().trim();
-                    String registro = txtRegistroProfissa.getText().trim();
-                    String especialidade = txtEspecialidadeProfissa.getText().trim();
-                    String localizacao = txtLocalizacaoProfissa.getText().trim();
-                    String biografia = txtBiografiaProfissa.getText().trim();
+                    String nome = txtNomeProfissional.getText().trim();
+                    String registro = txtRegistroProfissional.getText().trim();
+                    String especialidade = txtEspecialidadeProfissional.getText().trim();
+                    String localizacao = txtLocalizacaoProfissional.getText().trim();
+                    String biografia = txtBiografiaProfissional.getText().trim();
 
                     // valida se nao ta faltando coisa
                     if (nome.isEmpty() || registro.isEmpty() || especialidade.isEmpty() || localizacao.isEmpty() || biografia.isEmpty()) {
@@ -505,11 +574,11 @@ public class Elderia extends Application {
 
                     System.out.println("Nome: " + nome + " | CRM/COREN: " + registro + " | Total de profissionais cadastrados: " + listaAtual.size());
 
-                    txtNomeProfissa.clear();
-                    txtRegistroProfissa.clear();
-                    txtEspecialidadeProfissa.clear();
-                    txtLocalizacaoProfissa.clear();
-                    txtBiografiaProfissa.clear();
+                    txtNomeProfissional.clear();
+                    txtRegistroProfissional.clear();
+                    txtEspecialidadeProfissional.clear();
+                    txtLocalizacaoProfissional.clear();
+                    txtBiografiaProfissional.clear();
 
                     stage.setScene(sceneInicial);
 
