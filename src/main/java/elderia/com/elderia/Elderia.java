@@ -242,7 +242,7 @@ public class Elderia extends Application {
         Label lblBiografiaProfissional = new Label("Biografia:");
 
         TextArea txtBiografiaProfissional = new TextArea();
-        txtBiografiaProfissional.setPromptText("Descreva sua experiência profissional...");
+        txtBiografiaProfissional.setPromptText("Descreva a sua carreira até aqui :) ");
         txtBiografiaProfissional.setPrefWidth(250);
         txtBiografiaProfissional.setPrefRowCount(4); //define quantas linhas vai aparecer antes de aparecer o scroll
 
@@ -708,7 +708,158 @@ public class Elderia extends Application {
 
         boxCadastroProfissional.getChildren().add(boxBotaoProfissional);
 
-        // ---------------- BOTÕES TELA INICIAL ----------------
+
+        VBox boxProfissasTabela = criarTelaBase();
+
+        //cena q vai ser usada pra tabela de top 10 profissionais
+        Scene sceneTabelaProfissas = new Scene(boxProfissasTabela, 1280, 720);
+
+
+        // --------------------- tabea dos profissionais cadastrados ---------------------
+
+        //cabecalho
+        Label lblTituloTabelaProfissa = new Label("Profissionais Cadastrados");
+        lblTituloTabelaProfissa.setFont(new Font("Arial", 28));
+        lblTituloTabelaProfissa.setAlignment(Pos.CENTER);
+
+        Label lblTabelaProfissaInfo = new Label("Aqui voce pode ver os nossos profissionais do site.");
+        lblTabelaProfissaInfo.setFont(new Font("Arial", 14));
+
+        boxProfissasTabela.getChildren().addAll(lblTituloTabelaProfissa, lblTabelaProfissaInfo, new Separator());
+
+        //criação da tabela
+        TableView<Profissional> tabelaProfissa = new TableView<>();
+
+        ObservableList<Profissional> dadosProfissa = FXCollections.observableArrayList();
+
+
+        tabelaProfissa.setItems(dadosProfissa);
+        tabelaProfissa.setPrefHeight(400);
+
+        TableColumn<Profissional, Integer> colIdProf = new TableColumn<>("ID");
+
+        colIdProf.setCellValueFactory(new PropertyValueFactory<>("idProfissional"));
+        colIdProf.setPrefWidth(60);
+
+
+        TableColumn<Profissional, String> colNomeProf = new TableColumn<>("Nome");
+
+        colNomeProf.setCellValueFactory(new PropertyValueFactory<>("nomeProfissional"));
+        colNomeProf.setPrefWidth(200);
+
+        TableColumn<Profissional, String> colRegistro = new TableColumn<>("CRM/COREN");
+
+        colRegistro.setCellValueFactory(new PropertyValueFactory<>("registroProfissional"));
+        colRegistro.setPrefWidth(130);
+
+
+        TableColumn<Profissional, String> colEspecialidade = new TableColumn<>("Especialidade");
+        colEspecialidade.setCellValueFactory(new PropertyValueFactory<>("especialidade"));
+        colEspecialidade.setPrefWidth(150);
+
+        TableColumn<Profissional, String> colLocalizacao = new TableColumn<>("Localização");
+
+        colLocalizacao.setCellValueFactory(new PropertyValueFactory<>("localizacao"));
+        colLocalizacao.setPrefWidth(150);
+
+
+        TableColumn<Profissional, String> colBiografia = new TableColumn<>("Biografia");
+
+        colBiografia.setCellValueFactory(new PropertyValueFactory<>("biografia"));
+        colBiografia.setPrefWidth(250);
+
+        TableColumn<Profissional, Void> colDeletarProfissa = new TableColumn<>("Excluir");
+
+        colDeletar.setPrefWidth(70);
+
+        colDeletarProfissa.setCellFactory(param -> new TableCell<Profissional, Void>() {
+
+                    private final Button btnDeletarProfissa =
+                            new Button("Deletar");
+
+                    {
+                        btnDeletarProfissa.setOnAction(event -> {
+
+                            Profissional profissionalSelecionado =
+                                    getTableView()
+                                            .getItems()
+                                            .get(getIndex());
+
+                            if (profissionalSelecionado != null) {
+                                try {
+
+                                    //expulsa da tabela
+                                    dadosProfissa.remove(profissionalSelecionado);
+
+                                    //tira do arquivo .dat/ repository
+                                    List<Profissional> listaCompleta = ProfissionalRepository.listarTodos();
+
+                                    listaCompleta.removeIf(p -> p.getIdProfissional()
+                                            == profissionalSelecionado.getIdProfissional());
+
+                                    ProfissionalRepository.salvarTodos(listaCompleta);
+
+                                    System.out.println("Total de profissionais: " + listaCompleta.size());
+                                    System.out.println(ProfissionalRepository.listarTodos().size());
+
+                                    System.out.println("O Profissional '" + profissionalSelecionado.getNomeProfissional() + "' foi pro beleléu.");
+
+                                } catch (Exception e) {
+
+                                    System.err.println(
+                                            "Nao deu pra excluir o profissional: " + e.getMessage());
+                                }
+                            }
+                        });
+                    }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {  super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnDeletarProfissa);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
+        tabelaProfissa.getColumns().addAll(colIdProf, colNomeProf, colRegistro, colEspecialidade,
+                colLocalizacao, colBiografia, colDeletarProfissa
+        );
+
+        boxProfissasTabela.getChildren().add(tabelaProfissa);
+
+        Button btnVoltarTabelaProfissa = new Button("Voltar");
+        btnVoltarTabelaProfissa.setPrefWidth(180);
+
+        btnVoltarTabelaProfissa.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(scene2);
+            }
+        });
+
+        boxProfissasTabela.getChildren().add(btnVoltarTabelaProfissa);
+
+        //botao de ir pra tabela.
+        Button btnTabelaProfissa = new Button("Veja nossos profissionais cadastrados!");
+        btnTabelaProfissa.setPrefWidth(220);
+        btnTabelaProfissa.setOnAction(e -> {
+
+            List<Profissional> lista =
+                    ProfissionalRepository.listarTodos();
+
+            dadosProfissa.clear();
+            dadosProfissa.addAll(lista);
+
+            stage.setScene(sceneTabelaProfissas);
+            //FUNCIONOU MEU DEUS DO CEU FINALMENTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        });
+        boxCadastroProfissional.getChildren().add(btnTabelaProfissa);
+
+
+                // ---------------- BOTÕES TELA INICIAL ----------------
         // aqui ficam os botões principais do menu inicial
         // atualização: mantive os botões de cadastro, idoso, profissional e fechar
         // também mantive o botão avaliar da demo e o botão certificados da nossa parte
@@ -807,7 +958,7 @@ public class Elderia extends Application {
 
         boxIdoso.getChildren().add(btnVoltarAreaIdoso);
 
-        // botão de voltar da area do profissional
+        // botão de voltar da area do cadastro do profissa
         Button btnVoltarAreaProfissional = new Button("Voltar");
         btnVoltarAreaProfissional.setPrefWidth(180);
 
