@@ -15,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Elderia extends Application {
@@ -61,6 +62,138 @@ public class Elderia extends Application {
 
         VBox boxIdoso = criarTelaBase();
         boxIdoso.getChildren().addAll(lblIdoso, txtIdoso, new Separator());
+
+        // ---------------- AREA HORÁRIOS DISPONIVEIS----------------
+        //parte do idoso poder ver horários disponiveis
+        Label lblHorarios = new Label("Horários Disponíveis");
+
+        ListView<HorarioDisponivel> listHorariosMarcados =
+                new ListView<>();
+
+        Button btnAtualizarMarcados =
+                new Button("Atualizar Horários Marcados");
+
+        Button btnCancelarHorario =
+                new Button("Cancelar Horário");
+
+        ComboBox<HorarioDisponivel> cbHorarios =
+                new ComboBox<>();
+
+        cbHorarios.setPrefWidth(300);
+
+        Button btnMarcarHorario =
+                new Button("Marcar Horário");
+        btnMarcarHorario.setOnAction(e -> {
+
+            HorarioDisponivel selecionado =
+                    cbHorarios.getValue();
+
+            if(selecionado == null){
+                return;
+            }
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.getData().equals(selecionado.getData())
+                        && h.getHora().equals(selecionado.getHora())){
+
+                    h.setReservado(true);
+                }
+            }
+
+            HorarioRepository.salvarTodos(lista);
+
+            cbHorarios.getItems().remove(selecionado);
+
+            System.out.println("Parábens, conseguiu achar onde reserva horário!");
+        });
+        btnAtualizarMarcados.setOnAction(e -> {
+
+            listHorariosMarcados.getItems().clear();
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.isReservado()){
+
+                    listHorariosMarcados.getItems().add(h);
+                }
+            }
+        });
+        btnCancelarHorario.setOnAction(e -> {
+
+            HorarioDisponivel selecionado =
+                    listHorariosMarcados.getSelectionModel()
+                            .getSelectedItem();
+
+            if(selecionado == null){
+                return;
+            }
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.getProfissional().equals(
+                        selecionado.getProfissional())
+                        &&
+                        h.getData().equals(
+                                selecionado.getData())
+                        &&
+                        h.getHora().equals(
+                                selecionado.getHora())){
+
+                    h.setReservado(false);
+
+                    break;
+                }
+            }
+
+            HorarioRepository.salvarTodos(lista);
+            cbHorarios.getItems().clear();
+
+            for(HorarioDisponivel h : lista){
+
+                if(!h.isReservado()){
+
+                    cbHorarios.getItems().add(h);
+                }
+            }
+            listHorariosMarcados.getItems().clear();
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.isReservado()){
+
+                    listHorariosMarcados.getItems().add(h);
+                }
+            }
+
+            listHorariosMarcados.getItems().clear();
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.isReservado()){
+
+                    listHorariosMarcados.getItems().add(h);
+                }
+            }
+        });
+
+        boxIdoso.getChildren().addAll(
+                lblHorarios,
+                cbHorarios,
+                btnMarcarHorario,
+                btnAtualizarMarcados,
+                listHorariosMarcados,
+                btnCancelarHorario
+        );
 
         // essa cena vamos usar para printar os dados do idoso
         Scene sceneIdoso = new Scene(boxIdoso, 1280, 720);
@@ -241,7 +374,7 @@ public class Elderia extends Application {
         Label lblBiografiaProfissional = new Label("Biografia:");
 
         TextArea txtBiografiaProfissional = new TextArea();
-        txtBiografiaProfissional.setPromptText("Descreva sua experiência profissional...");
+        txtBiografiaProfissional.setPromptText("Descreva a sua carreira até aqui :) ");
         txtBiografiaProfissional.setPrefWidth(250);
         txtBiografiaProfissional.setPrefRowCount(4); //define quantas linhas vai aparecer antes de aparecer o scroll
 
@@ -364,10 +497,140 @@ public class Elderia extends Application {
             stage.setScene(sceneInicial);
         });
 
+        // ---------------- Cadastro do cuidador -----------
+
+        //titulo da pagina/scene
+        Label lblCuidadorCadastro = new Label("Cadastro do Cuidador");
+        lblCuidadorCadastro.setFont(new Font("Arial", 28));
+        lblCuidadorCadastro.setAlignment(Pos.CENTER);
+
+        //subtítulo
+        Label lblCuidadorCadastroInfo = new Label("Aqui você pode se cadastrar como cuidador de um idoso no site:");
+        lblCuidadorCadastroInfo.setFont(new Font("Arial", 14));
+
+        VBox boxCuidadorCadastro = criarTelaBase();
+        boxCuidadorCadastro.getChildren().addAll(lblCadastroProfissional, lblCadastroProfissionalInfo, new Separator());
+
+
+        // essa cena vamos usar pro cadastro do profissional
+        Scene sceneCuidadorCadastro = new Scene(boxCuidadorCadastro, 1280, 720);
+
+        // formulário
+        GridPane formularioCuidador = new GridPane();
+        formularioCuidador.setHgap(10);
+        formularioCuidador.setVgap(12);
+        formularioCuidador.setAlignment(Pos.CENTER);
+
+        // Nome
+        Label lblNomeCuidador = new Label("Nome:");
+
+        TextField txtNomeCuidador = new TextField();
+        txtNomeCuidador.setPromptText("Ex: Cuidador Robson Da Silva Sauro");
+        txtNomeCuidador.setPrefWidth(250);
+
+        Label lblCPFCuidador = new Label("CPF:");
+
+        TextField txtCPFCuidador = new TextField();
+        txtCPFCuidador.setPromptText("Ex: 167.169.420-69");
+        txtCPFCuidador.setPrefWidth(250);
+
+        // ---------------- ÁREA DE AVALIAÇÃO ----------------
+        // feito por Pierre
+        Label lblListaAvaliacoes = new Label("Avaliações por Profissional");
+        lblListaAvaliacoes.setFont(new Font("Arial", 24));
+
+        VBox boxListaAvaliacoes = criarTelaBase();
+        boxListaAvaliacoes.getChildren().addAll(lblListaAvaliacoes, new Separator());
+
+        Scene sceneListaAvaliacoes = new Scene(boxListaAvaliacoes, 1280, 720);
+
+        // ComboBox para filtrar cada profissional - Pierre
+        Label lblFiltro = new Label("Profissional:");
+        ComboBox<Profissional> cbFiltro = new ComboBox<>();
+        cbFiltro.getItems().addAll(ProfissionalRepository.listarTodos());
+        cbFiltro.setPromptText("Selecione um profissional");
+        cbFiltro.setPrefWidth(250);
+
+        cbFiltro.setCellFactory(lv -> new ListCell<Profissional>() {
+            @Override
+            protected void updateItem(Profissional p, boolean empty) {
+                super.updateItem(p, empty);
+                setText(empty || p == null ? null : p.getNomeProfissional());
+            }
+        });
+
+        // configura para aparecer o nome - Pierre
+        cbFiltro.setButtonCell(new ListCell<Profissional>() {
+            @Override
+            protected void updateItem(Profissional p, boolean empty) {
+                super.updateItem(p, empty);
+                setText(empty || p == null ? null : p.getNomeProfissional());
+            }
+        });
+
+        // tabela de avaliações - Pierre
+        TableView<Avaliacao> tabelaAvaliacoes = new TableView<>();
+        tabelaAvaliacoes.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
+        TableColumn<Avaliacao, Integer> colIdAv = new TableColumn<>("ID");
+        colIdAv.setCellValueFactory(new PropertyValueFactory<>("idAvaliacao"));
+        colIdAv.setPrefWidth(50);
+
+        TableColumn<Avaliacao, Integer> colNota = new TableColumn<>("Nota");
+        colNota.setCellValueFactory(new PropertyValueFactory<>("nota"));
+        colNota.setPrefWidth(80);
+
+        TableColumn<Avaliacao, String> colComentario = new TableColumn<>("Comentário");
+        colComentario.setCellValueFactory(new PropertyValueFactory<>("comentario"));
+        colComentario.setPrefWidth(400);
+
+        tabelaAvaliacoes.getColumns().addAll(colIdAv, colNota, colComentario);
+        tabelaAvaliacoes.setPrefHeight(400);
+
+        // filtra as avaliações ao selecionar o profissional - Pierre
+        cbFiltro.setOnAction(e -> {
+            Profissional profissionalSelecionado = cbFiltro.getValue();
+            if (profissionalSelecionado == null) return;
+
+            List<Avaliacao> todas = AvaliacaoRepository.listarTodos();
+            List<Avaliacao> filtradas = new ArrayList<>();
+
+            for (Avaliacao av : todas) {
+                if (av.getIdConsulta() == profissionalSelecionado.getIdProfissional()) {
+                    filtradas.add(av);
+                }
+            }
+
+            tabelaAvaliacoes.setItems(FXCollections.observableArrayList(filtradas));
+        });
+
+        HBox linhaFiltro = criarLinha();
+        linhaFiltro.getChildren().addAll(lblFiltro, cbFiltro);
+
+        boxListaAvaliacoes.getChildren().addAll(linhaFiltro, tabelaAvaliacoes);
+
+        // botão de voltar para a sceneAvaliacao
+        Button btnVoltarLista = new Button("Voltar");
+        btnVoltarLista.setPrefWidth(180);
+        btnVoltarLista.setOnAction(e -> stage.setScene(sceneAvaliacao));
+        boxListaAvaliacoes.getChildren().add(btnVoltarLista);
+
+        // botão de ver avaliações - Pierre
+        Button btnVerAvaliacoes = new Button("Avaliações");
+        btnVerAvaliacoes.setPrefWidth(180);
+        btnVerAvaliacoes.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                cbFiltro.getItems().setAll(ProfissionalRepository.listarTodos());
+                stage.setScene(sceneListaAvaliacoes);
+            }
+        });
+
         boxAvaliacao.getChildren().add(formularioAvaliacao);
 
-        HBox boxBotaoAvaliacao = new HBox(btnEnviarAvaliacao);
+        HBox boxBotaoAvaliacao = new HBox(10);
         boxBotaoAvaliacao.setAlignment(Pos.CENTER);
+        boxBotaoAvaliacao.getChildren().addAll(btnEnviarAvaliacao, btnVerAvaliacoes);
 
         boxAvaliacao.getChildren().add(boxBotaoAvaliacao);
 
@@ -686,6 +949,668 @@ public class Elderia extends Application {
 
         boxCadastroProfissional.getChildren().add(boxBotaoProfissional);
 
+
+        VBox boxProfissasTabela = criarTelaBase();
+
+        //cena q vai ser usada pra tabela de top 10 profissionais
+        Scene sceneTabelaProfissas = new Scene(boxProfissasTabela, 1280, 720);
+
+
+        // --------------------- tabea dos profissionais cadastrados ---------------------
+
+        //cabecalho
+        Label lblTituloTabelaProfissa = new Label("Profissionais Cadastrados");
+        lblTituloTabelaProfissa.setFont(new Font("Arial", 28));
+        lblTituloTabelaProfissa.setAlignment(Pos.CENTER);
+
+        Label lblTabelaProfissaInfo = new Label("Aqui voce pode ver os nossos profissionais do site.");
+        lblTabelaProfissaInfo.setFont(new Font("Arial", 14));
+
+        boxProfissasTabela.getChildren().addAll(lblTituloTabelaProfissa, lblTabelaProfissaInfo, new Separator());
+
+        //criação da tabela
+        TableView<Profissional> tabelaProfissa = new TableView<>();
+
+        ObservableList<Profissional> dadosProfissa = FXCollections.observableArrayList();
+
+
+        tabelaProfissa.setItems(dadosProfissa);
+        tabelaProfissa.setPrefHeight(400);
+
+        TableColumn<Profissional, Integer> colIdProf = new TableColumn<>("ID");
+
+        colIdProf.setCellValueFactory(new PropertyValueFactory<>("idProfissional"));
+        colIdProf.setPrefWidth(60);
+
+
+        TableColumn<Profissional, String> colNomeProf = new TableColumn<>("Nome");
+
+        colNomeProf.setCellValueFactory(new PropertyValueFactory<>("nomeProfissional"));
+        colNomeProf.setPrefWidth(200);
+
+        TableColumn<Profissional, String> colRegistro = new TableColumn<>("CRM/COREN");
+
+        colRegistro.setCellValueFactory(new PropertyValueFactory<>("registroProfissional"));
+        colRegistro.setPrefWidth(130);
+
+
+        TableColumn<Profissional, String> colEspecialidade = new TableColumn<>("Especialidade");
+        colEspecialidade.setCellValueFactory(new PropertyValueFactory<>("especialidade"));
+        colEspecialidade.setPrefWidth(150);
+
+        TableColumn<Profissional, String> colLocalizacao = new TableColumn<>("Localização");
+
+        colLocalizacao.setCellValueFactory(new PropertyValueFactory<>("localizacao"));
+        colLocalizacao.setPrefWidth(150);
+
+
+        TableColumn<Profissional, String> colBiografia = new TableColumn<>("Biografia");
+
+        colBiografia.setCellValueFactory(new PropertyValueFactory<>("biografia"));
+        colBiografia.setPrefWidth(250);
+
+        TableColumn<Profissional, Void> colDeletarProfissa = new TableColumn<>("Excluir");
+
+        colDeletar.setPrefWidth(70);
+
+        colDeletarProfissa.setCellFactory(param -> new TableCell<Profissional, Void>() {
+
+                    private final Button btnDeletarProfissa =
+                            new Button("Deletar");
+
+                    {
+                        btnDeletarProfissa.setOnAction(event -> {
+
+                            Profissional profissionalSelecionado =
+                                    getTableView()
+                                            .getItems()
+                                            .get(getIndex());
+
+                            if (profissionalSelecionado != null) {
+                                try {
+
+                                    //expulsa da tabela
+                                    dadosProfissa.remove(profissionalSelecionado);
+
+                                    //tira do arquivo .dat/ repository
+                                    List<Profissional> listaCompleta = ProfissionalRepository.listarTodos();
+
+                                    listaCompleta.removeIf(p -> p.getIdProfissional()
+                                            == profissionalSelecionado.getIdProfissional());
+
+                                    ProfissionalRepository.salvarTodos(listaCompleta);
+
+                                    System.out.println("Total de profissionais: " + listaCompleta.size());
+                                    System.out.println(ProfissionalRepository.listarTodos().size());
+
+                                    System.out.println("O Profissional '" + profissionalSelecionado.getNomeProfissional() + "' foi pro beleléu.");
+
+                                } catch (Exception e) {
+
+                                    System.err.println(
+                                            "Nao deu pra excluir o profissional: " + e.getMessage());
+                                }
+                            }
+                        });
+                    }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {  super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnDeletarProfissa);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
+        tabelaProfissa.getColumns().addAll(colIdProf, colNomeProf, colRegistro, colEspecialidade,
+                colLocalizacao, colBiografia, colDeletarProfissa
+        );
+
+        boxProfissasTabela.getChildren().add(tabelaProfissa);
+
+        Button btnVoltarTabelaProfissa = new Button("Voltar");
+        btnVoltarTabelaProfissa.setPrefWidth(180);
+
+        btnVoltarTabelaProfissa.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(scene2);
+            }
+        });
+
+        boxProfissasTabela.getChildren().add(btnVoltarTabelaProfissa);
+
+
+        // Tela de gerenciamento de horários cadastrados
+        // feito por Matheus
+        Label lblGerenciarHorarios =
+                new Label("Gerenciamento de Horários");
+
+        lblGerenciarHorarios.setFont(
+                new Font("Arial", 28)
+        );
+
+        VBox boxHorarios = criarTelaBase();
+        Button btnVoltarHorarios =
+                new Button("Voltar");
+
+        btnVoltarHorarios.setOnAction(
+                e -> stage.setScene(scene2)
+        );
+
+        boxHorarios.getChildren()
+                .add(btnVoltarHorarios);
+
+        boxHorarios.getChildren().addAll(
+                lblGerenciarHorarios,
+                new Separator()
+        );
+
+        Scene sceneHorarios =
+                new Scene(boxHorarios, 1280, 720);
+        ListView<HorarioDisponivel> listHorarios =
+                new ListView<>();
+        List<HorarioDisponivel> listaInicial =
+                HorarioRepository.listarTodos();
+
+        listHorarios.getItems().addAll(listaInicial);
+
+        Button btnAtualizarLista =
+                new Button("Atualizar Lista");
+
+        Button btnEditarHorario =
+                new Button("Editar Horário");
+
+        Button btnExcluirHorario =
+                new Button("Excluir Horário");
+
+        GridPane formularioHorario = new GridPane();
+
+        formularioHorario.setHgap(10);
+        formularioHorario.setVgap(12);
+        formularioHorario.setAlignment(Pos.CENTER);
+
+        Label lblDataHorario = new Label("Data:");
+        TextField txtDataHorario = new TextField();
+
+        txtDataHorario.textProperty().addListener((obs, oldValue, newValue) -> {
+
+            String numeros = newValue.replaceAll("[^0-9]", "");
+
+            if(numeros.length() > 8){
+                numeros = numeros.substring(0, 8);
+            }
+
+            StringBuilder formatado = new StringBuilder();
+
+            for(int i = 0; i < numeros.length(); i++){
+
+                if(i == 2 || i == 4){
+                    formatado.append("/");
+                }
+
+                formatado.append(numeros.charAt(i));
+            }
+
+            txtDataHorario.setText(formatado.toString());
+        });
+
+        Label lblHoraHorario = new Label("Hora:");
+        TextField txtHoraHorario = new TextField();
+
+        txtHoraHorario.textProperty().addListener((obs, oldValue, newValue) -> {
+
+            String numeros = newValue.replaceAll("[^0-9]", "");
+
+            if(numeros.length() > 4){
+                numeros = numeros.substring(0, 4);
+            }
+
+            StringBuilder formatado = new StringBuilder();
+
+            for(int i = 0; i < numeros.length(); i++){
+
+                if(i == 2){
+                    formatado.append(":");
+                }
+
+                formatado.append(numeros.charAt(i));
+            }
+
+            txtHoraHorario.setText(formatado.toString());
+        });
+
+        Button btnCriarHorario =
+                new Button("Criar Horário");
+        btnCriarHorario.setOnAction(e -> {
+
+
+            String data = txtDataHorario.getText().trim();
+            String hora = txtHoraHorario.getText().trim();
+
+            if(data.isEmpty() || hora.isEmpty()){
+                return;
+            }
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            //verifica se existe outro horario com a mesma data e hora
+            boolean existe = false;
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.getData().equals(data)
+                        &&
+                        h.getHora().equals(hora)){
+
+                    existe = true;
+                    break;
+                }
+            }
+
+            if(existe){
+                System.out.println("Já tem um horário criado seu idoso, pare de insistir porfavor.");
+                return;
+            }
+
+            HorarioDisponivel novo =
+                    new HorarioDisponivel(
+                            "Profissional",
+                            data,
+                            hora
+                    );
+
+            lista.add(novo);
+
+            HorarioRepository.salvarTodos(lista);
+            cbHorarios.getItems().clear();
+
+            for(HorarioDisponivel h : lista){
+
+                if(!h.isReservado()){
+
+                    cbHorarios.getItems().add(h);
+                }
+            }
+            listHorarios.getItems().clear();
+            listHorarios.getItems().addAll(lista);
+
+            txtDataHorario.clear();
+            txtHoraHorario.clear();
+
+            System.out.println("Parábens, agora só basta aguardar um idoso agendar com você (se ele conseguir :) )");
+        });
+        btnAtualizarLista.setOnAction(e -> {
+
+            listHorarios.getItems().clear();
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            listHorarios.getItems().addAll(lista);
+        });
+        btnExcluirHorario.setOnAction(e -> {
+
+            HorarioDisponivel selecionado =
+                    listHorarios.getSelectionModel()
+                            .getSelectedItem();
+
+            if(selecionado == null){
+                return;
+            }
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            lista.removeIf(h ->
+                    h.getProfissional().equals(
+                            selecionado.getProfissional())
+                            &&
+                            h.getData().equals(
+                                    selecionado.getData())
+                            &&
+                            h.getHora().equals(
+                                    selecionado.getHora())
+            );
+
+            HorarioRepository.salvarTodos(lista);
+
+            listHorarios.getItems().clear();
+            listHorarios.getItems().addAll(lista);
+        });
+        listHorarios.setOnMouseClicked(e -> {
+
+            HorarioDisponivel selecionado =
+                    listHorarios.getSelectionModel()
+                            .getSelectedItem();
+
+            if(selecionado != null){
+
+                txtDataHorario.setText(
+                        selecionado.getData());
+
+                txtHoraHorario.setText(
+                        selecionado.getHora());
+            }
+        });
+        btnEditarHorario.setOnAction(e -> {
+
+            HorarioDisponivel selecionado =
+                    listHorarios.getSelectionModel()
+                            .getSelectedItem();
+
+            if(selecionado == null){
+                return;
+            }
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.getProfissional().equals(
+                        selecionado.getProfissional())
+                        &&
+                        h.getData().equals(
+                                selecionado.getData())
+                        &&
+                        h.getHora().equals(
+                                selecionado.getHora())){
+
+                    h.setData(
+                            txtDataHorario.getText().trim());
+
+                    h.setHora(
+                            txtHoraHorario.getText().trim());
+
+                    break;
+                }
+            }
+
+            HorarioRepository.salvarTodos(lista);
+
+            listHorarios.getItems().clear();
+            listHorarios.getItems().addAll(lista);
+
+            txtDataHorario.clear();
+            txtHoraHorario.clear();
+        });
+
+        formularioHorario.add(lblDataHorario,0,0);
+        formularioHorario.add(txtDataHorario,1,0);
+
+        formularioHorario.add(lblHoraHorario,0,1);
+        formularioHorario.add(txtHoraHorario,1,1);
+
+        formularioHorario.add(btnCriarHorario,1,2);
+
+        boxHorarios.getChildren().add(formularioHorario);
+        boxHorarios.getChildren().addAll(
+                btnAtualizarLista,
+                listHorarios,
+                btnEditarHorario,
+                btnExcluirHorario
+        );
+
+        //botao de ir pra tabela.
+        Button btnTabelaProfissa = new Button("Veja nossos profissionais cadastrados!");
+
+        //botão para ir pra gerenciar horarios
+        Button btnGerenciarHorarios =
+                new Button("Gerenciar Horários");
+
+        btnGerenciarHorarios.setPrefWidth(220);
+
+        btnGerenciarHorarios.setOnAction(e -> {
+            stage.setScene(sceneHorarios);
+        });
+
+        boxCadastroProfissional
+                .getChildren()
+                .add(btnGerenciarHorarios);
+        //----------------------------------------//
+        btnTabelaProfissa.setPrefWidth(220);
+        btnTabelaProfissa.setOnAction(e -> {
+
+            List<Profissional> lista =
+                    ProfissionalRepository.listarTodos();
+
+            dadosProfissa.clear();
+            dadosProfissa.addAll(lista);
+
+            stage.setScene(sceneTabelaProfissas);
+            //FUNCIONOU MEU DEUS DO CEU FINALMENTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        });
+        boxCadastroProfissional.getChildren().add(btnTabelaProfissa);
+
+
+        // ---------------- CADASTRO ADMIN ----------------
+        // tela de cadastro de administrador
+        // segue o mesmo padrão do cadastro de usuário
+
+        Label lblAdmin = new Label("Cadastro de Administrador");
+        lblAdmin.setFont(new Font("Arial", 28));
+        lblAdmin.setAlignment(Pos.CENTER);
+
+        Label lblAdminInfo = new Label("Preencha os dados abaixo:");
+        lblAdminInfo.setFont(new Font("Arial", 14));
+
+        VBox boxAdmin = criarTelaBase();
+        boxAdmin.getChildren().addAll(lblAdmin, lblAdminInfo, new Separator());
+
+        Scene sceneAdmin = new Scene(boxAdmin, 1280, 720);
+
+        // formulário no mesmo esquema do cadastro de usuário
+        GridPane formularioAdmin = new GridPane();
+        formularioAdmin.setHgap(10);
+        formularioAdmin.setVgap(12);
+        formularioAdmin.setAlignment(Pos.CENTER);
+
+        // -- nome --
+        Label lblInputNomeAdmin = new Label("Nome:");
+
+        TextField txtNomeAdmin = new TextField();
+        txtNomeAdmin.setPromptText("Ex: Maria Administradora");
+        txtNomeAdmin.setPrefWidth(250);
+
+        // -- e-mail --
+        Label lblInputEmailAdmin = new Label("Email:");
+
+        TextField txtEmailAdmin = new TextField();
+        txtEmailAdmin.setPromptText("Ex: admin@elderia.com");
+        txtEmailAdmin.setPrefWidth(250);
+
+        // coluna 0 = label
+        // coluna 1 = campo
+        formularioAdmin.add(lblInputNomeAdmin, 0, 0);
+        formularioAdmin.add(txtNomeAdmin, 1, 0);
+
+        formularioAdmin.add(lblInputEmailAdmin, 0, 1);
+        formularioAdmin.add(txtEmailAdmin, 1, 1);
+
+        boxAdmin.getChildren().add(formularioAdmin);
+
+        // --------------------- TABELA DE ADMINS CADASTRADOS ---------------------
+        // cria a tabela que vai listar os administradores cadastrados
+
+        Label lblTituloTabelaAdmin = new Label("Administradores Cadastrados");
+        lblTituloTabelaAdmin.setFont(new Font("Arial", 26));
+        lblTituloTabelaAdmin.setAlignment(Pos.CENTER);
+
+        VBox boxDadosAdmin = criarTelaBase();
+        boxDadosAdmin.getChildren().addAll(lblTituloTabelaAdmin, new Separator());
+
+        Scene sceneDadosAdmin = new Scene(boxDadosAdmin, 1280, 720);
+
+        // lista conectada na tabela
+        ObservableList<Admin> dadosTabelaAdmin = FXCollections.observableArrayList();
+
+        TableView<Admin> tabelaAdmin = new TableView<>();
+        tabelaAdmin.setItems(dadosTabelaAdmin);
+        tabelaAdmin.setPrefHeight(400);
+
+        // criação das colunas da tabela de administradores
+        TableColumn<Admin, Integer> colIdAdmin = new TableColumn<>("ID");
+        colIdAdmin.setCellValueFactory(new PropertyValueFactory<>("idAdmin"));
+        colIdAdmin.setPrefWidth(60);
+
+        TableColumn<Admin, String> colNomeAdmin = new TableColumn<>("Nome");
+        colNomeAdmin.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        colNomeAdmin.setPrefWidth(200);
+
+        TableColumn<Admin, String> colEmailAdmin = new TableColumn<>("E-mail");
+        colEmailAdmin.setCellValueFactory(new PropertyValueFactory<>("email"));
+        colEmailAdmin.setPrefWidth(250);
+
+        // botão de delete dentro da coluna, igual ao da tabela de usuários
+        TableColumn<Admin, Void> colDeletarAdmin = new TableColumn<>("Ação");
+        colDeletarAdmin.setPrefWidth(100);
+
+        colDeletarAdmin.setCellFactory(param -> new TableCell<Admin, Void>() {
+            private final Button btnDeletarAdmin = new Button("Deletar");
+
+            {
+                btnDeletarAdmin.setOnAction(event -> {
+                    // pega o objeto admin correspondente a linha onde o botao foi clicado
+                    Admin adminSelecionado = getTableView().getItems().get(getIndex());
+
+                    if (adminSelecionado != null) {
+                        try {
+                            // tira da tabela, mas so a parte visual
+                            dadosTabelaAdmin.remove(adminSelecionado);
+
+                            // apaga literalmente do arquivo .dat
+                            List<Admin> listaCompleta = AdminRepository.listarTodos();
+
+                            // remove da lista o admin que possui o mesmo id
+                            listaCompleta.removeIf(a -> a.getIdAdmin() == adminSelecionado.getIdAdmin());
+
+                            // grava o trem de bytes atualizado de volta no arquivo permanente
+                            AdminRepository.salvarTodos(listaCompleta);
+
+                            System.out.println("Administrador '" + adminSelecionado.getNome() + "' foi excluído do sistema.");
+
+                        } catch (Exception e) {
+                            System.err.println("Erro ao excluir administrador. Código: " + e.getMessage());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+
+                // se a linha estiver vazia, não mostra o botão
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnDeletarAdmin);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
+        tabelaAdmin.getColumns().addAll(colIdAdmin, colNomeAdmin, colEmailAdmin, colDeletarAdmin);
+        boxDadosAdmin.getChildren().add(tabelaAdmin);
+
+        // botão de voltar da tela de admins cadastrados
+        Button btnVoltarDadosAdmin = new Button("Voltar");
+        btnVoltarDadosAdmin.setPrefWidth(180);
+
+        btnVoltarDadosAdmin.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(sceneAdmin);
+            }
+        });
+
+        boxDadosAdmin.getChildren().add(btnVoltarDadosAdmin);
+
+        // ---------------- BOTÕES DO CADASTRO DE ADMIN ----------------
+        // botão de salvar os dados do admin
+        Button btnSalvarDadosAdmin = new Button("Confirmar Cadastro");
+        btnSalvarDadosAdmin.setPrefWidth(180);
+
+        btnSalvarDadosAdmin.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {
+                    String nome = txtNomeAdmin.getText().trim();
+                    String email = txtEmailAdmin.getText().trim();
+
+                    // não pode deixar nada em branco
+                    if (nome.isEmpty() || email.isEmpty()) {
+                        throw new IllegalArgumentException("Erro: Falta de informações para cadastro de administrador. Por favor, tente novamente.");
+                    }
+
+                    // pega a lista atual do arquivo
+                    List<Admin> listaAtual = AdminRepository.listarTodos();
+
+                    // cria um id novo baseado no tamanho da lista
+                    int novoId = listaAtual.size() + 1;
+
+                    // cria um admin novo
+                    Admin novoAdmin = new Admin(novoId, nome, email);
+
+                    // adiciona na lista
+                    listaAtual.add(novoAdmin);
+
+                    // salva tudo de volta no .dat
+                    AdminRepository.salvarTodos(listaAtual);
+
+                    System.out.println("\n=== ADMIN SALVO COM SUCESSO NO ARQUIVO .DAT ===");
+                    System.out.println("Nome: " + nome + " | Total cadastrados: " + listaAtual.size());
+
+                    // depois de salvar tudo, limpa os inputs
+                    txtNomeAdmin.clear();
+                    txtEmailAdmin.clear();
+
+                    // volta para a tela inicial automaticamente após salvar
+                    stage.setScene(sceneInicial);
+
+                } catch (IllegalArgumentException y) {
+                    System.err.println("Erro de Validação: " + y.getMessage());
+                } catch (Exception y) {
+                    System.err.println("Erro inesperado do sistema: " + y.getMessage());
+                }
+            }
+        });
+
+        // botão de ver admins cadastrados
+        Button btnMostrarAdmins = new Button("Administradores Cadastrados");
+        btnMostrarAdmins.setPrefWidth(180);
+
+        btnMostrarAdmins.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // acha o trem de bytes do arquivo e atualiza a lista da tabela
+                List<Admin> listaDoArquivo = AdminRepository.listarTodos();
+                dadosTabelaAdmin.setAll(listaDoArquivo);
+
+                stage.setScene(sceneDadosAdmin);
+            }
+        });
+
+        Button btnVoltarAdmin = new Button("Voltar");
+        btnVoltarAdmin.setPrefWidth(180);
+
+        btnVoltarAdmin.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                stage.setScene(sceneInicial);
+            }
+        });
+
+        HBox botoesAdmin = criarLinha();
+        botoesAdmin.getChildren().addAll(btnSalvarDadosAdmin, btnMostrarAdmins, btnVoltarAdmin);
+
+        boxAdmin.getChildren().addAll(new Separator(), botoesAdmin);
+
         // ---------------- BOTÕES TELA INICIAL ----------------
         // aqui ficam os botões principais do menu inicial
         // atualização: mantive os botões de cadastro, idoso, profissional e fechar
@@ -720,6 +1645,18 @@ public class Elderia extends Application {
         btnAbaIdoso.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                //parte de ver horario disponivel
+                cbHorarios.getItems().clear();
+
+                List<HorarioDisponivel> lista =
+                        HorarioRepository.listarTodos();
+
+                for (HorarioDisponivel h : lista) {
+
+                    if (!h.isReservado()) {
+                        cbHorarios.getItems().add(h);
+                    }
+                }
                 stage.setScene(sceneIdoso);
             }
         });
@@ -733,6 +1670,7 @@ public class Elderia extends Application {
         btnAvaliar.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                cbProfissional.getItems().setAll(ProfissionalRepository.listarTodos());
                 stage.setScene(sceneAvaliacao);
             }
         });
@@ -760,10 +1698,14 @@ public class Elderia extends Application {
             }
         });
 
+        Button btnCadastrarAdmin = new Button("Cadastrar como Administrador");
+        btnCadastrarAdmin.setPrefWidth(220);
+        btnCadastrarAdmin.setOnAction(e -> stage.setScene(sceneAdmin));
+
         VBox menuPrincipal = new VBox();
         menuPrincipal.setSpacing(10);
         menuPrincipal.setAlignment(Pos.CENTER);
-        menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastrarProfissional, btnAbaIdoso, btnAvaliar, btnCertificados, close);
+        menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastrarProfissional, btnCadastrarAdmin, btnAbaIdoso, btnAvaliar, btnCertificados, close);
 
         box1.getChildren().add(menuPrincipal);
 
@@ -784,7 +1726,7 @@ public class Elderia extends Application {
 
         boxIdoso.getChildren().add(btnVoltarAreaIdoso);
 
-        // botão de voltar da area do profissional
+        // botão de voltar da area do cadastro do profissa
         Button btnVoltarAreaProfissional = new Button("Voltar");
         btnVoltarAreaProfissional.setPrefWidth(180);
 
