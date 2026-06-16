@@ -91,6 +91,7 @@ public class UsuarioRepository {
                     fileOutput.close(); // Fecha o FileOutputStream
                 }
                 System.out.println("Deu certo esta BUFUNFA, joga muito.");
+                System.out.println(" \n----------------------- ");
             } catch (IOException ex) {
                 System.err.println("Erro crítico contato do suporte: @Abimael " + ex.getMessage());
             }

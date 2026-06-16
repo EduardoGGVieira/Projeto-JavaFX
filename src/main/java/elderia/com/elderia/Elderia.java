@@ -410,8 +410,78 @@ public class Elderia extends Application {
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipoUsuario"));
         colTipo.setPrefWidth(100);
 
+
+        // tem q deixar essa bomba pra cima pra n dar erro de compilação.
+        // botão de salvar os dados
+        Button btnSalvarDadosIdoso = new Button("Confirmar Cadastro");
+        btnSalvarDadosIdoso.setPrefWidth(180);
+
+        // Botão de teste de editar FENIX
+        Button btnFenix = new Button("FENIX");
+        btnFenix.setVisible(true);
+
+
+        // ----- PARTE DE EDITARRR  ---
+
+        // botão de editar dentro da coluna
+        TableColumn<Usuario, Void> colEditar = new TableColumn<>("Editar");
+        colEditar.setPrefWidth(100);
+
+        // cria uma nova parte dentro da tabela para add o botão
+        colEditar.setCellFactory(param -> new TableCell<Usuario, Void>() {
+            private final Button btnEditar = new Button("Editar");
+
+            {
+                // CSS de editar verde para ficar facil
+                btnEditar.setStyle("-fx-background-color: #5cb85c; -fx-text-fill: white; -fx-font-weight: bold;");
+                // coloca o evento para o botão (como ele vai funcionar)
+
+                btnEditar.setOnAction(event -> {
+                    Usuario usuarioSelecionado = getTableView().getItems().get(getIndex());
+                    if (usuarioSelecionado != null) {
+                        // pega tudo que foi adicionado novo, e troca para o que já tem no arquivo
+                        txtNome.setText(usuarioSelecionado.getNome());
+                        txtCPF.setText(usuarioSelecionado.getCpf());
+                        txtEmail.setText(usuarioSelecionado.getEmail());
+                        txtDataNascimento.setText(usuarioSelecionado.getTelefone());
+
+
+                        // Aqui fudeo, não consigo fazer funcionar esta parte
+                        // tenta vincular qm está editando a quem se cadastrou.
+                       btnSalvarDadosIdoso.setUserData(usuarioSelecionado.getIdUsuario());
+                       btnSalvarDadosIdoso.setText("Atualizar Cadastro");
+
+
+                        // botão fenix apaga o antigo e deixa o novo
+                     //   btnFenix.setUserData(usuarioSelecionado.getIdUsuario());
+
+                        // Aqui serve pro botão fica invi e so aparece quando alg clica em editar.
+                        // btnSalvarDadosIdoso.setVisible(false);
+                       //  btnFenix.setVisible(true);
+
+                        // Redireciona para a cena do formulário de cadastro
+                        stage.setScene(scene3);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnEditar);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
+        // ----- PARTE DE DELETARRR ---
+
+
         // botão de delete dentro da coluna
-        TableColumn<Usuario, Void> colDeletar = new TableColumn<>("Ação");
+        TableColumn<Usuario, Void> colDeletar = new TableColumn<>("Deletar");
         colDeletar.setPrefWidth(100);
 
         // tem que add o botão dentro da coluna
@@ -419,8 +489,10 @@ public class Elderia extends Application {
             private final Button btnDeletar = new Button("Deletar");
 
             {
+                // Vermelho para mostrar perigo
+                btnDeletar.setStyle("-fx-background-color: #d9534f; -fx-text-fill: white; -fx-font-weight: bold;");
                 btnDeletar.setOnAction(event -> {
-                    // pega o objeto usuario correspondente a linha onde o botao foi clicado
+                    // Seleciona a linha interia onde o botão pertence.
                     Usuario usuarioSelecionado = getTableView().getItems().get(getIndex());
 
                     if (usuarioSelecionado != null) {
@@ -461,7 +533,7 @@ public class Elderia extends Application {
         });
 
         // pega tudo e add na tabela criada
-        tabelaUsuarios.getColumns().addAll(colId, colNome, colCpf, colEmail, colTelefone, colTipo, colDeletar);
+        tabelaUsuarios.getColumns().addAll(colId, colNome, colCpf, colEmail, colTelefone, colTipo, colEditar, colDeletar);
         boxDadosUsuarios.getChildren().add(tabelaUsuarios);
 
         // ObjectOutputStream = saída
@@ -472,9 +544,6 @@ public class Elderia extends Application {
         // atualização: antes os botões eram adicionados um por um no boxFormCadastro
         // agora eles ficam na mesma linha
 
-        // botão de salvar os dados
-        Button btnSalvarDadosIdoso = new Button("Confirmar Cadastro");
-        btnSalvarDadosIdoso.setPrefWidth(180);
 
         btnSalvarDadosIdoso.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -554,6 +623,9 @@ public class Elderia extends Application {
         });
 
         HBox botoesCadastro = criarLinha();
+
+        // tem q add os butão aq, genio!
+
         botoesCadastro.getChildren().addAll(btnSalvarDadosIdoso, btnMostrarDados, btnVoltarCadastro);
 
         boxFormCadastro.getChildren().addAll(new Separator(), botoesCadastro);
