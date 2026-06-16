@@ -67,6 +67,15 @@ public class Elderia extends Application {
         //parte do idoso poder ver horários disponiveis
         Label lblHorarios = new Label("Horários Disponíveis");
 
+        ListView<HorarioDisponivel> listHorariosMarcados =
+                new ListView<>();
+
+        Button btnAtualizarMarcados =
+                new Button("Atualizar Horários Marcados");
+
+        Button btnCancelarHorario =
+                new Button("Cancelar Horário");
+
         ComboBox<HorarioDisponivel> cbHorarios =
                 new ComboBox<>();
 
@@ -99,13 +108,91 @@ public class Elderia extends Application {
 
             cbHorarios.getItems().remove(selecionado);
 
-            System.out.println("Horário reservado!");
+            System.out.println("Parábens, conseguiu achar onde reserva horário!");
+        });
+        btnAtualizarMarcados.setOnAction(e -> {
+
+            listHorariosMarcados.getItems().clear();
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.isReservado()){
+
+                    listHorariosMarcados.getItems().add(h);
+                }
+            }
+        });
+        btnCancelarHorario.setOnAction(e -> {
+
+            HorarioDisponivel selecionado =
+                    listHorariosMarcados.getSelectionModel()
+                            .getSelectedItem();
+
+            if(selecionado == null){
+                return;
+            }
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.getProfissional().equals(
+                        selecionado.getProfissional())
+                        &&
+                        h.getData().equals(
+                                selecionado.getData())
+                        &&
+                        h.getHora().equals(
+                                selecionado.getHora())){
+
+                    h.setReservado(false);
+
+                    break;
+                }
+            }
+
+            HorarioRepository.salvarTodos(lista);
+            cbHorarios.getItems().clear();
+
+            for(HorarioDisponivel h : lista){
+
+                if(!h.isReservado()){
+
+                    cbHorarios.getItems().add(h);
+                }
+            }
+            listHorariosMarcados.getItems().clear();
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.isReservado()){
+
+                    listHorariosMarcados.getItems().add(h);
+                }
+            }
+
+            listHorariosMarcados.getItems().clear();
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.isReservado()){
+
+                    listHorariosMarcados.getItems().add(h);
+                }
+            }
         });
 
         boxIdoso.getChildren().addAll(
                 lblHorarios,
                 cbHorarios,
-                btnMarcarHorario
+                btnMarcarHorario,
+                btnAtualizarMarcados,
+                listHorariosMarcados,
+                btnCancelarHorario
         );
 
         // essa cena vamos usar para printar os dados do idoso
@@ -889,7 +976,7 @@ public class Elderia extends Application {
 
 
         // Tela de gerenciamento de horários cadastrados
-
+        // feito por Matheus
         Label lblGerenciarHorarios =
                 new Label("Gerenciamento de Horários");
 
@@ -915,6 +1002,22 @@ public class Elderia extends Application {
 
         Scene sceneHorarios =
                 new Scene(boxHorarios, 1280, 720);
+        ListView<HorarioDisponivel> listHorarios =
+                new ListView<>();
+        List<HorarioDisponivel> listaInicial =
+                HorarioRepository.listarTodos();
+
+        listHorarios.getItems().addAll(listaInicial);
+
+        Button btnAtualizarLista =
+                new Button("Atualizar Lista");
+
+        Button btnEditarHorario =
+                new Button("Editar Horário");
+
+        Button btnExcluirHorario =
+                new Button("Excluir Horário");
+
         GridPane formularioHorario = new GridPane();
 
         formularioHorario.setHgap(10);
@@ -924,12 +1027,57 @@ public class Elderia extends Application {
         Label lblDataHorario = new Label("Data:");
         TextField txtDataHorario = new TextField();
 
+        txtDataHorario.textProperty().addListener((obs, oldValue, newValue) -> {
+
+            String numeros = newValue.replaceAll("[^0-9]", "");
+
+            if(numeros.length() > 8){
+                numeros = numeros.substring(0, 8);
+            }
+
+            StringBuilder formatado = new StringBuilder();
+
+            for(int i = 0; i < numeros.length(); i++){
+
+                if(i == 2 || i == 4){
+                    formatado.append("/");
+                }
+
+                formatado.append(numeros.charAt(i));
+            }
+
+            txtDataHorario.setText(formatado.toString());
+        });
+
         Label lblHoraHorario = new Label("Hora:");
         TextField txtHoraHorario = new TextField();
+
+        txtHoraHorario.textProperty().addListener((obs, oldValue, newValue) -> {
+
+            String numeros = newValue.replaceAll("[^0-9]", "");
+
+            if(numeros.length() > 4){
+                numeros = numeros.substring(0, 4);
+            }
+
+            StringBuilder formatado = new StringBuilder();
+
+            for(int i = 0; i < numeros.length(); i++){
+
+                if(i == 2){
+                    formatado.append(":");
+                }
+
+                formatado.append(numeros.charAt(i));
+            }
+
+            txtHoraHorario.setText(formatado.toString());
+        });
 
         Button btnCriarHorario =
                 new Button("Criar Horário");
         btnCriarHorario.setOnAction(e -> {
+
 
             String data = txtDataHorario.getText().trim();
             String hora = txtHoraHorario.getText().trim();
@@ -941,6 +1089,25 @@ public class Elderia extends Application {
             List<HorarioDisponivel> lista =
                     HorarioRepository.listarTodos();
 
+            //verifica se existe outro horario com a mesma data e hora
+            boolean existe = false;
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.getData().equals(data)
+                        &&
+                        h.getHora().equals(hora)){
+
+                    existe = true;
+                    break;
+                }
+            }
+
+            if(existe){
+                System.out.println("Já tem um horário criado seu idoso, pare de insistir porfavor.");
+                return;
+            }
+
             HorarioDisponivel novo =
                     new HorarioDisponivel(
                             "Profissional",
@@ -951,11 +1118,117 @@ public class Elderia extends Application {
             lista.add(novo);
 
             HorarioRepository.salvarTodos(lista);
+            cbHorarios.getItems().clear();
+
+            for(HorarioDisponivel h : lista){
+
+                if(!h.isReservado()){
+
+                    cbHorarios.getItems().add(h);
+                }
+            }
+            listHorarios.getItems().clear();
+            listHorarios.getItems().addAll(lista);
 
             txtDataHorario.clear();
             txtHoraHorario.clear();
 
-            System.out.println("Horário criado!");
+            System.out.println("Parábens, agora só basta aguardar um idoso agendar com você (se ele conseguir :) )");
+        });
+        btnAtualizarLista.setOnAction(e -> {
+
+            listHorarios.getItems().clear();
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            listHorarios.getItems().addAll(lista);
+        });
+        btnExcluirHorario.setOnAction(e -> {
+
+            HorarioDisponivel selecionado =
+                    listHorarios.getSelectionModel()
+                            .getSelectedItem();
+
+            if(selecionado == null){
+                return;
+            }
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            lista.removeIf(h ->
+                    h.getProfissional().equals(
+                            selecionado.getProfissional())
+                            &&
+                            h.getData().equals(
+                                    selecionado.getData())
+                            &&
+                            h.getHora().equals(
+                                    selecionado.getHora())
+            );
+
+            HorarioRepository.salvarTodos(lista);
+
+            listHorarios.getItems().clear();
+            listHorarios.getItems().addAll(lista);
+        });
+        listHorarios.setOnMouseClicked(e -> {
+
+            HorarioDisponivel selecionado =
+                    listHorarios.getSelectionModel()
+                            .getSelectedItem();
+
+            if(selecionado != null){
+
+                txtDataHorario.setText(
+                        selecionado.getData());
+
+                txtHoraHorario.setText(
+                        selecionado.getHora());
+            }
+        });
+        btnEditarHorario.setOnAction(e -> {
+
+            HorarioDisponivel selecionado =
+                    listHorarios.getSelectionModel()
+                            .getSelectedItem();
+
+            if(selecionado == null){
+                return;
+            }
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.getProfissional().equals(
+                        selecionado.getProfissional())
+                        &&
+                        h.getData().equals(
+                                selecionado.getData())
+                        &&
+                        h.getHora().equals(
+                                selecionado.getHora())){
+
+                    h.setData(
+                            txtDataHorario.getText().trim());
+
+                    h.setHora(
+                            txtHoraHorario.getText().trim());
+
+                    break;
+                }
+            }
+
+            HorarioRepository.salvarTodos(lista);
+
+            listHorarios.getItems().clear();
+            listHorarios.getItems().addAll(lista);
+
+            txtDataHorario.clear();
+            txtHoraHorario.clear();
         });
 
         formularioHorario.add(lblDataHorario,0,0);
@@ -967,6 +1240,12 @@ public class Elderia extends Application {
         formularioHorario.add(btnCriarHorario,1,2);
 
         boxHorarios.getChildren().add(formularioHorario);
+        boxHorarios.getChildren().addAll(
+                btnAtualizarLista,
+                listHorarios,
+                btnEditarHorario,
+                btnExcluirHorario
+        );
 
         //botao de ir pra tabela.
         Button btnTabelaProfissa = new Button("Veja nossos profissionais cadastrados!");
