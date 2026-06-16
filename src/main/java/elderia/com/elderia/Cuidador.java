@@ -5,27 +5,27 @@ import java.io.Serializable;
 public class Cuidador implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String nome;
+    private String nomeCuidador;
     private String idosoResponsavel;
-    private String cpf;
+    private String cpfCuidador;
 
 
     // Criar isso em todas as classe que forem ser usadas o Seriazable para n dar merda
     public Cuidador() {
     }
 
-    public Cuidador(String nome, String idosoResponsavel, String cpf) {
-        this.nome = nome;
+    public Cuidador(String nomeCuidador, String idosoResponsavel, String cpfCuidador) {
+        this.nomeCuidador = nomeCuidador;
         this.idosoResponsavel = idosoResponsavel;
-        this.cpf = cpf;
+        this.cpfCuidador = cpfCuidador;
     }
 
     public String getNome() {
-        return nome;
+        return nomeCuidador;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setNome(String nomeCuidador) {
+        this.nomeCuidador = nomeCuidador;
     }
 
     public String getIdosoResponsavel() {
@@ -37,11 +37,11 @@ public class Cuidador implements Serializable {
     }
 
     public String getCpf() {
-        return cpf;
+        return cpfCuidador;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public void setCpf(String cpfCuidador) {
+        this.cpfCuidador = cpfCuidador;
     }
 
 }
