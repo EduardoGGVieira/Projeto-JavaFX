@@ -63,6 +63,51 @@ public class Elderia extends Application {
         VBox boxIdoso = criarTelaBase();
         boxIdoso.getChildren().addAll(lblIdoso, txtIdoso, new Separator());
 
+        // ---------------- AREA HORÁRIOS DISPONIVEIS----------------
+        //parte do idoso poder ver horários disponiveis
+        Label lblHorarios = new Label("Horários Disponíveis");
+
+        ComboBox<HorarioDisponivel> cbHorarios =
+                new ComboBox<>();
+
+        cbHorarios.setPrefWidth(300);
+
+        Button btnMarcarHorario =
+                new Button("Marcar Horário");
+        btnMarcarHorario.setOnAction(e -> {
+
+            HorarioDisponivel selecionado =
+                    cbHorarios.getValue();
+
+            if(selecionado == null){
+                return;
+            }
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            for(HorarioDisponivel h : lista){
+
+                if(h.getData().equals(selecionado.getData())
+                        && h.getHora().equals(selecionado.getHora())){
+
+                    h.setReservado(true);
+                }
+            }
+
+            HorarioRepository.salvarTodos(lista);
+
+            cbHorarios.getItems().remove(selecionado);
+
+            System.out.println("Horário reservado!");
+        });
+
+        boxIdoso.getChildren().addAll(
+                lblHorarios,
+                cbHorarios,
+                btnMarcarHorario
+        );
+
         // essa cena vamos usar para printar os dados do idoso
         Scene sceneIdoso = new Scene(boxIdoso, 1280, 720);
 
@@ -842,8 +887,104 @@ public class Elderia extends Application {
 
         boxProfissasTabela.getChildren().add(btnVoltarTabelaProfissa);
 
+
+        // Tela de gerenciamento de horários cadastrados
+
+        Label lblGerenciarHorarios =
+                new Label("Gerenciamento de Horários");
+
+        lblGerenciarHorarios.setFont(
+                new Font("Arial", 28)
+        );
+
+        VBox boxHorarios = criarTelaBase();
+        Button btnVoltarHorarios =
+                new Button("Voltar");
+
+        btnVoltarHorarios.setOnAction(
+                e -> stage.setScene(scene2)
+        );
+
+        boxHorarios.getChildren()
+                .add(btnVoltarHorarios);
+
+        boxHorarios.getChildren().addAll(
+                lblGerenciarHorarios,
+                new Separator()
+        );
+
+        Scene sceneHorarios =
+                new Scene(boxHorarios, 1280, 720);
+        GridPane formularioHorario = new GridPane();
+
+        formularioHorario.setHgap(10);
+        formularioHorario.setVgap(12);
+        formularioHorario.setAlignment(Pos.CENTER);
+
+        Label lblDataHorario = new Label("Data:");
+        TextField txtDataHorario = new TextField();
+
+        Label lblHoraHorario = new Label("Hora:");
+        TextField txtHoraHorario = new TextField();
+
+        Button btnCriarHorario =
+                new Button("Criar Horário");
+        btnCriarHorario.setOnAction(e -> {
+
+            String data = txtDataHorario.getText().trim();
+            String hora = txtHoraHorario.getText().trim();
+
+            if(data.isEmpty() || hora.isEmpty()){
+                return;
+            }
+
+            List<HorarioDisponivel> lista =
+                    HorarioRepository.listarTodos();
+
+            HorarioDisponivel novo =
+                    new HorarioDisponivel(
+                            "Profissional",
+                            data,
+                            hora
+                    );
+
+            lista.add(novo);
+
+            HorarioRepository.salvarTodos(lista);
+
+            txtDataHorario.clear();
+            txtHoraHorario.clear();
+
+            System.out.println("Horário criado!");
+        });
+
+        formularioHorario.add(lblDataHorario,0,0);
+        formularioHorario.add(txtDataHorario,1,0);
+
+        formularioHorario.add(lblHoraHorario,0,1);
+        formularioHorario.add(txtHoraHorario,1,1);
+
+        formularioHorario.add(btnCriarHorario,1,2);
+
+        boxHorarios.getChildren().add(formularioHorario);
+
         //botao de ir pra tabela.
         Button btnTabelaProfissa = new Button("Veja nossos profissionais cadastrados!");
+
+        //botão para ir pra gerenciar horarios
+        Button btnGerenciarHorarios =
+                new Button("Gerenciar Horários");
+
+        btnGerenciarHorarios.setPrefWidth(220);
+
+        btnGerenciarHorarios.setOnAction(e -> {
+            stage.setScene(sceneHorarios);
+        });
+
+        boxCadastroProfissional
+                .getChildren()
+                .add(btnGerenciarHorarios);
+        //----------------------------------------//
         btnTabelaProfissa.setPrefWidth(220);
         btnTabelaProfissa.setOnAction(e -> {
 
@@ -1116,6 +1257,18 @@ public class Elderia extends Application {
         btnAbaIdoso.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                //parte de ver horario disponivel
+                cbHorarios.getItems().clear();
+
+                List<HorarioDisponivel> lista =
+                        HorarioRepository.listarTodos();
+
+                for (HorarioDisponivel h : lista) {
+
+                    if (!h.isReservado()) {
+                        cbHorarios.getItems().add(h);
+                    }
+                }
                 stage.setScene(sceneIdoso);
             }
         });
