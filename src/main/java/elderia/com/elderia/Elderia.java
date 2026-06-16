@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -20,6 +21,7 @@ import java.util.List;
 
 public class Elderia extends Application {
 
+
     // tabela que vai aparecer na tela de pessoas cadastradas
     private TableView<Usuario> tabelaUsuarios;
 
@@ -30,6 +32,11 @@ public class Elderia extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         stage.setTitle("ELDERIA");
+
+        // deixa essa jiiromba aqui para compilar certo
+        // botão de salvar os dados
+        Button btnSalvarDadosIdoso = new Button("Confirmar Cadastro");
+        btnSalvarDadosIdoso.setPrefWidth(180);
 
         // ---------------- TELA INICIAL ----------------
         // essa e a primeira tela do sistema
@@ -673,6 +680,50 @@ public class Elderia extends Application {
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipoUsuario"));
         colTipo.setPrefWidth(100);
 
+        // botão de editar dentro da coluna
+        TableColumn<Usuario, Void> colEditar = new TableColumn<>("Editar");
+        colEditar.setPrefWidth(100);
+
+        colEditar.setCellFactory(param -> new TableCell<Usuario, Void>() {
+            private final Button btnEditarVisual = new Button("Editar");
+
+            {
+                // NOVO COMENTÁRIO: Botão de editar em verde sucesso
+                btnEditarVisual.setStyle("-fx-background-color: #5cb85c; -fx-text-fill: white; -fx-font-weight: bold;");
+                btnEditarVisual.setOnAction(event -> {
+                    Usuario usuarioSelecionado = getTableView().getItems().get(getIndex());
+
+                    if (usuarioSelecionado != null) {
+                        // NOVO COMENTÁRIO: Puxa os dados da linha selecionada e injeta de volta nas caixas de texto do formulário
+                        txtNome.setText(usuarioSelecionado.getNome());
+                        txtCPF.setText(usuarioSelecionado.getCpf());
+                        txtEmail.setText(usuarioSelecionado.getEmail());
+                        txtDataNascimento.setText(usuarioSelecionado.getTelefone());
+
+                        // NOVO COMENTÁRIO: Guarda o ID do usuário diretamente nos metadados do botão de salvar utilizando a classe wrapper Integer (Autoboxing)
+                        btnSalvarDadosIdoso.setUserData(Integer.valueOf(usuarioSelecionado.getIdUsuario()));
+
+                        // NOVO COMENTÁRIO: Muda o texto do botão de salvar para o usuário saber que está editando dados existentes
+                        btnSalvarDadosIdoso.setText("Salvar Alterações");
+
+                        // Redireciona o fluxo para a cena do formulário de cadastro (scene3)
+                        stage.setScene(scene3);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnEditarVisual);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
         // botão de delete dentro da coluna
         TableColumn<Usuario, Void> colDeletar = new TableColumn<>("Ação");
         colDeletar.setPrefWidth(100);
@@ -682,6 +733,8 @@ public class Elderia extends Application {
             private final Button btnDeletar = new Button("Deletar");
 
             {
+                // NOVO COMENTÁRIO: Botão de deletar em vermelho perigo
+                btnDeletar.setStyle("-fx-background-color: #d9534f; -fx-text-fill: white; -fx-font-weight: bold;");
                 btnDeletar.setOnAction(event -> {
                     // pega o objeto usuario correspondente a linha onde o botao foi clicado
                     Usuario usuarioSelecionado = getTableView().getItems().get(getIndex());
@@ -724,7 +777,7 @@ public class Elderia extends Application {
         });
 
         // pega tudo e add na tabela criada
-        tabelaUsuarios.getColumns().addAll(colId, colNome, colCpf, colEmail, colTelefone, colTipo, colDeletar);
+        tabelaUsuarios.getColumns().addAll(colId, colNome, colCpf, colEmail, colTelefone, colTipo, colEditar, colDeletar);
         boxDadosUsuarios.getChildren().add(tabelaUsuarios);
 
         // ObjectOutputStream = saída
@@ -735,9 +788,7 @@ public class Elderia extends Application {
         // atualização: antes os botões eram adicionados um por um no boxFormCadastro
         // agora eles ficam na mesma linha
 
-        // botão de salvar os dados
-        Button btnSalvarDadosIdoso = new Button("Confirmar Cadastro");
-        btnSalvarDadosIdoso.setPrefWidth(180);
+
 
         btnSalvarDadosIdoso.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -757,21 +808,45 @@ public class Elderia extends Application {
                     // pega a lista atual do arquivo
                     List<Usuario> listaAtual = UsuarioRepository.listarTodos();
 
-                    // cria um id novo baseado no tamanho da lista
-                    int novoId = listaAtual.size() + 1;
+                    // NOVO COMENTÁRIO: SE O BOTÃO CARREGAR UM ID NOS METADADOS, SIGNIFICA QUE É UMA ATUALIZAÇÃO (FLUXO DE EDIÇÃO)
+                    if (btnSalvarDadosIdoso.getUserData() != null) {
+                        int idParaEditar = (int) btnSalvarDadosIdoso.getUserData();
 
-                    // cria um usuário novo
-                    // obs: mantive dataNasc indo no lugar de telefone pq era assim que ja tava funcionando
-                    Usuario novoUsuario = new Usuario(novoId, nome, cpf, email, dataNasc, "idoso");
+                        // NOVO COMENTÁRIO: Percorre a lista para encontrar e atualizar o usuário correspondente, semelhante ao laço do Matheus
+                        for (Usuario u : listaAtual) {
+                            if (u.getIdUsuario() == idParaEditar) {
+                                u.setNome(nome);
+                                u.setCpf(cpf);
+                                u.setEmail(email);
+                                u.setTelefone(dataNasc); // mantive dataNasc indo no lugar de telefone
+                                break;
+                            }
+                        }
 
-                    // adiciona na lista
-                    listaAtual.add(novoUsuario);
+                        // NOVO COMENTÁRIO: Limpa o ID e restaura o texto original do botão para o próximo cadastro comum
+                        btnSalvarDadosIdoso.setUserData(null);
+                        btnSalvarDadosIdoso.setText("Confirmar Cadastro");
+
+                        System.out.println("\n=== DADOS ATUALIZADOS COM SUCESSO NO ARQUIVO .DAT ===");
+                    } else {
+                        // NOVO COMENTÁRIO: FLUXO NORMAL: Se o getUserData for nulo, executa o cadastro padrão que você já tinha feito
+                        // cria um id novo baseado no tamanho da lista
+                        int novoId = listaAtual.size() + 1;
+
+                        // cria um usuário novo
+                        // obs: mantive dataNasc indo no lugar de telefone pq era assim que ja tava funcionando
+                        Usuario novoUsuario = new Usuario(novoId, nome, cpf, email, dataNasc, "idoso");
+
+                        // adiciona na lista
+                        listaAtual.add(novoUsuario);
+
+                        System.out.println("\n=== DADOS SALVOS COM SUCESSO NO ARQUIVO .DAT ===");
+                    }
 
                     // salva tudo de volta no .dat
                     UsuarioRepository.salvarTodos(listaAtual);
 
                     // feedback visual e no console
-                    System.out.println("\n=== DADOS SALVOS COM SUCESSO NO ARQUIVO .DAT ===");
                     System.out.println("Nome: " + nome + " | CPF: " + cpf + " | Total cadastrados: " + listaAtual.size());
 
                     // depois de salvar tudo, limpa os inputs
@@ -780,6 +855,9 @@ public class Elderia extends Application {
                     txtEmail.clear();
                     txtSenha.clear();
                     txtDataNascimento.clear();
+
+                    // NOVO COMENTÁRIO: Sincroniza a listagem visual da tabela imediatamente após salvar ou atualizar os dados
+                    dadosTabela.setAll(UsuarioRepository.listarTodos());
 
                     // volta para a tela inicial automaticamente após salvar
                     stage.setScene(sceneInicial);
@@ -812,6 +890,16 @@ public class Elderia extends Application {
         btnVoltarCadastro.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                // NOVO COMENTÁRIO: Limpa os inputs e reseta o botão para o modo cadastro padrão caso o usuário mude de ideia no meio de uma edição
+                txtNome.clear();
+                txtCPF.clear();
+                txtEmail.clear();
+                txtSenha.clear();
+                txtDataNascimento.clear();
+
+                btnSalvarDadosIdoso.setUserData(null);
+                btnSalvarDadosIdoso.setText("Confirmar Cadastro");
+
                 stage.setScene(sceneInicial);
             }
         });
