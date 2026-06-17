@@ -494,23 +494,44 @@ public class Elderia extends Application {
             String comentario = txtComentario.getText().trim();
 
             if (profissionalSelecionado == null || comentario.isEmpty()) {
-                System.err.println("Erro: Selecione um profissional cadastrado e escreva um comentário.");
+                System.err.println("Erro: Por favor, selecione um profissional e escreva uma avaliação.");
                 return;
             }
 
-            // salva a avaliação do usuário/idoso
-            List<Avaliacao> listaAtual = AvaliacaoRepository.listarTodos();
-            int novoId = listaAtual.size() + 1;
-            Avaliacao nova = new Avaliacao(novoId, profissionalSelecionado.getIdProfissional(), nota, comentario);
-            listaAtual.add(nova);
-            AvaliacaoRepository.salvarTodos(listaAtual);
+            List<Avaliacao> listAvaliacaoAtual = AvaliacaoRepository.listarTodos();
+
+            Integer idEdicao = (Integer) btnEnviarAvaliacao.getUserData();
+
+            if (idEdicao != null) {
+                // UPDATE - Pierre
+                for (Avaliacao a : listAvaliacaoAtual) {
+                    if (a.getIdAvaliacao() == idEdicao) {
+                        a.setComentario(comentario);
+                        a.setNota(nota);
+
+                        a.setIdProfissional(profissionalSelecionado.getIdProfissional());
+                        break;
+                    }
+                }
+
+                btnEnviarAvaliacao.setUserData(null);
+                btnEnviarAvaliacao.setText("Enviar Avaliação");
+            } else {
+                // INSERT - Pierre
+                int novoId = listAvaliacaoAtual.size() + 1;
+
+                Avaliacao novaAvaliacao = new Avaliacao(novoId, profissionalSelecionado.getIdProfissional(), nota, comentario);
+                listAvaliacaoAtual.add(novaAvaliacao);
+            }
+
+            AvaliacaoRepository.salvarTodos(listAvaliacaoAtual);
 
             cbProfissional.setValue(null);
             sliderNota.setValue(3);
             txtComentario.clear();
-
-            stage.setScene(sceneAvaliacao);
         });
+
+        stage.setScene(sceneAvaliacao);
 
         // CRUD: READ - Pierre
         Label lblListaAvaliacoes = new Label("Avaliações por Profissional");
@@ -583,7 +604,7 @@ public class Elderia extends Application {
                             }
                         }
 
-                        btnEnviarAvaliacao.setUserData(Integer.valueOf(avaliacaoSelecionada.getIdAvaliacao()));
+                        btnEnviarAvaliacao.setUserData(avaliacaoSelecionada.getIdAvaliacao());
                         btnEnviarAvaliacao.setText("Salvar Alterações");
 
                         stage.setScene(sceneAvaliacao);
@@ -658,7 +679,7 @@ public class Elderia extends Application {
             List<Avaliacao> filtradas = new ArrayList<>();
 
             for (Avaliacao av : todas) {
-                if (av.getIdConsulta() == profissionalSelecionado.getIdProfissional()) {
+                if (av.getIdProfissional() == profissionalSelecionado.getIdProfissional()) {
                     filtradas.add(av);
                 }
             }
