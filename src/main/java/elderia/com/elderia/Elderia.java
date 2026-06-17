@@ -717,7 +717,86 @@ public class Elderia extends Application {
 
         boxAvaliacao.getChildren().add(boxBotaoAvaliacao);
 
-        // 
+        // ---------------- ÁREA DE CONSULTA ----------------
+        // feito pelo Pierre
+        // CRUD: CREATE - Pierre
+        Label lblConsulta = new Label("Agendar Consulta");
+        lblConsulta.setFont(new Font("Arial", 28));
+        lblConsulta.setAlignment(Pos.CENTER);
+
+        Label txtConsulta = new Label("Agenda uma consulta com um profissional.");
+        txtConsulta.setFont(new Font("Arial", 14));
+
+        VBox boxConsulta = criarTelaBase();
+        boxConsulta.getChildren().addAll(lblConsulta, txtConsulta, new Separator());
+
+        Scene sceneConsulta = new Scene(boxConsulta, 1280, 720);
+
+        // FORMULÁRIO - Pierre
+        GridPane formConsulta = new GridPane();
+        formConsulta.setHgap(10);
+        formConsulta.setVgap(12);
+        formConsulta.setAlignment(Pos.CENTER);
+
+        // ComboBox de idosos - Pierre
+        Label lblIdosoConsulta = new Label("Paciente:");
+        ComboBox<Usuario> cbIdoso = new ComboBox<>();
+        cbIdoso.getItems().addAll(UsuarioRepository.listarTodos());
+        cbIdoso.setPromptText("Selecione um paciente");
+        cbIdoso.setPrefWidth(250);
+        cbIdoso.setCellFactory(lv -> new ListCell<Usuario>() {
+            @Override
+            protected void updateItem(Usuario u, boolean empty) {
+                super.updateItem(u, empty);
+                setText(empty || u == null ? null : u.getNome());
+            }
+        });
+
+        cbIdoso.setButtonCell(new ListCell<Usuario>() {
+            @Override
+            protected void updateItem(Usuario u, boolean empty) {
+                super.updateItem(u, empty);
+                setText(empty || u == null ? null : u.getNome());
+            }
+        });
+
+        // ComboBox de profissionais - Pierre
+        Label lblProfissionalConsulta = new Label("Profissional:");
+        ComboBox<Profissional> cbProfissionalConsulta = new ComboBox<>();
+        cbProfissionalConsulta.getItems().addAll(ProfissionalRepository.listarTodos());
+        cbProfissionalConsulta.setPromptText("Selecione o profissional");
+        cbProfissionalConsulta.setPrefWidth(250);
+        cbProfissionalConsulta.setCellFactory(lv -> new ListCell<Profissional>() {
+            @Override
+            protected void updateItem(Profissional p, boolean empty) {
+                super.updateItem(p, empty);
+                setText(empty || p == null ? null : p.getNomeProfissional());
+            }
+        });
+
+        cbProfissionalConsulta.setButtonCell(new ListCell<Profissional>() {
+            @Override
+            protected void updateItem(Profissional p, boolean empty) {
+                super.updateItem(p, empty);
+                setText(empty || p == null ? null : p.getNomeProfissional());
+            }
+        });
+
+        // campo de data/hora - Pierre
+        Label lblDataHora = new Label("Data:");
+        TextField txtDataHora = new TextField();
+        txtDataHora.setPromptText("Ex.: 20/06/2026 14:30");
+        txtDataHora.setPrefWidth(250);
+
+        formConsulta.add(lblIdosoConsulta, 0, 0);
+        formConsulta.add(cbIdoso, 1, 0);
+        formConsulta.add(lblProfissionalConsulta, 0, 1);
+        formConsulta.add(cbProfissionalConsulta, 1, 1);
+        formConsulta.add(lblDataHora, 0, 2);
+        formConsulta.add(txtDataHora, 1, 2);
+
+        boxConsulta.getChildren().add(formConsulta);
+
 
         // --------------------- TABELA DE PESSOAS CADASTRADAS --------------
         // cria a tabela que vai listar os usuários cadastrados
