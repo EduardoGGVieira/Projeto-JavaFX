@@ -13,10 +13,11 @@ public class Profissional implements Serializable {
     private String biografia;
 
 
-    // Criar isso em todas as classe que forem ser usadas o Seriazable para n dar merda
+    // Criar isso em todas as classe que forem ser usadas o Seriazable para n dar merda, construtor vazio
     public Profissional() {
     }
 
+    //construtor dos atributos.
     public Profissional(int idProfissional, String nomeProfissional, String registroProfissional, String especialidade,
                         String localizacao, String biografia) {
         this.idProfissional = idProfissional;
