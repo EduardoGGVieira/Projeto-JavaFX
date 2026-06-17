@@ -1797,6 +1797,17 @@ public class Elderia extends Application {
             }
         });
 
+        //botão para ir para cadastrar medicamento
+        Button btnMedicamento = new Button("Cadastrar Medicamento");
+        btnMedicamento.setPrefWidth(220);
+
+        btnMedicamento.setOnAction(event -> {
+            TelaMedicamento telaMedicamento = new TelaMedicamento();
+            stage.setScene(
+                    telaMedicamento.remedio(stage, sceneInicial)
+            );
+        });
+
         // botão para ir para area de certificados
         // isso e a nossa parte nova
         Button btnCertificados = new Button("Certificados");
@@ -1828,7 +1839,7 @@ public class Elderia extends Application {
         menuPrincipal.setSpacing(10);
         menuPrincipal.setAlignment(Pos.CENTER);
 
-        menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastrarProfissional, btnCadastrarAdmin,
+        menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastrarProfissional, btnCadastrarAdmin, btnMedicamento,
                 btnAbaIdoso, btnAvaliar, btnCertificados, btnMóduloProntuario, close);
         box1.getChildren().add(menuPrincipal);
 
