@@ -38,6 +38,11 @@ public class Elderia extends Application {
         Button btnSalvarDadosIdoso = new Button("Confirmar Cadastro");
         btnSalvarDadosIdoso.setPrefWidth(180);
 
+        // ------ botão da tela do cadastro do profissional-----------
+        Button btnSalvarDadosProfissional = new Button("Confirmar Cadastro");
+        btnSalvarDadosProfissional.setPrefWidth(180);
+
+
         // ---------------- TELA INICIAL ----------------
         // essa e a primeira tela do sistema
         // atualizacao: mantive a ideia da tela inicial, mas organizei com subtitulo e separador
@@ -909,10 +914,6 @@ public class Elderia extends Application {
 
         boxFormCadastro.getChildren().addAll(new Separator(), botoesCadastro);
 
-        // ------ botão da tela do cadastro do profissional-----------
-        Button btnSalvarDadosProfissional = new Button("Confirmar Cadastro");
-        btnSalvarDadosProfissional.setPrefWidth(180);
-
         btnSalvarDadosProfissional.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -930,17 +931,45 @@ public class Elderia extends Application {
                     }
                     List<Profissional> listaAtual = ProfissionalRepository.listarTodos();
 
-                    // bota um id novo
-                    int novoId = listaAtual.size() + 1;
+                    // NOVO COMENTÁRIO: SE O BOTÃO CARREGAR UM ID NOS METADADOS, SIGNIFICA QUE É UMA ATUALIZAÇÃO (FLUXO DE EDIÇÃO)
+                    if (btnSalvarDadosProfissional.getUserData() != null) {
+                        int idParaEditar = (int) btnSalvarDadosProfissional.getUserData();
 
-                    // cria o profissional cadastrado no formulario lindo
-                    Profissional novoProfissional = new Profissional(novoId, nome, registro, especialidade, localizacao, biografia);
+                        // NOVO COMENTÁRIO: Percorre a lista para encontrar e atualizar o usuário correspondente, semelhante ao laço do Matheus
+                        for (Profissional p : listaAtual) {
+                            if (p.getIdProfissional() == idParaEditar) {
+                                p.setNomeProfissional(nome);
+                                p.setRegistroProfissional(registro);
+                                p.setEspecialidade(especialidade);
+                                p.setLocalizacao(localizacao); // mantive dataNasc indo no lugar de telefone
+                                p.setBiografia(biografia);
+                                break;
+                            }
+                        }
 
-                    listaAtual.add(novoProfissional);
 
+
+
+
+                        // NOVO COMENTÁRIO: Limpa o ID e restaura o texto original do botão para o próximo cadastro comum
+                        btnSalvarDadosProfissional.setUserData(null);
+                        btnSalvarDadosProfissional.setText("Confirmar Cadastro");
+
+                        System.out.println("\n=== os dados foram atualizados no arquivo ===");
+                    } else {
+                        // NOVO COMENTÁRIO: FLUXO NORMAL: Se o getUserData for nulo, executa o cadastro padrão que você já tinha feito
+                        // cria um id novo baseado no tamanho da lista
+                        int novoId = listaAtual.size() + 1;
+                        // cria o profissional cadastrado no formulario lindo
+                        Profissional novoProfissional = new Profissional(novoId, nome, registro, especialidade, localizacao, biografia);
+
+                        listaAtual.add(novoProfissional);
+
+
+
+                        System.out.println("\n= Ta salvo pai :P =");
+                    }
                     ProfissionalRepository.salvarTodos(listaAtual);
-
-                    System.out.println("\n= Ta salvo pai :P =");
 
                     System.out.println("Nome: " + nome + " | CRM/COREN: " + registro + " | Total de profissionais cadastrados: " + listaAtual.size());
 
@@ -949,6 +978,9 @@ public class Elderia extends Application {
                     txtEspecialidadeProfissional.clear();
                     txtLocalizacaoProfissional.clear();
                     txtBiografiaProfissional.clear();
+
+                    // NOVO COMENTÁRIO: Sincroniza a listagem visual da tabela imediatamente após salvar ou atualizar os dados
+                    dadosTabela.setAll(UsuarioRepository.listarTodos());
 
                     stage.setScene(sceneInicial);
 
@@ -1025,6 +1057,50 @@ public class Elderia extends Application {
         colBiografia.setCellValueFactory(new PropertyValueFactory<>("biografia"));
         colBiografia.setPrefWidth(250);
 
+        // botão de editar dentro da coluna
+        TableColumn<Profissional, Void> colEditarProfissa = new TableColumn<>("Editar");
+        colEditar.setPrefWidth(100);
+
+        colEditarProfissa.setCellFactory(param -> new TableCell<Profissional, Void>() {
+            private final Button btnEditarVisualProfissa = new Button("Editar");
+
+            {
+                // NOVO COMENTÁRIO: Botão de editar em verde sucesso
+                btnEditarVisualProfissa.setStyle("-fx-background-color: #5cb85c; -fx-text-fill: white; -fx-font-weight: bold;");
+                btnEditarVisualProfissa.setOnAction(event -> {
+                    Profissional profissionalSelecionado = getTableView().getItems().get(getIndex());
+
+                    if (profissionalSelecionado != null) {
+                        // NOVO COMENTÁRIO: Puxa os dados da linha selecionada e injeta de volta nas caixas de texto do formulário
+                        txtNomeProfissional.setText(profissionalSelecionado.getNomeProfissional());
+                        txtRegistroProfissional.setText(profissionalSelecionado.getRegistroProfissional());
+                        txtEspecialidadeProfissional.setText(profissionalSelecionado.getEspecialidade());
+                        txtLocalizacaoProfissional.setText(profissionalSelecionado.getLocalizacao());
+                        txtBiografiaProfissional.setText(profissionalSelecionado.getBiografia());
+
+                        // NOVO COMENTÁRIO: Guarda o ID do usuário diretamente nos metadados do botão de salvar utilizando a classe wrapper Integer (Autoboxing)
+                        btnSalvarDadosProfissional.setUserData(Integer.valueOf(profissionalSelecionado.getIdProfissional()));
+
+                        // NOVO COMENTÁRIO: Muda o texto do botão de salvar para o usuário saber que está editando dados existentes
+                        btnSalvarDadosProfissional.setText("Salvar Alterações");
+
+                        // Redireciona o fluxo para a cena do formulário de cadastro do profissa (scene2)
+                        stage.setScene(scene2);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnEditarVisualProfissa);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
         TableColumn<Profissional, Void> colDeletarProfissa = new TableColumn<>("Excluir");
 
         colDeletar.setPrefWidth(70);
@@ -1035,6 +1111,7 @@ public class Elderia extends Application {
                             new Button("Deletar");
 
                     {
+                        btnDeletarProfissa.setStyle("-fx-background-color: #d9534f; -fx-text-fill: white; -fx-font-weight: bold;");
                         btnDeletarProfissa.setOnAction(event -> {
 
                             Profissional profissionalSelecionado =
@@ -1082,7 +1159,7 @@ public class Elderia extends Application {
         });
 
         tabelaProfissa.getColumns().addAll(colIdProf, colNomeProf, colRegistro, colEspecialidade,
-                colLocalizacao, colBiografia, colDeletarProfissa
+                colLocalizacao, colBiografia, colEditarProfissa, colDeletarProfissa
         );
 
         boxProfissasTabela.getChildren().add(tabelaProfissa);
@@ -1093,7 +1170,17 @@ public class Elderia extends Application {
         btnVoltarTabelaProfissa.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                stage.setScene(scene2);
+
+                txtNomeProfissional.clear();
+                txtRegistroProfissional.clear();
+                txtEspecialidadeProfissional.clear(); // não txtEspecializacao
+                txtLocalizacaoProfissional.clear();
+                txtBiografiaProfissional.clear();
+
+                btnSalvarDadosProfissional.setUserData(null);
+                btnSalvarDadosProfissional.setText("Confirmar Cadastro");
+
+                stage.setScene(sceneInicial);
             }
         });
 
@@ -1397,6 +1484,10 @@ public class Elderia extends Application {
 
             dadosProfissa.clear();
             dadosProfissa.addAll(lista);
+
+            // NOVO COMENTÁRIO: Sincroniza a listagem visual da tabela imediatamente após salvar ou atualizar os dados
+            dadosProfissa.setAll(ProfissionalRepository.listarTodos());
+
 
             stage.setScene(sceneTabelaProfissas);
             //FUNCIONOU MEU DEUS DO CEU FINALMENTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
