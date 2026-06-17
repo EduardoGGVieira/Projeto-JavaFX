@@ -717,6 +717,269 @@ public class Elderia extends Application {
 
         boxAvaliacao.getChildren().add(boxBotaoAvaliacao);
 
+        // ---------------- ÁREA DE CONSULTA ----------------
+        // feito pelo Pierre
+        // CRUD: CREATE - Pierre
+        Label lblConsulta = new Label("Agendar Consulta");
+        lblConsulta.setFont(new Font("Arial", 28));
+        lblConsulta.setAlignment(Pos.CENTER);
+
+        Label txtConsulta = new Label("Agenda uma consulta com um profissional.");
+        txtConsulta.setFont(new Font("Arial", 14));
+
+        VBox boxConsulta = criarTelaBase();
+        boxConsulta.getChildren().addAll(lblConsulta, txtConsulta, new Separator());
+
+        Scene sceneConsulta = new Scene(boxConsulta, 1280, 720);
+
+        // FORMULÁRIO - Pierre
+        GridPane formConsulta = new GridPane();
+        formConsulta.setHgap(10);
+        formConsulta.setVgap(12);
+        formConsulta.setAlignment(Pos.CENTER);
+
+        // ComboBox de idosos - Pierre
+        Label lblIdosoConsulta = new Label("Paciente:");
+        ComboBox<Usuario> cbIdoso = new ComboBox<>();
+        cbIdoso.getItems().addAll(UsuarioRepository.listarTodos());
+        cbIdoso.setPromptText("Selecione um paciente");
+        cbIdoso.setPrefWidth(250);
+        cbIdoso.setCellFactory(lv -> new ListCell<Usuario>() {
+            @Override
+            protected void updateItem(Usuario u, boolean empty) {
+                super.updateItem(u, empty);
+                setText(empty || u == null ? null : u.getNome());
+            }
+        });
+
+        cbIdoso.setButtonCell(new ListCell<Usuario>() {
+            @Override
+            protected void updateItem(Usuario u, boolean empty) {
+                super.updateItem(u, empty);
+                setText(empty || u == null ? null : u.getNome());
+            }
+        });
+
+        // ComboBox de profissionais - Pierre
+        Label lblProfissionalConsulta = new Label("Profissional:");
+        ComboBox<Profissional> cbProfissionalConsulta = new ComboBox<>();
+        cbProfissionalConsulta.getItems().addAll(ProfissionalRepository.listarTodos());
+        cbProfissionalConsulta.setPromptText("Selecione o profissional");
+        cbProfissionalConsulta.setPrefWidth(250);
+        cbProfissionalConsulta.setCellFactory(lv -> new ListCell<Profissional>() {
+            @Override
+            protected void updateItem(Profissional p, boolean empty) {
+                super.updateItem(p, empty);
+                setText(empty || p == null ? null : p.getNomeProfissional());
+            }
+        });
+
+        cbProfissionalConsulta.setButtonCell(new ListCell<Profissional>() {
+            @Override
+            protected void updateItem(Profissional p, boolean empty) {
+                super.updateItem(p, empty);
+                setText(empty || p == null ? null : p.getNomeProfissional());
+            }
+        });
+
+        // campo de data/hora - Pierre
+        Label lblDataHora = new Label("Data e Hora:");
+        TextField txtDataHora = new TextField();
+        txtDataHora.setPromptText("Ex.: 20/06/2026 14:30");
+        txtDataHora.setPrefWidth(250);
+
+        formConsulta.add(lblIdosoConsulta, 0, 0);
+        formConsulta.add(cbIdoso, 1, 0);
+        formConsulta.add(lblProfissionalConsulta, 0, 1);
+        formConsulta.add(cbProfissionalConsulta, 1, 1);
+        formConsulta.add(lblDataHora, 0, 2);
+        formConsulta.add(txtDataHora, 1, 2);
+
+        boxConsulta.getChildren().add(formConsulta);
+
+        // tabela de consultas agendadas
+        TableView<Consulta> tabelaConsultas = new TableView<>();
+        tabelaConsultas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabelaConsultas.setPrefHeight(300);
+
+        TableColumn<Consulta, Integer> colIdConsulta = new TableColumn<>("ID");
+        colIdConsulta.setCellValueFactory(new PropertyValueFactory<>("idConsulta"));
+
+        TableColumn<Consulta, Integer> colIdUsuarioConsulta = new TableColumn<>("ID Idoso");
+        colIdUsuarioConsulta.setCellValueFactory(new PropertyValueFactory<>("idUsuario"));
+
+        TableColumn<Consulta, Integer> colIdProfissionalConsulta = new TableColumn<>("ID Profissional");
+        colIdProfissionalConsulta.setCellValueFactory(new PropertyValueFactory<>("idProfissional"));
+
+        TableColumn<Consulta, String> colDataHoraConsulta = new TableColumn<>("Data e Hora");
+        colDataHoraConsulta.setCellValueFactory(new PropertyValueFactory<>("dataHora"));
+
+        TableColumn<Consulta, String> colStatusConsulta = new TableColumn<>("Status");
+        colStatusConsulta.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        boxConsulta.getChildren().add(tabelaConsultas);
+
+        // botão agendar - Pierre
+        Button btnAgendarConsulta = new Button("Agendar Consulta");
+        btnAgendarConsulta.setPrefWidth(180);
+
+        btnAgendarConsulta.setOnAction(e -> {
+            try {
+                Usuario idosoSelecionado = cbIdoso.getValue();
+                Profissional profissionalSelecionado = cbProfissionalConsulta.getValue();
+                String dataHora = txtDataHora.getText().trim();
+
+                if (idosoSelecionado == null || profissionalSelecionado == null || dataHora.isEmpty()) {
+                    throw new IllegalArgumentException("Erro. Por favor, preencha todos os campos.");
+                }
+
+                List<Consulta> listaConsultaAtual = ConsultaRepository.listarTodos();
+
+                if (btnAgendarConsulta.getUserData() != null) {
+                    int idEdicao = (Integer) btnAgendarConsulta.getUserData();
+                    for (Consulta c : listaConsultaAtual) {
+                        if (c.getIdConsulta() == idEdicao) {
+                            c.setIdUsuario(idosoSelecionado.getIdUsuario());
+                            c.setIdProfissional(profissionalSelecionado.getIdProfissional());
+                            c.setDataHora(dataHora);
+                            break;
+                        }
+                    }
+
+                    btnAgendarConsulta.setUserData(null);
+                    btnAgendarConsulta.setText("Agendar");
+                } else {
+                    int novoId = listaConsultaAtual.size() + 1;
+                    Consulta novaConsulta = new Consulta(novoId, idosoSelecionado.getIdUsuario(), profissionalSelecionado.getIdProfissional(), dataHora, "agendada");
+                    listaConsultaAtual.add(novaConsulta);
+                }
+
+                // atualiza a tabela - Pierre
+                ConsultaRepository.salvarTodos(listaConsultaAtual);
+                tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
+
+                cbIdoso.setValue(null);
+                cbProfissionalConsulta.setValue(null);
+                txtDataHora.clear();
+
+            } catch (IllegalArgumentException ex) {
+                System.err.println("Falha de validação.\nErro: " + ex.getMessage());
+            } catch (Exception ex) {
+                System.err.println("Falha inesperada.\nErro: " + ex.getMessage());
+            }
+        });
+
+        // CRUD: READ (tabela já carrega, aqui vai só recarregar a tabela)
+        Button btnRecarregarConsultas = new Button("Recarregar");
+        btnRecarregarConsultas.setPrefWidth(180);
+        btnRecarregarConsultas.setOnAction(e -> {
+            tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
+        });
+
+        // CRUD: UPDATE - Pierre
+        TableColumn<Consulta, Void> colEditarConsulta = new TableColumn<>("Editar");
+        colEditarConsulta.setPrefWidth(100);
+        colEditarConsulta.setCellFactory(param -> new TableCell<Consulta, Void>() {
+            private final Button btnEditarConsulta = new Button("Editar");
+
+            {
+                btnEditarConsulta.setStyle("-fx-background-color: #5cb85c; -fx-text-fill: white; -fx-font-weight: bold;");
+                btnEditarConsulta.setOnAction(event -> {
+                    Consulta consultaSelecionada = getTableView().getItems().get(getIndex());
+                    if (consultaSelecionada != null) {
+                        txtDataHora.setText(consultaSelecionada.getDataHora());
+
+                        for (Usuario u : UsuarioRepository.listarTodos()) {
+                            if (u.getIdUsuario() == consultaSelecionada.getIdUsuario()) {
+                                cbIdoso.setValue(u);
+                                break;
+                            }
+                        }
+
+                        for (Profissional p : ProfissionalRepository.listarTodos()) {
+                            if (p.getIdProfissional() == consultaSelecionada.getIdProfissional()) {
+                                cbProfissionalConsulta.setValue(p);
+                                break;
+                            }
+                        }
+
+                        btnAgendarConsulta.setUserData(Integer.valueOf(consultaSelecionada.getIdConsulta()));
+                        btnAgendarConsulta.setText("Salvar Alterações");
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnEditarConsulta);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
+        // CRUD: DELETE - Pierre
+        TableColumn<Consulta, Void> colDeletarConsulta = new TableColumn<>("Ação");
+        colDeletarConsulta.setPrefWidth(100);
+        colDeletarConsulta.setCellFactory(param -> new TableCell<Consulta, Void>() {
+            private final Button btnDeletarConsulta = new Button("Remover");
+
+            {
+                btnDeletarConsulta.setStyle("-fx-background-color: #d9534f; -fx-text-fill: white; -fx-font-weight: bold;");
+                btnDeletarConsulta.setOnAction(event -> {
+                    Consulta consultaSelecionada = getTableView().getItems().get(getIndex());
+                    if (consultaSelecionada != null) {
+                        try {
+                            List<Consulta> listaCompleta = ConsultaRepository.listarTodos();
+                            listaCompleta.removeIf(c -> c.getIdConsulta() == consultaSelecionada.getIdConsulta());
+                            ConsultaRepository.salvarTodos(listaCompleta);
+                            tabelaConsultas.getItems().remove(consultaSelecionada);
+                            System.out.println("Consulta ID " + consultaSelecionada.getIdConsulta() + " foi removida com sucesso.");
+                        } catch (Exception e) {
+                            System.err.println("Falha ao remover consulta.\nErro: " + e.getMessage());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnDeletarConsulta);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
+        // botão voltar - Pierre
+        Button btnVoltarConsultas = new Button("Voltar");
+        btnVoltarConsultas.setPrefWidth(180);
+        btnVoltarConsultas.setOnAction(e -> stage.setScene(sceneInicial));
+
+        HBox boxBotoesConsulta = new HBox(10);
+        boxBotoesConsulta.setAlignment(Pos.CENTER);
+        boxBotoesConsulta.getChildren().addAll(btnAgendarConsulta, btnVoltarConsultas);
+
+        boxConsulta.getChildren().add(boxBotoesConsulta);
+
+        Button btnConsulta = new Button("Consultas");
+        btnConsulta.setPrefWidth(220);
+        btnConsulta.setOnAction(e -> {
+            cbIdoso.getItems().setAll(UsuarioRepository.listarTodos());
+            cbProfissionalConsulta.getItems().setAll(ProfissionalRepository.listarTodos());
+            tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
+            stage.setScene(sceneConsulta);
+        });
+
+        tabelaConsultas.getColumns().addAll(colIdConsulta, colIdUsuarioConsulta, colIdProfissionalConsulta, colDataHoraConsulta, colStatusConsulta, colEditarConsulta, colDeletarConsulta);
+        tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
+
         // --------------------- TABELA DE PESSOAS CADASTRADAS --------------
         // cria a tabela que vai listar os usuários cadastrados
 
@@ -882,14 +1145,14 @@ public class Elderia extends Application {
                     }
 
                     // pega a lista atual do arquivo
-                    List<Usuario> listaAtual = UsuarioRepository.listarTodos();
+                    List<Usuario> listaUsuarioAtual = UsuarioRepository.listarTodos();
 
                     // se tiver id no botao, considera atualização.
                     if (btnSalvarDadosIdoso.getUserData() != null) {
                         int idParaEditar = (int) btnSalvarDadosIdoso.getUserData();
 
                         // verifica a tabela pra ver qual usuario q tem q mudar
-                        for (Usuario u : listaAtual) {
+                        for (Usuario u : listaUsuarioAtual) {
                             if (u.getIdUsuario() == idParaEditar) {
                                 u.setNome(nome);
                                 u.setCpf(cpf);
@@ -907,23 +1170,23 @@ public class Elderia extends Application {
                     } else {
                         // se for nulo o id, cria um cadastro padrao
                         // cria um id novo baseado no tamanho da lista
-                        int novoId = listaAtual.size() + 1;
+                        int novoId = listaUsuarioAtual.size() + 1;
 
                         // cria um usuário novo
                         // obs: mantive dataNasc indo no lugar de telefone pq era assim que ja tava funcionando
                         Usuario novoUsuario = new Usuario(novoId, nome, cpf, email, dataNasc, "idoso");
 
                         // adiciona na lista
-                        listaAtual.add(novoUsuario);
+                        listaUsuarioAtual.add(novoUsuario);
 
                         System.out.println("\n=== DADOS SALVOS COM SUCESSO NO ARQUIVO .DAT ===");
                     }
 
                     // salva tudo de volta no .dat
-                    UsuarioRepository.salvarTodos(listaAtual);
+                    UsuarioRepository.salvarTodos(listaUsuarioAtual);
 
                     // feedback visual e no console
-                    System.out.println("Nome: " + nome + " | CPF: " + cpf + " | Total cadastrados: " + listaAtual.size());
+                    System.out.println("Nome: " + nome + " | CPF: " + cpf + " | Total cadastrados: " + listaUsuarioAtual.size());
 
                     // depois de salvar tudo, limpa os inputs
                     txtNome.clear();
@@ -2002,7 +2265,7 @@ public class Elderia extends Application {
         menuPrincipal.setAlignment(Pos.CENTER);
 
         menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastroCuida ,btnCadastrarProfissional, btnCadastrarAdmin, btnMedicamento,
-                btnAbaIdoso, btnAvaliar, btnCertificados, btnConvenio, btnMóduloProntuario, close);
+                btnAbaIdoso, btnAvaliar, btnConsulta, btnCertificados, btnConvenio, btnMóduloProntuario, close);
         boxInicial.getChildren().add(menuPrincipal);
 
         // ---------------- BOTÕES DE VOLTAR ----------------
