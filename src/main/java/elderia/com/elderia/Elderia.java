@@ -857,21 +857,18 @@ public class Elderia extends Application {
                     listaConsultaAtual.add(novaConsulta);
                 }
 
+                // atualiza a tabela - Pierre
                 ConsultaRepository.salvarTodos(listaConsultaAtual);
-
-                // atualiza a tabela
                 tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
 
                 cbIdoso.setValue(null);
                 cbProfissionalConsulta.setValue(null);
                 txtDataHora.clear();
 
-                System.out.println("Consulta agendada! ID: " + novoId);
-
             } catch (IllegalArgumentException ex) {
-                System.err.println("Erro de validação: " + ex.getMessage());
+                System.err.println("Falha de validação.\nErro: " + ex.getMessage());
             } catch (Exception ex) {
-                System.err.println("Erro inesperado: " + ex.getMessage());
+                System.err.println("Falha inesperada.\nErro: " + ex.getMessage());
             }
         });
 
