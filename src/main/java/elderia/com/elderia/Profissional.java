@@ -13,10 +13,11 @@ public class Profissional implements Serializable {
     private String biografia;
 
 
-    // Criar isso em todas as classe que forem ser usadas o Seriazable para n dar merda
+    // Criar isso em todas as classe que forem ser usadas o Seriazable para n dar merda, construtor vazio
     public Profissional() {
     }
 
+    //construtor dos atributos.
     public Profissional(int idProfissional, String nomeProfissional, String registroProfissional, String especialidade,
                         String localizacao, String biografia) {
         this.idProfissional = idProfissional;
@@ -26,22 +27,6 @@ public class Profissional implements Serializable {
         this.localizacao = localizacao;
         this.biografia = biografia;
     }
-
-
-    public String obterIniciaisNomedoProfissional() {
-        if (this.nomeProfissional == null || this.nomeProfissional.trim().isEmpty()) {
-            return "??";
-        }
-        String[] partes = this.nomeProfissional.trim().split("\\s+");
-        StringBuilder iniciais = new StringBuilder();
-        for (int i = 0; i < Math.min(partes.length, 2); i++) {
-            if (!partes[i].isEmpty()) {
-                iniciais.append(partes[i].substring(0, 1).toUpperCase()).append(". ");
-            }
-        }
-        return iniciais.toString().trim();
-    }
-
 
     public String getRegistroProfissional() {
         return registroProfissional;
@@ -89,5 +74,10 @@ public class Profissional implements Serializable {
 
     public void setBiografia(String biografia) {
         this.biografia = biografia;
+    }
+
+    @Override
+    public String toString() {
+        return nomeProfissional;
     }
 }
