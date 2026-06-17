@@ -23,6 +23,14 @@ public class Medicamento implements Serializable {
         this.observacao = observacao;
     }
 
+    public int getIdMedicamentos() {
+        return idMedicamento;
+    }
+
+    public void setIdMedicamentos(int idMedicamento){
+        this.idMedicamento = idMedicamento;
+    }
+
 
     public String getNomeMedicamento() {
         return nomeMedicamento;

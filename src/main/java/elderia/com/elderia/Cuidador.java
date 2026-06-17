@@ -5,27 +5,37 @@ import java.io.Serializable;
 public class Cuidador implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    private String nome;
+    private int idCuidador;
+    private String nomeCuidador;
     private String idosoResponsavel;
-    private String cpf;
+    private String cpfCuidador;
 
 
     // Criar isso em todas as classe que forem ser usadas o Seriazable para n dar merda
     public Cuidador() {
     }
 
-    public Cuidador(String nome, String idosoResponsavel, String cpf) {
-        this.nome = nome;
+    public Cuidador(int idCuidador, String nomeCuidador, String idosoResponsavel, String cpfCuidador) {
+        this.idCuidador = idCuidador;
+        this.nomeCuidador = nomeCuidador;
         this.idosoResponsavel = idosoResponsavel;
-        this.cpf = cpf;
+        this.cpfCuidador = cpfCuidador;
     }
 
-    public String getNome() {
-        return nome;
+    public int getIdCuidador() {
+        return idCuidador;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setIdCuidador(int idCuidador) {
+        this.idCuidador = idCuidador;
+    }
+
+    public String getNomeCuidador() {
+        return nomeCuidador;
+    }
+
+    public void setNomeCuidador(String nomeCuidador) {
+        this.nomeCuidador = nomeCuidador;
     }
 
     public String getIdosoResponsavel() {
@@ -36,12 +46,12 @@ public class Cuidador implements Serializable {
         this.idosoResponsavel = idosoResponsavel;
     }
 
-    public String getCpf() {
-        return cpf;
+    public String getCpfCuidador() {
+        return cpfCuidador;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public void setCpfCuidador(String cpfCuidador) {
+        this.cpfCuidador = cpfCuidador;
     }
 
 }
