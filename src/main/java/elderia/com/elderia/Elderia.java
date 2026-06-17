@@ -607,7 +607,7 @@ public class Elderia extends Application {
                         btnEnviarAvaliacao.setUserData(avaliacaoSelecionada.getIdAvaliacao());
                         btnEnviarAvaliacao.setText("Salvar Alterações");
 
-                        stage.setScene(sceneListaAvaliacoes);
+                        stage.setScene(sceneAvaliacao);
                     }
                 });
             }
