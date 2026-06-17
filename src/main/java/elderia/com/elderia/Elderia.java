@@ -598,7 +598,7 @@ public class Elderia extends Application {
                         txtComentario.setText(avaliacaoSelecionada.getComentario());
                         sliderNota.setValue(avaliacaoSelecionada.getNota());
                         for (Profissional p : ProfissionalRepository.listarTodos()) {
-                            if (p.getIdProfissional() == avaliacaoSelecionada.getIdAvaliacao()) {
+                            if (p.getIdProfissional() == avaliacaoSelecionada.getIdProfissional()) {
                                 cbProfissional.setValue(p);
                                 break;
                             }
@@ -607,7 +607,7 @@ public class Elderia extends Application {
                         btnEnviarAvaliacao.setUserData(avaliacaoSelecionada.getIdAvaliacao());
                         btnEnviarAvaliacao.setText("Salvar Alterações");
 
-                        stage.setScene(sceneAvaliacao);
+                        stage.setScene(sceneListaAvaliacoes);
                     }
                 });
             }

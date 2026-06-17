@@ -75,4 +75,9 @@ public class Profissional implements Serializable {
     public void setBiografia(String biografia) {
         this.biografia = biografia;
     }
+
+    @Override
+    public String toString() {
+        return nomeProfissional;
+    }
 }
