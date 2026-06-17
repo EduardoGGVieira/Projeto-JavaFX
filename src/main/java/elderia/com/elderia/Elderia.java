@@ -640,7 +640,7 @@ public class Elderia extends Application {
             }
         });
 
-        tabelaAvaliacoes.getColumns().addAll(colIdAv, colNota, colComentario, colDeletarAvaliacao);
+        tabelaAvaliacoes.getColumns().addAll(colIdAv, colNota, colComentario, colEditarAvaliacao, colDeletarAvaliacao);
         tabelaAvaliacoes.setPrefHeight(400);
 
         // filtra as avaliações ao selecionar o profissional - Pierre
