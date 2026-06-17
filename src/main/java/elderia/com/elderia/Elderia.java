@@ -1971,6 +1971,18 @@ public class Elderia extends Application {
             }
         });
 
+        // botão para ir para area de convênios
+        Button btnConvenio = new Button("Convênio");
+        btnConvenio.setPrefWidth(220);
+
+        btnConvenio.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                TelaConvenio telaConvenio = new TelaConvenio();
+                stage.setScene(telaConvenio.criarCena(stage, sceneInicial));
+            }
+        });
+
         Button close = new Button("Fechar");
         close.setPrefWidth(220);
 
@@ -1990,7 +2002,7 @@ public class Elderia extends Application {
         menuPrincipal.setAlignment(Pos.CENTER);
 
         menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastroCuida ,btnCadastrarProfissional, btnCadastrarAdmin, btnMedicamento,
-                btnAbaIdoso, btnAvaliar, btnCertificados, btnMóduloProntuario, close);
+                btnAbaIdoso, btnAvaliar, btnCertificados, btnConvenio, btnMóduloProntuario, close);
         boxInicial.getChildren().add(menuPrincipal);
 
         // ---------------- BOTÕES DE VOLTAR ----------------
