@@ -717,6 +717,8 @@ public class Elderia extends Application {
 
         boxAvaliacao.getChildren().add(boxBotaoAvaliacao);
 
+        // 
+
         // --------------------- TABELA DE PESSOAS CADASTRADAS --------------
         // cria a tabela que vai listar os usuários cadastrados
 
