@@ -833,14 +833,31 @@ public class Elderia extends Application {
                 String dataHora = txtDataHora.getText().trim();
 
                 if (idosoSelecionado == null || profissionalSelecionado == null || dataHora.isEmpty()) {
-                    throw new IllegalArgumentException("Preencha todos os campos.");
+                    throw new IllegalArgumentException("Erro. Por favor, preencha todos os campos.");
                 }
 
-                List<Consulta> listaAtual = ConsultaRepository.listarTodos();
-                int novoId = listaAtual.size() + 1;
+                List<Consulta> listaConsultaAtual = ConsultaRepository.listarTodos();
 
-                Consulta novaConsulta = new Consulta(novoId, idosoSelecionado.getIdUsuario(), profissionalSelecionado.getIdProfissional(), dataHora, "agendada");                listaAtual.add(novaConsulta);
-                ConsultaRepository.salvarTodos(listaAtual);
+                if (btnAgendarConsulta.getUserData() != null) {
+                    int idEdicao = (Integer) btnAgendarConsulta.getUserData();
+                    for (Consulta c : listaConsultaAtual) {
+                        if (c.getIdConsulta() == idEdicao) {
+                            c.setIdUsuario(idosoSelecionado.getIdUsuario());
+                            c.setIdProfissional(profissionalSelecionado.getIdProfissional());
+                            c.setDataHora(dataHora);
+                            break;
+                        }
+                    }
+
+                    btnAgendarConsulta.setUserData(null);
+                    btnAgendarConsulta.setText("Agendar");
+                } else {
+                    int novoId = listaConsultaAtual.size() + 1;
+                    Consulta novaConsulta = new Consulta(novoId, idosoSelecionado.getIdUsuario(), profissionalSelecionado.getIdProfissional(), dataHora, "agendada");
+                    listaConsultaAtual.add(novaConsulta);
+                }
+
+                ConsultaRepository.salvarTodos(listaConsultaAtual);
 
                 // atualiza a tabela
                 tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
@@ -1043,14 +1060,14 @@ public class Elderia extends Application {
                     }
 
                     // pega a lista atual do arquivo
-                    List<Usuario> listaAtual = UsuarioRepository.listarTodos();
+                    List<Usuario> listaUsuarioAtual = UsuarioRepository.listarTodos();
 
                     // se tiver id no botao, considera atualização.
                     if (btnSalvarDadosIdoso.getUserData() != null) {
                         int idParaEditar = (int) btnSalvarDadosIdoso.getUserData();
 
                         // verifica a tabela pra ver qual usuario q tem q mudar
-                        for (Usuario u : listaAtual) {
+                        for (Usuario u : listaUsuarioAtual) {
                             if (u.getIdUsuario() == idParaEditar) {
                                 u.setNome(nome);
                                 u.setCpf(cpf);
