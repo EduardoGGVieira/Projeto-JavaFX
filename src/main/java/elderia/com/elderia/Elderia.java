@@ -869,6 +869,58 @@ public class Elderia extends Application {
             }
         });
 
+        // CRUD: READ (tabela já carrega, aqui vai só recarregar a tabela)
+        Button btnRecarregarConsultas = new Button("Recarregar");
+        btnRecarregarConsultas.setPrefWidth(180);
+        btnRecarregarConsultas.setOnAction(e -> {
+            tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
+        });
+
+        // CRUD: UPDATE - Pierre
+        TableColumn<Consulta, Void> colEditarConsulta = new TableColumn<>("Editar");
+        colEditarConsulta.setPrefWidth(100);
+        colEditarConsulta.setCellFactory(param -> new TableCell<Consulta, Void>() {
+            private final Button btnEditarConsulta = new Button("Editar");
+
+            {
+                btnEditarConsulta.setStyle("-fx-background-color: #5cb85c; -fx-text-fill: white; -fx-font-weight: bold;");
+                btnEditarConsulta.setOnAction(event -> {
+                    Consulta consultaSelecionada = getTableView().getItems().get(getIndex());
+                    if (consultaSelecionada != null) {
+                        txtDataHora.setText(consultaSelecionada.getDataHora());
+
+                        for (Usuario u : UsuarioRepository.listarTodos()) {
+                            if (u.getIdUsuario() == consultaSelecionada.getIdUsuario()) {
+                                cbIdoso.setValue(u);
+                                break;
+                            }
+                        }
+
+                        for (Profissional p : ProfissionalRepository.listarTodos()) {
+                            if (p.getIdProfissional() == consultaSelecionada.getIdProfissional()) {
+                                cbProfissionalConsulta.setValue(p);
+                                break;
+                            }
+                        }
+
+                        btnAgendarConsulta.setUserData(Integer.valueOf(consultaSelecionada.getIdConsulta()));
+                        btnAgendarConsulta.setText("Salvar Alterações");
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnEditarConsulta);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
         // CRUD: DELETE - Pierre
         TableColumn<Consulta, Void> colDeletarConsulta = new TableColumn<>("Ação");
         colDeletarConsulta.setPrefWidth(100);
@@ -927,7 +979,6 @@ public class Elderia extends Application {
 
         tabelaConsultas.getColumns().addAll(colIdConsulta, colIdUsuarioConsulta, colIdProfissionalConsulta, colDataHoraConsulta, colStatusConsulta, colEditarConsulta, colDeletarConsulta);
         tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
-
 
         // --------------------- TABELA DE PESSOAS CADASTRADAS --------------
         // cria a tabela que vai listar os usuários cadastrados
@@ -1119,7 +1170,7 @@ public class Elderia extends Application {
                     } else {
                         // se for nulo o id, cria um cadastro padrao
                         // cria um id novo baseado no tamanho da lista
-                        int novoId = listaAtual.size() + 1;
+                        int novoId = listaUsuarioAtual.size() + 1;
 
                         // cria um usuário novo
                         // obs: mantive dataNasc indo no lugar de telefone pq era assim que ja tava funcionando
@@ -2203,58 +2254,6 @@ public class Elderia extends Application {
 
         menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastrarProfissional, btnAbaIdoso, btnAvaliar, btnConsulta, btnCertificados, close);
         boxInicial.getChildren().add(menuPrincipal);
-
-        // CRUD: READ (tabela já carrega, aqui vai só recarregar a tabela)
-        Button btnRecarregarConsultas = new Button("Recarregar");
-        btnRecarregarConsultas.setPrefWidth(180);
-        btnRecarregarConsultas.setOnAction(e -> {
-            tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
-        });
-
-        // CRUD: UPDATE - Pierre
-        TableColumn<Consulta, Void> colEditarConsulta = new TableColumn<>("Editar");
-        colEditarConsulta.setPrefWidth(100);
-        colEditarConsulta.setCellFactory(param -> new TableCell<Consulta, Void>() {
-            private final Button btnEditarConsulta = new Button("Editar");
-
-            {
-                btnEditarConsulta.setStyle("-fx-background-color: #5cb85c; -fx-text-fill: white; -fx-font-weight: bold;");
-                btnEditarConsulta.setOnAction(event -> {
-                    Consulta consultaSelecionada = getTableView().getItems().get(getIndex());
-                    if (consultaSelecionada != null) {
-                        txtDataHora.setText(consultaSelecionada.getDataHora());
-
-                        for (Usuario u : UsuarioRepository.listarTodos()) {
-                            if (u.getIdUsuario() == consultaSelecionada.getIdUsuario()) {
-                                cbIdoso.setValue(u);
-                                break;
-                            }
-                        }
-
-                        for (Profissional p : ProfissionalRepository.listarTodos()) {
-                            if (p.getIdProfissional() == consultaSelecionada.getIdProfissional()) {
-                                cbProfissionalConsulta.setValue(p);
-                                break;
-                            }
-                        }
-
-                        btnAgendarConsulta.setUserData(Integer.valueOf(consultaSelecionada.getIdConsulta()));
-                        btnAgendarConsulta.setText("Salvar Alterações");
-                    }
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(btnEditarConsulta);
-                    setAlignment(Pos.CENTER);
-                }
-            }
-        });
 
         // ---------------- BOTÕES DE VOLTAR ----------------
         // esses botões so mandam de volta para a scene anterior
