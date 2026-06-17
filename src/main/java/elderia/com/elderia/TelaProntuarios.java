@@ -143,7 +143,7 @@ public class TelaProntuarios {
         colObs.setCellValueFactory(new PropertyValueFactory<>("observacoes"));
         colObs.setPrefWidth(220);
 
-        // Coluna de Editar integrada na própria tabela (Verde Sucesso)
+        // Coluna de Editar integrada na própria tabela com a cor verde usada no elderia.java
         TableColumn<Prontuario, Void> colEditar = new TableColumn<>("Editar");
         colEditar.setPrefWidth(90);
         colEditar.setCellFactory(param -> new TableCell<Prontuario, Void>() {
@@ -172,7 +172,7 @@ public class TelaProntuarios {
             }
         });
 
-        //  Coluna de Deletar integrada na própria tabela (Vermelho Perigo)
+        //  Coluna de Deletar integrada na própria tabela em vermelho igual no elderia.java
         TableColumn<Prontuario, Void> colDeletar = new TableColumn<>("Deletar");
         colDeletar.setPrefWidth(90);
         colDeletar.setCellFactory(param -> new TableCell<Prontuario, Void>() {
@@ -187,12 +187,9 @@ public class TelaProntuarios {
                             List<Prontuario> listaCompleta = ProntuarioRepository.listarTodos();
                             listaCompleta.removeIf(p -> p.getIdProntuario() == selecionado.getIdProntuario());
                             ProntuarioRepository.salvarTodos(listaCompleta);
-
-                            // NOVO COMENTÁRIO: Substituído Alert por Print informativo de sucesso no terminal
                             System.out.println("\n=== PRONTUÁRIO EXCLUÍDO COM SUCESSO ===");
                             System.out.println("Paciente: " + selecionado.getNomePaciente() + " | ID: " + selecionado.getIdProntuario());
                         } catch (Exception ex) {
-                            // NOVO COMENTÁRIO: Substituído Alert por Print de erro no console técnico
                             System.err.println("Erro crítico ao excluir prontuário: " + ex.getMessage());
                         }
                     }
@@ -233,7 +230,7 @@ public class TelaProntuarios {
             List<Prontuario> listaAtual = ProntuarioRepository.listarTodos();
 
             if (btnSalvarProntuario.getUserData() != null) {
-                // MODO EDIÇÃO HÍBRIDA
+                //pega as informações passadas anteriormente e salva as substitui
                 int idEditar = (int) btnSalvarProntuario.getUserData();
                 for (Prontuario p : listaAtual) {
                     if (p.getIdProntuario() == idEditar) {
@@ -245,16 +242,13 @@ public class TelaProntuarios {
                         break;
                     }
                 }
-                // NOVO COMENTÁRIO: Substituído Alert por Print de alteração com sucesso
                 System.out.println("\n=== PRONTUÁRIO ALTERADO COM SUCESSO VIA OPERAÇÃO HÍBRIDA ===");
                 System.out.println("Paciente: " + paciente + " | ID: " + idEditar);
             } else {
-                // MODO NOVO CADASTRO
+                //pra novos cadastros
                 int novoId = listaAtual.size() + 1;
                 Prontuario novo = new Prontuario(novoId, paciente, data, alergias, medicamentos, obs);
                 listaAtual.add(novo);
-
-                // NOVO COMENTÁRIO: Substituído Alert por Print de gravação com sucesso
                 System.out.println("\n=== NOVO PRONTUÁRIO GRAVADO NO ARQUIVO .DAT ===");
                 System.out.println("Paciente: " + paciente + " | Novo ID Gerado: " + novoId);
             }
@@ -265,10 +259,10 @@ public class TelaProntuarios {
 
 
         } catch (IllegalArgumentException e) {
-            // NOVO COMENTÁRIO: Captura erros de validação local e exibe no fluxo de erro do sistema
+            // pega erros de validação e mostra o erro no terminal
             System.err.println("Erro de Validação de Prontuário: " + e.getMessage());
         } catch (Exception e) {
-            // NOVO COMENTÁRIO: Captura falhas inesperadas de arquitetura ou I/O
+            // pega falhas inesperadas e mostra o erro no termianl
             System.err.println("Erro inesperado do sistema ao processar prontuário: " + e.getMessage());
         }
     }

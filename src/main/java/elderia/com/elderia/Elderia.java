@@ -1713,7 +1713,6 @@ public class Elderia extends Application {
         });
 
 
-
         // botão de cadastrar
         Button btnCadastrarUsuario = new Button("Cadastrar-se como Usuário");
         btnCadastrarUsuario.setPrefWidth(220);
