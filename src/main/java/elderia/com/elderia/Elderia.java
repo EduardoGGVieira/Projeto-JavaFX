@@ -2153,7 +2153,12 @@ public class Elderia extends Application {
         menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastrarProfissional, btnAbaIdoso, btnAvaliar, btnConsulta, btnCertificados, close);
         boxInicial.getChildren().add(menuPrincipal);
 
-        // CRUD
+        // CRUD: READ (tabela já carrega, aqui vai só recarregar a tabela)
+        Button btnRecarregarConsultas = new Button("Recarregar");
+        btnRecarregarConsultas.setPrefWidth(180);
+        btnRecarregarConsultas.setOnAction(e -> {
+            tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
+        });
 
         // ---------------- BOTÕES DE VOLTAR ----------------
         // esses botões so mandam de volta para a scene anterior
