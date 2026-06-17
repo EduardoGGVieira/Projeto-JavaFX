@@ -1632,6 +1632,21 @@ public class Elderia extends Application {
         // atualização: mantive os botões de cadastro, idoso, profissional e fechar
         // também mantive o botão avaliar da demo e o botão certificados da nossa parte
 
+       // botão para ir para outra tela igual o gab fez
+        Button btnMóduloProntuario = new Button("Prontuários");
+        btnMóduloProntuario.setPrefWidth(220);
+
+        btnMóduloProntuario.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Instancia a nova classe que criamos e altera a cena passando a atual como retorno
+                TelaProntuarios telaProntuarios = new TelaProntuarios();
+                stage.setScene(telaProntuarios.criarCena(stage, sceneInicial));
+            }
+        });
+
+
+
         // botão de cadastrar
         Button btnCadastrarUsuario = new Button("Cadastrar-se como Usuário");
         btnCadastrarUsuario.setPrefWidth(220);
@@ -1721,8 +1736,9 @@ public class Elderia extends Application {
         VBox menuPrincipal = new VBox();
         menuPrincipal.setSpacing(10);
         menuPrincipal.setAlignment(Pos.CENTER);
-        menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastrarProfissional, btnCadastrarAdmin, btnAbaIdoso, btnAvaliar, btnCertificados, close);
 
+        menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastrarProfissional, btnCadastrarAdmin,
+                btnAbaIdoso, btnAvaliar, btnCertificados, btnMóduloProntuario, close);
         box1.getChildren().add(menuPrincipal);
 
         // ---------------- BOTÕES DE VOLTAR ----------------
