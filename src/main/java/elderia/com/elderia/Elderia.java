@@ -801,7 +801,7 @@ public class Elderia extends Application {
         });
 
         // botão de delete dentro da coluna
-        TableColumn<Usuario, Void> colDeletar = new TableColumn<>("Ação");
+        TableColumn<Usuario, Void> colDeletar = new TableColumn<>("Deletar");
         colDeletar.setPrefWidth(100);
 
         // tem que add o botão dentro da coluna
@@ -812,7 +812,7 @@ public class Elderia extends Application {
                 // botao vermeiao
                 btnDeletar.setStyle("-fx-background-color: #d9534f; -fx-text-fill: white; -fx-font-weight: bold;");
                 btnDeletar.setOnAction(event -> {
-                    // pega o objeto usuario correspondente a linha onde o botao foi clicado
+                    // Seleciona a linha interia onde o botão pertence.
                     Usuario usuarioSelecionado = getTableView().getItems().get(getIndex());
 
                     if (usuarioSelecionado != null) {
@@ -981,6 +981,9 @@ public class Elderia extends Application {
         });
 
         HBox botoesCadastro = criarLinha();
+
+        // tem q add os butão aq, genio!
+
         botoesCadastro.getChildren().addAll(btnSalvarDadosIdoso, btnMostrarDados, btnVoltarCadastro);
 
         boxFormCadastro.getChildren().addAll(new Separator(), botoesCadastro);
