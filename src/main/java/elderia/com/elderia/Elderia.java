@@ -7,6 +7,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -15,6 +16,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,11 +57,11 @@ public class Elderia extends Application {
         lblSubtitulo.setFont(new Font("Arial", 14));
         lblSubtitulo.setAlignment(Pos.CENTER);
 
-        VBox box1 = criarTelaBase();
-        box1.getChildren().addAll(lblTitulo, lblSubtitulo, new Separator());
+        VBox boxInicial = criarTelaBase();
+        boxInicial.getChildren().addAll(lblTitulo, lblSubtitulo, new Separator());
 
         // area inicial
-        Scene sceneInicial = new Scene(box1, 1280, 720);
+        Scene sceneInicial = new Scene(boxInicial, 1280, 720);
 
         // ---------------- AREA IDOSO ----------------
         // botao de ir para idoso manda pra essa scene aqui
@@ -250,7 +252,7 @@ public class Elderia extends Application {
         boxFormCadastro.getChildren().addAll(lbl4, lblCadastroInfo, new Separator());
 
         // parte de cadastro
-        Scene scene3 = new Scene(boxFormCadastro, 1280, 720);
+        Scene sceneFormCadastro = new Scene(boxFormCadastro, 1280, 720);
 
         // inputs do cadastro - todos os inputs
         // antes cada campo era um hbox separado
@@ -324,11 +326,11 @@ public class Elderia extends Application {
         lbl5.setFont(new Font("Arial", 26));
         lbl5.setAlignment(Pos.CENTER);
 
-        VBox boxDadosUsuarios = criarTelaBase();
-        boxDadosUsuarios.getChildren().addAll(lbl5, new Separator());
+        VBox boxDadosUsuario = criarTelaBase();
+        boxDadosUsuario.getChildren().addAll(lbl5, new Separator());
 
         // parte de mostrar os dados cadastrados
-        Scene scene4 = new Scene(boxDadosUsuarios, 1280, 720);
+        Scene sceneDadosUsuario = new Scene(boxDadosUsuario, 1280, 720);
 
         // ---------------- Cadastro do profissional-----------
 
@@ -346,7 +348,7 @@ public class Elderia extends Application {
 
 
         // essa cena vamos usar pro cadastro do profissional
-        Scene scene2 = new Scene(boxCadastroProfissional, 1280, 720);
+        Scene sceneCadastroProfissional = new Scene(boxCadastroProfissional, 1280, 720);
 
         // formulário
         GridPane formularioProfissional = new GridPane();
@@ -422,7 +424,7 @@ public class Elderia extends Application {
         VBox boxAvaliacao = criarTelaBase();
         boxAvaliacao.getChildren().addAll(lblAvaliacao, textoAvaliacao, new Separator());
 
-        // parte de avaliação
+        // cena de avaliação - Pierre
         Scene sceneAvaliacao = new Scene(boxAvaliacao, 1280, 720);
 
         // mostra o nome dos profissionais cadastrados - Pierre
@@ -510,7 +512,7 @@ public class Elderia extends Application {
         });
 
         // ---------------- ÁREA DE AVALIAÇÃO ----------------
-        // feito por Pierre
+        // CRUD: READ - Pierre
         Label lblListaAvaliacoes = new Label("Avaliações por Profissional");
         lblListaAvaliacoes.setFont(new Font("Arial", 24));
 
@@ -518,7 +520,7 @@ public class Elderia extends Application {
         boxListaAvaliacoes.getChildren().addAll(lblListaAvaliacoes, new Separator());
 
         Scene sceneListaAvaliacoes = new Scene(boxListaAvaliacoes, 1280, 720);
-
+        
         // ComboBox para filtrar cada profissional - Pierre
         Label lblFiltro = new Label("Profissional:");
         ComboBox<Profissional> cbFiltro = new ComboBox<>();
@@ -559,7 +561,52 @@ public class Elderia extends Application {
         colComentario.setCellValueFactory(new PropertyValueFactory<>("comentario"));
         colComentario.setPrefWidth(400);
 
-        tabelaAvaliacoes.getColumns().addAll(colIdAv, colNota, colComentario);
+        // CRUD: UPDATE - Pierre
+
+        // CRUD: DELETE - Pierre
+        TableColumn<Avaliacao, Void> colDeletarAvaliacao = new TableColumn<>("Ação");
+        colDeletarAvaliacao.setPrefWidth(100);
+
+        colDeletarAvaliacao.setCellFactory(param -> new TableCell<Avaliacao, Void>() {
+            private final Button btnDeletarAvaliacao = new Button("Remover");
+
+            {
+                btnDeletarAvaliacao.setStyle("-fx-background-color: #d9534f; -fx-text-fill: white; -fx-font-weight: bold;");
+                btnDeletarAvaliacao.setOnAction(event -> {
+                    Avaliacao avaliacaoSelecionada = getTableView().getItems().get(getIndex());
+
+                    if (avaliacaoSelecionada != null) {
+                        try {
+                            dadosTabela.remove(avaliacaoSelecionada);
+
+                            List<Avaliacao> listaCompletaAvaliacao = AvaliacaoRepository.listarTodos();
+
+                            listaCompletaAvaliacao.removeIf(u -> u.getIdAvaliacao() == avaliacaoSelecionada.getIdAvaliacao());
+
+                            AvaliacaoRepository.salvarTodos(listaCompletaAvaliacao);
+
+                            System.out.println("Avaliação '" + avaliacaoSelecionada.getIdAvaliacao() + "' foi removida do sistema.");
+                        } catch (Exception e) {
+                            System.err.println("Problema ao remover avaliação.\nErro: " + e.getMessage());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnDeletarAvaliacao);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
+        tabelaAvaliacoes.getColumns().addAll(colIdAv, colNota, colComentario, colDeletarAvaliacao);
         tabelaAvaliacoes.setPrefHeight(400);
 
         // filtra as avaliações ao selecionar o profissional - Pierre
@@ -674,8 +721,8 @@ public class Elderia extends Application {
                         // muda o textinho do botao se estiver na tela de edição
                         btnSalvarDadosIdoso.setText("Salvar Alterações");
 
-                        // Redireciona o fluxo para a cena do formulário de cadastro (scene3)
-                        stage.setScene(scene3);
+                        // Redireciona o fluxo para a cena do formulário de cadastro (sceneFormCadastro)
+                        stage.setScene(sceneFormCadastro);
                     }
                 });
             }
@@ -746,7 +793,7 @@ public class Elderia extends Application {
 
         // pega tudo e add na tabela criada
         tabelaUsuarios.getColumns().addAll(colId, colNome, colCpf, colEmail, colTelefone, colTipo, colEditar, colDeletar);
-        boxDadosUsuarios.getChildren().add(tabelaUsuarios);
+        boxDadosUsuario.getChildren().add(tabelaUsuarios);
 
         // ObjectOutputStream = saída
         // ObjectInputStream = entrada, le os dados
@@ -848,7 +895,7 @@ public class Elderia extends Application {
                 List<Usuario> listaDoArquivo = UsuarioRepository.listarTodos();
                 dadosTabela.setAll(listaDoArquivo);
 
-                stage.setScene(scene4);
+                stage.setScene(sceneDadosUsuario);
             }
         });
 
@@ -1047,8 +1094,8 @@ public class Elderia extends Application {
                         //  muda o textinho do botao quando estiver editando
                         btnSalvarDadosProfissional.setText("Salvar Alterações");
 
-                        // Redireciona o fluxo para a cena do formulário de cadastro do profissa (scene2)
-                        stage.setScene(scene2);
+                        // Redireciona o fluxo para a cena do formulário de cadastro do profissa (sceneCadastroProfissional)
+                        stage.setScene(sceneCadastroProfissional);
                     }
                 });
             }
@@ -1164,7 +1211,7 @@ public class Elderia extends Application {
                 new Button("Voltar");
 
         btnVoltarHorarios.setOnAction(
-                e -> stage.setScene(scene2)
+                e -> stage.setScene(sceneCadastroProfissional)
         );
 
         boxHorarios.getChildren()
@@ -1721,7 +1768,7 @@ public class Elderia extends Application {
         btnCadastrarUsuario.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                stage.setScene(scene3);
+                stage.setScene(sceneFormCadastro);
             }
         });
 
@@ -1732,7 +1779,7 @@ public class Elderia extends Application {
         btnCadastrarProfissional.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                stage.setScene(scene2);
+                stage.setScene(sceneCadastroProfissional);
             }
         });
 
@@ -1758,11 +1805,9 @@ public class Elderia extends Application {
                 stage.setScene(sceneIdoso);
             }
         });
-
-
-        // botão de avaliar
-        // isso veio da branch demo, então não pode sumir
-        Button btnAvaliar = new Button("Avaliar");
+        
+        // BOTAO NA TELA INICIAL PARA ACESSAR A TELA DE AVALIAÇÃO - Pierre
+        Button btnAvaliar = new Button("Avaliar Profissional");
         btnAvaliar.setPrefWidth(220);
 
         btnAvaliar.setOnAction(new EventHandler<ActionEvent>() {
@@ -1817,7 +1862,7 @@ public class Elderia extends Application {
 
         menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastroCuida ,btnCadastrarProfissional, btnCadastrarAdmin, btnMedicamento,
                 btnAbaIdoso, btnAvaliar, btnCertificados, btnMóduloProntuario, close);
-        box1.getChildren().add(menuPrincipal);
+        boxInicial.getChildren().add(menuPrincipal);
 
         // ---------------- BOTÕES DE VOLTAR ----------------
         // esses botões so mandam de volta para a scene anterior
@@ -1856,11 +1901,11 @@ public class Elderia extends Application {
         btnVoltarDados.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                stage.setScene(scene3);
+                stage.setScene(sceneFormCadastro);
             }
         });
 
-        boxDadosUsuarios.getChildren().add(btnVoltarDados);
+        boxDadosUsuario.getChildren().add(btnVoltarDados);
 
         // botão de voltar da tela de avaliação
         // atualização: a demo tinha tela de avaliação, mas não tinha botão de voltar
@@ -1878,10 +1923,14 @@ public class Elderia extends Application {
         boxAvaliacao.getChildren().add(voltarAvaliacao);
 
         stage.setScene(sceneInicial);
+        Screen screen = Screen.getPrimary();
+        Rectangle2D bounds = screen.getVisualBounds();
+        stage.setWidth(bounds.getWidth());
+        stage.setHeight(bounds.getHeight());
         stage.show();
     }
 
-    // método auxiliar para criar uma tela base
+    // metodo auxiliar para criar uma tela base
     // atualização: isso evita ficar repetindo spacing, padding e alinhamento em toda vbox
     private VBox criarTelaBase() {
         VBox box = new VBox();
@@ -1891,7 +1940,7 @@ public class Elderia extends Application {
         return box;
     }
 
-    // método auxiliar pra criar linhas centralizadas
+    // metodo auxiliar pra criar linhas centralizadas
     // atualização: usado na busca de profissional e nos botões do cadastro
     // deixa o código menos repetido
     private HBox criarLinha() {
