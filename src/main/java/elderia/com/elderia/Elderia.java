@@ -562,6 +562,40 @@ public class Elderia extends Application {
         colComentario.setPrefWidth(400);
 
         // CRUD: UPDATE - Pierre
+        TableColumn<Avaliacao, Void> colEditarAvaliacao = new TableColumn<>("Editar");
+        colEditarAvaliacao.setPrefWidth(100);
+
+        colEditarAvaliacao.setCellFactory(param -> new TableCell<Avaliacao, Void>() {
+            private final Button btnEditarAvaliacao = new Button("Editar");
+
+            {
+                btnEditarAvaliacao.setStyle("-fx-background-color: #5cb85c; -fx-text-fill: white; -fx-font-weight: bold;");
+                btnEditarAvaliacao.setOnAction(event -> {
+                    Avaliacao avaliacaoSelecionada = getTableView().getItems().get(getIndex());
+
+                    if (avaliacaoSelecionada != null) {
+                        txtComentario.setText(avaliacaoSelecionada.getComentario());
+                        sliderNota.setValue(avaliacaoSelecionada.getNota());
+
+                        btnEnviarAvaliacao.setUserData(Integer.valueOf(avaliacaoSelecionada.getIdAvaliacao()));
+                        btnEnviarAvaliacao.setText("Salvar Alterações");
+
+                        stage.setScene(sceneAvaliacao);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnEditarAvaliacao);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
 
         // CRUD: DELETE - Pierre
         TableColumn<Avaliacao, Void> colDeletarAvaliacao = new TableColumn<>("Ação");
