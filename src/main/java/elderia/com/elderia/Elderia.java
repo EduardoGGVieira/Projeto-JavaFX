@@ -783,7 +783,7 @@ public class Elderia extends Application {
         });
 
         // campo de data/hora - Pierre
-        Label lblDataHora = new Label("Data:");
+        Label lblDataHora = new Label("Data e Hora:");
         TextField txtDataHora = new TextField();
         txtDataHora.setPromptText("Ex.: 20/06/2026 14:30");
         txtDataHora.setPrefWidth(250);
@@ -796,6 +796,79 @@ public class Elderia extends Application {
         formConsulta.add(txtDataHora, 1, 2);
 
         boxConsulta.getChildren().add(formConsulta);
+
+        // tabela de consultas agendadas
+        TableView<Consulta> tabelaConsultas = new TableView<>();
+        tabelaConsultas.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabelaConsultas.setPrefHeight(300);
+
+        TableColumn<Consulta, Integer> colIdConsulta = new TableColumn<>("ID");
+        colIdConsulta.setCellValueFactory(new PropertyValueFactory<>("idConsulta"));
+
+        TableColumn<Consulta, Integer> colIdUsuarioConsulta = new TableColumn<>("ID Idoso");
+        colIdUsuarioConsulta.setCellValueFactory(new PropertyValueFactory<>("idUsuario"));
+
+        TableColumn<Consulta, Integer> colIdProfConsulta = new TableColumn<>("ID Profissional");
+        colIdProfConsulta.setCellValueFactory(new PropertyValueFactory<>("idProfissional"));
+
+        TableColumn<Consulta, String> colDataHoraConsulta = new TableColumn<>("Data e Hora");
+        colDataHoraConsulta.setCellValueFactory(new PropertyValueFactory<>("dataHora"));
+
+        TableColumn<Consulta, String> colStatusConsulta = new TableColumn<>("Status");
+        colStatusConsulta.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        tabelaConsultas.getColumns().addAll(colIdConsulta, colIdUsuarioConsulta, colIdProfConsulta, colDataHoraConsulta, colStatusConsulta);
+        tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
+
+        boxConsulta.getChildren().add(tabelaConsultas);
+
+        // botão agendar - Pierre
+        Button btnAgendarConsulta = new Button("Agendar Consulta");
+        btnAgendarConsulta.setPrefWidth(180);
+
+        btnAgendarConsulta.setOnAction(e -> {
+            try {
+                Usuario idosoSelecionado = cbIdoso.getValue();
+                Profissional profissionalSelecionado = cbProfissionalConsulta.getValue();
+                String dataHora = txtDataHora.getText().trim();
+
+                if (idosoSelecionado == null || profissionalSelecionado == null || dataHora.isEmpty()) {
+                    throw new IllegalArgumentException("Preencha todos os campos.");
+                }
+
+                List<Consulta> listaAtual = ConsultaRepository.listarTodos();
+                int novoId = listaAtual.size() + 1;
+
+                Consulta nova = new Consulta(novoId, idosoSelecionado.getIdUsuario(), profissionalSelecionado.getIdProfissional(), dataHora);
+                listaAtual.add(nova);
+                ConsultaRepository.salvarTodos(listaAtual);
+
+                // atualiza a tabela
+                tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
+
+                cbIdoso.setValue(null);
+                cbProfissionalConsulta.setValue(null);
+                txtDataHora.clear();
+
+                System.out.println("Consulta agendada! ID: " + novoId);
+
+            } catch (IllegalArgumentException ex) {
+                System.err.println("Erro de validação: " + ex.getMessage());
+            } catch (Exception ex) {
+                System.err.println("Erro inesperado: " + ex.getMessage());
+            }
+        });
+
+        // botão voltar - Pierre
+        Button btnVoltarConsultas = new Button("Voltar");
+        btnVoltarConsultas.setPrefWidth(180);
+        btnVoltarConsultas.setOnAction(e -> stage.setScene(sceneInicial));
+
+        HBox boxBotoesConsulta = new HBox(10);
+        boxBotoesConsulta.setAlignment(Pos.CENTER);
+        boxBotoesConsulta.getChildren().addAll(btnAgendarConsulta, btnVoltarConsultas);
+
+        boxConsulta.getChildren().add(boxBotoesConsulta);
 
 
         // --------------------- TABELA DE PESSOAS CADASTRADAS --------------
