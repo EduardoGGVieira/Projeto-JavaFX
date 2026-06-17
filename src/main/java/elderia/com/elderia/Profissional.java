@@ -27,22 +27,6 @@ public class Profissional implements Serializable {
         this.biografia = biografia;
     }
 
-
-    public String obterIniciaisNomedoProfissional() {
-        if (this.nomeProfissional == null || this.nomeProfissional.trim().isEmpty()) {
-            return "??";
-        }
-        String[] partes = this.nomeProfissional.trim().split("\\s+");
-        StringBuilder iniciais = new StringBuilder();
-        for (int i = 0; i < Math.min(partes.length, 2); i++) {
-            if (!partes[i].isEmpty()) {
-                iniciais.append(partes[i].substring(0, 1).toUpperCase()).append(". ");
-            }
-        }
-        return iniciais.toString().trim();
-    }
-
-
     public String getRegistroProfissional() {
         return registroProfissional;
     }
