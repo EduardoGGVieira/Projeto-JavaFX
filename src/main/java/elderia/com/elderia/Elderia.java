@@ -839,8 +839,7 @@ public class Elderia extends Application {
                 List<Consulta> listaAtual = ConsultaRepository.listarTodos();
                 int novoId = listaAtual.size() + 1;
 
-                Consulta novaConsulta = new Consulta(novoId, idosoSelecionado.getIdUsuario(), profissionalSelecionado.getIdProfissional(), dataHora);
-                listaAtual.add(novaConsulta);
+                Consulta novaConsulta = new Consulta(novoId, idosoSelecionado.getIdUsuario(), profissionalSelecionado.getIdProfissional(), dataHora, "agendada");                listaAtual.add(novaConsulta);
                 ConsultaRepository.salvarTodos(listaAtual);
 
                 // atualiza a tabela
@@ -870,6 +869,14 @@ public class Elderia extends Application {
 
         boxConsulta.getChildren().add(boxBotoesConsulta);
 
+        Button btnConsulta = new Button("Consultas");
+        btnConsulta.setPrefWidth(220);
+        btnConsulta.setOnAction(e -> {
+            cbIdoso.getItems().setAll(UsuarioRepository.listarTodos());
+            cbProfissionalConsulta.getItems().setAll(ProfissionalRepository.listarTodos());
+            tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
+            stage.setScene(sceneConsulta);
+        });
 
         // --------------------- TABELA DE PESSOAS CADASTRADAS --------------
         // cria a tabela que vai listar os usuários cadastrados
@@ -2143,9 +2150,10 @@ public class Elderia extends Application {
         menuPrincipal.setSpacing(10);
         menuPrincipal.setAlignment(Pos.CENTER);
 
-        menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastroCuida ,btnCadastrarProfissional, btnCadastrarAdmin, btnMedicamento,
-                btnAbaIdoso, btnAvaliar, btnCertificados, btnMóduloProntuario, close);
+        menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastrarProfissional, btnAbaIdoso, btnAvaliar, btnConsulta, btnCertificados, close);
         boxInicial.getChildren().add(menuPrincipal);
+
+        // CRUD
 
         // ---------------- BOTÕES DE VOLTAR ----------------
         // esses botões so mandam de volta para a scene anterior
