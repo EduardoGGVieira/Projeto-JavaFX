@@ -808,17 +808,14 @@ public class Elderia extends Application {
         TableColumn<Consulta, Integer> colIdUsuarioConsulta = new TableColumn<>("ID Idoso");
         colIdUsuarioConsulta.setCellValueFactory(new PropertyValueFactory<>("idUsuario"));
 
-        TableColumn<Consulta, Integer> colIdProfConsulta = new TableColumn<>("ID Profissional");
-        colIdProfConsulta.setCellValueFactory(new PropertyValueFactory<>("idProfissional"));
+        TableColumn<Consulta, Integer> colIdProfissionalConsulta = new TableColumn<>("ID Profissional");
+        colIdProfissionalConsulta.setCellValueFactory(new PropertyValueFactory<>("idProfissional"));
 
         TableColumn<Consulta, String> colDataHoraConsulta = new TableColumn<>("Data e Hora");
         colDataHoraConsulta.setCellValueFactory(new PropertyValueFactory<>("dataHora"));
 
         TableColumn<Consulta, String> colStatusConsulta = new TableColumn<>("Status");
         colStatusConsulta.setCellValueFactory(new PropertyValueFactory<>("status"));
-
-        tabelaConsultas.getColumns().addAll(colIdConsulta, colIdUsuarioConsulta, colIdProfConsulta, colDataHoraConsulta, colStatusConsulta);
-        tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
 
         boxConsulta.getChildren().add(tabelaConsultas);
 
@@ -872,6 +869,42 @@ public class Elderia extends Application {
             }
         });
 
+        // CRUD: DELETE - Pierre
+        TableColumn<Consulta, Void> colDeletarConsulta = new TableColumn<>("Ação");
+        colDeletarConsulta.setPrefWidth(100);
+        colDeletarConsulta.setCellFactory(param -> new TableCell<Consulta, Void>() {
+            private final Button btnDeletarConsulta = new Button("Remover");
+
+            {
+                btnDeletarConsulta.setStyle("-fx-background-color: #d9534f; -fx-text-fill: white; -fx-font-weight: bold;");
+                btnDeletarConsulta.setOnAction(event -> {
+                    Consulta consultaSelecionada = getTableView().getItems().get(getIndex());
+                    if (consultaSelecionada != null) {
+                        try {
+                            List<Consulta> listaCompleta = ConsultaRepository.listarTodos();
+                            listaCompleta.removeIf(c -> c.getIdConsulta() == consultaSelecionada.getIdConsulta());
+                            ConsultaRepository.salvarTodos(listaCompleta);
+                            tabelaConsultas.getItems().remove(consultaSelecionada);
+                            System.out.println("Consulta ID " + consultaSelecionada.getIdConsulta() + " foi removida com sucesso.");
+                        } catch (Exception e) {
+                            System.err.println("Falha ao remover consulta.\nErro: " + e.getMessage());
+                        }
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnDeletarConsulta);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
         // botão voltar - Pierre
         Button btnVoltarConsultas = new Button("Voltar");
         btnVoltarConsultas.setPrefWidth(180);
@@ -891,6 +924,10 @@ public class Elderia extends Application {
             tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
             stage.setScene(sceneConsulta);
         });
+
+        tabelaConsultas.getColumns().addAll(colIdConsulta, colIdUsuarioConsulta, colIdProfissionalConsulta, colDataHoraConsulta, colStatusConsulta, colEditarConsulta, colDeletarConsulta);
+        tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
+
 
         // --------------------- TABELA DE PESSOAS CADASTRADAS --------------
         // cria a tabela que vai listar os usuários cadastrados
@@ -1089,16 +1126,16 @@ public class Elderia extends Application {
                         Usuario novoUsuario = new Usuario(novoId, nome, cpf, email, dataNasc, "idoso");
 
                         // adiciona na lista
-                        listaAtual.add(novoUsuario);
+                        listaUsuarioAtual.add(novoUsuario);
 
                         System.out.println("\n=== DADOS SALVOS COM SUCESSO NO ARQUIVO .DAT ===");
                     }
 
                     // salva tudo de volta no .dat
-                    UsuarioRepository.salvarTodos(listaAtual);
+                    UsuarioRepository.salvarTodos(listaUsuarioAtual);
 
                     // feedback visual e no console
-                    System.out.println("Nome: " + nome + " | CPF: " + cpf + " | Total cadastrados: " + listaAtual.size());
+                    System.out.println("Nome: " + nome + " | CPF: " + cpf + " | Total cadastrados: " + listaUsuarioAtual.size());
 
                     // depois de salvar tudo, limpa os inputs
                     txtNome.clear();
