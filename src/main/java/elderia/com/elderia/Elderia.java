@@ -2160,6 +2160,51 @@ public class Elderia extends Application {
             tabelaConsultas.setItems(FXCollections.observableArrayList(ConsultaRepository.listarTodos()));
         });
 
+        // CRUD: UPDATE - Pierre
+        TableColumn<Consulta, Void> colEditarConsulta = new TableColumn<>("Editar");
+        colEditarConsulta.setPrefWidth(100);
+        colEditarConsulta.setCellFactory(param -> new TableCell<Consulta, Void>() {
+            private final Button btnEditarConsulta = new Button("Editar");
+
+            {
+                btnEditarConsulta.setStyle("-fx-background-color: #5cb85c; -fx-text-fill: white; -fx-font-weight: bold;");
+                btnEditarConsulta.setOnAction(event -> {
+                    Consulta consultaSelecionada = getTableView().getItems().get(getIndex());
+                    if (consultaSelecionada != null) {
+                        txtDataHora.setText(consultaSelecionada.getDataHora());
+
+                        for (Usuario u : UsuarioRepository.listarTodos()) {
+                            if (u.getIdUsuario() == consultaSelecionada.getIdUsuario()) {
+                                cbIdoso.setValue(u);
+                                break;
+                            }
+                        }
+
+                        for (Profissional p : ProfissionalRepository.listarTodos()) {
+                            if (p.getIdProfissional() == consultaSelecionada.getIdProfissional()) {
+                                cbProfissionalConsulta.setValue(p);
+                                break;
+                            }
+                        }
+
+                        btnAgendarConsulta.setUserData(Integer.valueOf(consultaSelecionada.getIdConsulta()));
+                        btnAgendarConsulta.setText("Salvar Alterações");
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnEditarConsulta);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
+
         // ---------------- BOTÕES DE VOLTAR ----------------
         // esses botões so mandam de volta para a scene anterior
         // mantive a lógica de navegação por stage.setScene()
