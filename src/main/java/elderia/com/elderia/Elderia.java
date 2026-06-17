@@ -509,43 +509,6 @@ public class Elderia extends Application {
             stage.setScene(sceneInicial);
         });
 
-        // ---------------- Cadastro do cuidador -----------
-
-        //titulo da pagina/scene
-        Label lblCuidadorCadastro = new Label("Cadastro do Cuidador");
-        lblCuidadorCadastro.setFont(new Font("Arial", 28));
-        lblCuidadorCadastro.setAlignment(Pos.CENTER);
-
-        //subtítulo
-        Label lblCuidadorCadastroInfo = new Label("Aqui você pode se cadastrar como cuidador de um idoso no site:");
-        lblCuidadorCadastroInfo.setFont(new Font("Arial", 14));
-
-        VBox boxCuidadorCadastro = criarTelaBase();
-        boxCuidadorCadastro.getChildren().addAll(lblCadastroProfissional, lblCadastroProfissionalInfo, new Separator());
-
-
-        // essa cena vamos usar pro cadastro do profissional
-        Scene sceneCuidadorCadastro = new Scene(boxCuidadorCadastro, 1280, 720);
-
-        // formulário
-        GridPane formularioCuidador = new GridPane();
-        formularioCuidador.setHgap(10);
-        formularioCuidador.setVgap(12);
-        formularioCuidador.setAlignment(Pos.CENTER);
-
-        // Nome
-        Label lblNomeCuidador = new Label("Nome:");
-
-        TextField txtNomeCuidador = new TextField();
-        txtNomeCuidador.setPromptText("Ex: Cuidador Robson Da Silva Sauro");
-        txtNomeCuidador.setPrefWidth(250);
-
-        Label lblCPFCuidador = new Label("CPF:");
-
-        TextField txtCPFCuidador = new TextField();
-        txtCPFCuidador.setPromptText("Ex: 167.169.420-69");
-        txtCPFCuidador.setPrefWidth(250);
-
         // ---------------- ÁREA DE AVALIAÇÃO ----------------
         // feito por Pierre
         Label lblListaAvaliacoes = new Label("Avaliações por Profissional");
@@ -1736,6 +1699,19 @@ public class Elderia extends Application {
             }
         });
 
+        // botão pra ir pra tela do cuidador
+        Button btnCadastroCuida = new Button("Cadastre-se como Cuidador");
+        btnCadastroCuida.setPrefWidth(220);
+
+        btnCadastroCuida.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                // Instancia a nova classe que criamos e altera a cena passando a atual como retorno
+                TelaCuidador telaCuidador = new TelaCuidador();
+                stage.setScene(telaCuidador.criarCena(stage, sceneInicial));
+            }
+        });
+
 
 
         // botão de cadastrar
@@ -1839,7 +1815,7 @@ public class Elderia extends Application {
         menuPrincipal.setSpacing(10);
         menuPrincipal.setAlignment(Pos.CENTER);
 
-        menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastrarProfissional, btnCadastrarAdmin, btnMedicamento,
+        menuPrincipal.getChildren().addAll(btnCadastrarUsuario, btnCadastroCuida ,btnCadastrarProfissional, btnCadastrarAdmin, btnMedicamento,
                 btnAbaIdoso, btnAvaliar, btnCertificados, btnMóduloProntuario, close);
         box1.getChildren().add(menuPrincipal);
 

@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class Cuidador implements Serializable {
     private static final long serialVersionUID = 1L;
 
+    private int idCuidador;
     private String nomeCuidador;
     private String idosoResponsavel;
     private String cpfCuidador;
@@ -14,17 +15,26 @@ public class Cuidador implements Serializable {
     public Cuidador() {
     }
 
-    public Cuidador(String nomeCuidador, String idosoResponsavel, String cpfCuidador) {
+    public Cuidador(int idCuidador, String nomeCuidador, String idosoResponsavel, String cpfCuidador) {
+        this.idCuidador = idCuidador;
         this.nomeCuidador = nomeCuidador;
         this.idosoResponsavel = idosoResponsavel;
         this.cpfCuidador = cpfCuidador;
     }
 
-    public String getNome() {
+    public int getIdCuidador() {
+        return idCuidador;
+    }
+
+    public void setIdCuidador(int idCuidador) {
+        this.idCuidador = idCuidador;
+    }
+
+    public String getNomeCuidador() {
         return nomeCuidador;
     }
 
-    public void setNome(String nomeCuidador) {
+    public void setNomeCuidador(String nomeCuidador) {
         this.nomeCuidador = nomeCuidador;
     }
 
@@ -36,11 +46,11 @@ public class Cuidador implements Serializable {
         this.idosoResponsavel = idosoResponsavel;
     }
 
-    public String getCpf() {
+    public String getCpfCuidador() {
         return cpfCuidador;
     }
 
-    public void setCpf(String cpfCuidador) {
+    public void setCpfCuidador(String cpfCuidador) {
         this.cpfCuidador = cpfCuidador;
     }
 
