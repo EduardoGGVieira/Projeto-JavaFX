@@ -12,28 +12,20 @@ public class Admin implements Serializable {
     private int idAdmin;
     private String nome;
     private String email;
-    private int totalDenunciasTratadas;
+    private String telefone;
 
-
-    public Admin(int idAdmin, String nome, String email) {
+    public Admin(int idAdmin, String nome, String email, String telefone) {
         this.idAdmin = idAdmin;
         this.nome = nome;
         this.email = email;
-
-        // isso n existe ou existe?
-        this.totalDenunciasTratadas = 0;
+        this.telefone = telefone;
     }
 
-
-    // Ta certo sabomba? ( deletar idoso e profissa)
-
-    // MÉTODO 1: Remove um idoso da lista do sistema baseado no ID
 
     public boolean deletarIdoso(int idIdoso, List<Idoso> listaIdosos) {
         if (listaIdosos == null || listaIdosos.isEmpty()) {
             return false;
         }
-        // Utiliza expressão lambda para remover o idoso correspondente (ON DELETE CASCADE lógico)
         return listaIdosos.removeIf(idoso -> idoso.getIdIdoso() == idIdoso);
     }
 
@@ -75,11 +67,12 @@ public class Admin implements Serializable {
         this.email = email;
     }
 
-    public int getTotalDenunciasTratadas() {
-        return totalDenunciasTratadas;
+    public String getTelefone() {
+        return telefone;
     }
 
-    public void setTotalDenunciasTratadas(int totalDenunciasTratadas) {
-        this.totalDenunciasTratadas = totalDenunciasTratadas;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
+
 }

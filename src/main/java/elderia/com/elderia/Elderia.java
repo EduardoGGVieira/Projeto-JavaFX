@@ -1424,6 +1424,13 @@ public class Elderia extends Application {
         txtEmailAdmin.setPromptText("Ex: admin@elderia.com");
         txtEmailAdmin.setPrefWidth(250);
 
+        // -- telefone --
+        Label lblInputTelefoneAdmin = new Label("Telefone:");
+
+        TextField txtTelefoneAdmin = new TextField();
+        txtTelefoneAdmin.setPromptText("Ex: (41) 99999-9999");
+        txtTelefoneAdmin.setPrefWidth(250);
+
         // coluna 0 = label
         // coluna 1 = campo
         formularioAdmin.add(lblInputNomeAdmin, 0, 0);
@@ -1432,7 +1439,15 @@ public class Elderia extends Application {
         formularioAdmin.add(lblInputEmailAdmin, 0, 1);
         formularioAdmin.add(txtEmailAdmin, 1, 1);
 
+        formularioAdmin.add(lblInputTelefoneAdmin, 0, 2);
+        formularioAdmin.add(txtTelefoneAdmin, 1, 2);
+
         boxAdmin.getChildren().add(formularioAdmin);
+
+        // tem q deixar essa bomba pra cima pra n dar erro de compilação.
+        // botão de salvar os dados do admin
+        Button btnSalvarDadosAdmin = new Button("Confirmar Cadastro");
+        btnSalvarDadosAdmin.setPrefWidth(180);
 
         // --------------------- TABELA DE ADMINS CADASTRADOS ---------------------
         // cria a tabela que vai listar os administradores cadastrados
@@ -1464,7 +1479,45 @@ public class Elderia extends Application {
 
         TableColumn<Admin, String> colEmailAdmin = new TableColumn<>("E-mail");
         colEmailAdmin.setCellValueFactory(new PropertyValueFactory<>("email"));
-        colEmailAdmin.setPrefWidth(250);
+        colEmailAdmin.setPrefWidth(200);
+
+        TableColumn<Admin, String> colTelefoneAdmin = new TableColumn<>("Telefone");
+        colTelefoneAdmin.setCellValueFactory(new PropertyValueFactory<>("telefone"));
+        colTelefoneAdmin.setPrefWidth(130);
+
+        // botão de editar dentro da coluna, igual ao da tabela de usuários
+        TableColumn<Admin, Void> colEditarAdmin = new TableColumn<>("Editar");
+        colEditarAdmin.setPrefWidth(100);
+
+        colEditarAdmin.setCellFactory(param -> new TableCell<Admin, Void>() {
+            private final Button btnEditarAdmin = new Button("Editar");
+
+            {
+                btnEditarAdmin.setStyle("-fx-background-color: #5cb85c; -fx-text-fill: white; -fx-font-weight: bold;");
+                btnEditarAdmin.setOnAction(event -> {
+                    Admin adminSelecionado = getTableView().getItems().get(getIndex());
+                    if (adminSelecionado != null) {
+                        txtNomeAdmin.setText(adminSelecionado.getNome());
+                        txtEmailAdmin.setText(adminSelecionado.getEmail());
+                        txtTelefoneAdmin.setText(adminSelecionado.getTelefone() != null ? adminSelecionado.getTelefone() : "");
+                        btnSalvarDadosAdmin.setUserData(adminSelecionado.getIdAdmin());
+                        btnSalvarDadosAdmin.setText("Atualizar Cadastro");
+                        stage.setScene(sceneAdmin);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btnEditarAdmin);
+                    setAlignment(Pos.CENTER);
+                }
+            }
+        });
 
         // botão de delete dentro da coluna, igual ao da tabela de usuários
         TableColumn<Admin, Void> colDeletarAdmin = new TableColumn<>("Ação");
@@ -1515,7 +1568,7 @@ public class Elderia extends Application {
             }
         });
 
-        tabelaAdmin.getColumns().addAll(colIdAdmin, colNomeAdmin, colEmailAdmin, colDeletarAdmin);
+        tabelaAdmin.getColumns().addAll(colIdAdmin, colNomeAdmin, colEmailAdmin, colTelefoneAdmin, colEditarAdmin, colDeletarAdmin);
         boxDadosAdmin.getChildren().add(tabelaAdmin);
 
         // botão de voltar da tela de admins cadastrados
@@ -1532,43 +1585,56 @@ public class Elderia extends Application {
         boxDadosAdmin.getChildren().add(btnVoltarDadosAdmin);
 
         // ---------------- BOTÕES DO CADASTRO DE ADMIN ----------------
-        // botão de salvar os dados do admin
-        Button btnSalvarDadosAdmin = new Button("Confirmar Cadastro");
-        btnSalvarDadosAdmin.setPrefWidth(180);
-
         btnSalvarDadosAdmin.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
                 try {
                     String nome = txtNomeAdmin.getText().trim();
                     String email = txtEmailAdmin.getText().trim();
+                    String telefone = txtTelefoneAdmin.getText().trim();
 
                     // não pode deixar nada em branco
-                    if (nome.isEmpty() || email.isEmpty()) {
+                    if (nome.isEmpty() || email.isEmpty() || telefone.isEmpty()) {
                         throw new IllegalArgumentException("Erro: Falta de informações para cadastro de administrador. Por favor, tente novamente.");
                     }
 
                     // pega a lista atual do arquivo
                     List<Admin> listaAtual = AdminRepository.listarTodos();
 
-                    // cria um id novo baseado no tamanho da lista
-                    int novoId = listaAtual.size() + 1;
+                    Object userData = btnSalvarDadosAdmin.getUserData();
+                    if (userData != null) {
+                        // modo de edição: atualiza o admin existente
+                        int idParaAtualizar = (int) userData;
+                        for (int i = 0; i < listaAtual.size(); i++) {
+                            if (listaAtual.get(i).getIdAdmin() == idParaAtualizar) {
+                                listaAtual.set(i, new Admin(idParaAtualizar, nome, email, telefone));
+                                break;
+                            }
+                        }
+                        btnSalvarDadosAdmin.setUserData(null);
+                        btnSalvarDadosAdmin.setText("Confirmar Cadastro");
+                        System.out.println("\n=== ADMIN ATUALIZADO COM SUCESSO ===");
+                    } else {
+                        // cria um id novo baseado no tamanho da lista
+                        int novoId = listaAtual.size() + 1;
 
-                    // cria um admin novo
-                    Admin novoAdmin = new Admin(novoId, nome, email);
+                        // cria um admin novo
+                        Admin novoAdmin = new Admin(novoId, nome, email, telefone);
 
-                    // adiciona na lista
-                    listaAtual.add(novoAdmin);
+                        // adiciona na lista
+                        listaAtual.add(novoAdmin);
+
+                        System.out.println("\n=== ADMIN SALVO COM SUCESSO NO ARQUIVO .DAT ===");
+                        System.out.println("Nome: " + nome + " | Total cadastrados: " + listaAtual.size());
+                    }
 
                     // salva tudo de volta no .dat
                     AdminRepository.salvarTodos(listaAtual);
 
-                    System.out.println("\n=== ADMIN SALVO COM SUCESSO NO ARQUIVO .DAT ===");
-                    System.out.println("Nome: " + nome + " | Total cadastrados: " + listaAtual.size());
-
                     // depois de salvar tudo, limpa os inputs
                     txtNomeAdmin.clear();
                     txtEmailAdmin.clear();
+                    txtTelefoneAdmin.clear();
 
                     // volta para a tela inicial automaticamente após salvar
                     stage.setScene(sceneInicial);
