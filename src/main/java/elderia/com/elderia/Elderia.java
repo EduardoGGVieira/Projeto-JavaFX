@@ -509,7 +509,7 @@ public class Elderia extends Application {
             sliderNota.setValue(3);
             txtComentario.clear();
 
-            stage.setScene(sceneInicial);
+            stage.setScene(sceneAvaliacao);
         });
 
         // CRUD: READ - Pierre
@@ -577,7 +577,7 @@ public class Elderia extends Application {
 
                     if (avaliacaoSelecionada != null) {
                         try {
-                            dadosTabela.remove(avaliacaoSelecionada);
+                            tabelaAvaliacoes.getItems().remove(avaliacaoSelecionada);
 
                             List<Avaliacao> listaCompletaAvaliacao = AvaliacaoRepository.listarTodos();
 
