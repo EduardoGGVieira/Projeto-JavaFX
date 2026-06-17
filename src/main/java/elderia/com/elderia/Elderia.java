@@ -839,8 +839,8 @@ public class Elderia extends Application {
                 List<Consulta> listaAtual = ConsultaRepository.listarTodos();
                 int novoId = listaAtual.size() + 1;
 
-                Consulta nova = new Consulta(novoId, idosoSelecionado.getIdUsuario(), profissionalSelecionado.getIdProfissional(), dataHora);
-                listaAtual.add(nova);
+                Consulta novaConsulta = new Consulta(novoId, idosoSelecionado.getIdUsuario(), profissionalSelecionado.getIdProfissional(), dataHora);
+                listaAtual.add(novaConsulta);
                 ConsultaRepository.salvarTodos(listaAtual);
 
                 // atualiza a tabela
