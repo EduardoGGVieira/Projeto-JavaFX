@@ -414,6 +414,7 @@ public class Elderia extends Application {
 
         // ---------------- ÁREA DE AVALIAÇÃO ----------------
         // feito pelo Pierre
+        // CRUD: CREATE - Pierre
         Label lblAvaliacao = new Label("Avaliação");
         lblAvaliacao.setFont(new Font("Arial", 28));
         lblAvaliacao.setAlignment(Pos.CENTER);
@@ -511,7 +512,6 @@ public class Elderia extends Application {
             stage.setScene(sceneInicial);
         });
 
-        // ---------------- ÁREA DE AVALIAÇÃO ----------------
         // CRUD: READ - Pierre
         Label lblListaAvaliacoes = new Label("Avaliações por Profissional");
         lblListaAvaliacoes.setFont(new Font("Arial", 24));
