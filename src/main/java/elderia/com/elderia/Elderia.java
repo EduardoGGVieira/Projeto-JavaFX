@@ -576,6 +576,12 @@ public class Elderia extends Application {
                     if (avaliacaoSelecionada != null) {
                         txtComentario.setText(avaliacaoSelecionada.getComentario());
                         sliderNota.setValue(avaliacaoSelecionada.getNota());
+                        for (Profissional p : ProfissionalRepository.listarTodos()) {
+                            if (p.getIdProfissional() == avaliacaoSelecionada.getIdAvaliacao()) {
+                                cbProfissional.setValue(p);
+                                break;
+                            }
+                        }
 
                         btnEnviarAvaliacao.setUserData(Integer.valueOf(avaliacaoSelecionada.getIdAvaliacao()));
                         btnEnviarAvaliacao.setText("Salvar Alterações");
