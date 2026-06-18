@@ -19,7 +19,6 @@ import java.util.List;
 
 public class TelaProntuarios {
 
-    //
     private TableView<Prontuario> tabelaProntuarios;
     private ObservableList<Prontuario> dadosProntuarios;
 
@@ -30,6 +29,9 @@ public class TelaProntuarios {
     private TextField txtMedicamentos;
     private TextArea txtObservacoes;
     private TextField txtBuscaProntuario;
+
+    // AUDITORIA: Adicionado o componente TextField para a captura gráfica do novo campo de telefone
+    private TextField txtNovoTelefone;
 
     // btn de salvar os dados DO PRONTUARIO
     private Button btnSalvarProntuario;
@@ -65,6 +67,11 @@ public class TelaProntuarios {
         txtObservacoes.setPrefWidth(250);
         txtObservacoes.setPrefRowCount(3);
 
+        // AUDITORIA: Inicialização do novo campo de texto com prompt descritivo para o usuário
+        txtNovoTelefone = new TextField();
+        txtNovoTelefone.setPromptText("Ex: (41) 99999-9999");
+        txtNovoTelefone.setPrefWidth(250);
+
         formulario.add(new Label("Nome do Paciente:"), 0, 0);
         formulario.add(txtNomePaciente, 1, 0);
         formulario.add(new Label("Data Registro:"), 0, 1);
@@ -76,6 +83,10 @@ public class TelaProntuarios {
         formulario.add(new Label("Observações:"), 0, 4);
         formulario.add(txtObservacoes, 1, 4);
 
+        // AUDITORIA: Inserção visual do novo rótulo e campo na linha 5 do leiaute em grade (GridPane)
+        formulario.add(new Label("Telefone de Contato:"), 0, 5);
+        formulario.add(txtNovoTelefone, 1, 5);
+
         // Botão de ações
         btnSalvarProntuario = new Button("Confirmar Cadastro");
         Button btnLimpar = new Button("Limpar");
@@ -85,7 +96,8 @@ public class TelaProntuarios {
         btnLimpar.setPrefWidth(180);
         btnVoltar.setPrefWidth(180);
 
-        btnSalvarProntuario.setOnAction(event -> salvarProntuario());
+        // AUDITORIA: Modificado o gatilho para repassar o controle de cena do JavaFX para a rotina interna
+        btnSalvarProntuario.setOnAction(event -> salvarProntuario(stage, cenaAnterior));
         btnLimpar.setOnAction(event -> limparCampos());
         btnVoltar.setOnAction(event -> {
             limparCampos();
@@ -95,8 +107,6 @@ public class TelaProntuarios {
         HBox linhaBotoes = new HBox(10);
         linhaBotoes.setAlignment(Pos.CENTER);
         linhaBotoes.getChildren().addAll(btnSalvarProntuario, btnVoltar);
-
-
 
         txtBuscaProntuario = new TextField();
         txtBuscaProntuario.setPromptText("Pesquisar paciente por nome");
@@ -141,7 +151,13 @@ public class TelaProntuarios {
 
         TableColumn<Prontuario, String> colObs = new TableColumn<>("Observações");
         colObs.setCellValueFactory(new PropertyValueFactory<>("observacoes"));
-        colObs.setPrefWidth(220);
+        colObs.setPrefWidth(160);
+
+        // AUDITORIA: Criação e mapeamento da nova coluna para exibir o atributo Telefone de Contato
+        // O PropertyValueFactory deve buscar por "txtNovoTelefone", que é o nome exato da variável dentro do seu arquivo Prontuario.java
+        TableColumn<Prontuario, String> colTelefone = new TableColumn<>("Telefone");
+        colTelefone.setCellValueFactory(new PropertyValueFactory<>("txtNovoTelefone"));
+        colTelefone.setPrefWidth(120);
 
         // Coluna de Editar integrada na própria tabela com a cor verde usada no elderia.java
         TableColumn<Prontuario, Void> colEditar = new TableColumn<>("Editar");
@@ -158,6 +174,9 @@ public class TelaProntuarios {
                         txtAlergias.setText(selecionado.getAlergias());
                         txtMedicamentos.setText(selecionado.getMedicamentos());
                         txtObservacoes.setText(selecionado.getObservacoes());
+
+                        // AUDITORIA: Busca a informação clínico pelo método getTxtNovoTelefone() do seu Model
+                        txtNovoTelefone.setText(selecionado.getTxtNovoTelefone());
 
                         btnSalvarProntuario.setUserData(Integer.valueOf(selecionado.getIdProntuario()));
                         btnSalvarProntuario.setText("Salvar Alterações");
@@ -203,8 +222,8 @@ public class TelaProntuarios {
             }
         });
 
-        tabelaProntuarios.getColumns().addAll(colId, colPaciente, colData, colAlergias, colMedicamentos, colObs, colEditar, colDeletar);
-
+        // AUDITORIA: CORREÇÃO: Removida a variável fantasma 'colNomeProf' que causava erro de compilação. Adicionada a coluna 'colTelefone' na listagem
+        tabelaProntuarios.getColumns().addAll(colId, colPaciente, colData, colAlergias, colMedicamentos, colObs, colTelefone, colEditar, colDeletar);
 
         VBox layout = new VBox();
         layout.setSpacing(15);
@@ -212,6 +231,7 @@ public class TelaProntuarios {
         layout.setAlignment(Pos.TOP_CENTER);
         layout.setStyle("-fx-background-color: #f2f2f2;");
 
+        // AUDITORIA: Leiaute modificado para respeitar a estrutura invertida (Campos de entrada no topo e tabela na base)
         layout.getChildren().addAll(titulo, formulario, linhaBotoes, new Separator(), linhaBusca, tabelaProntuarios);
 
         dadosProntuarios.setAll(ProntuarioRepository.listarTodos());
@@ -219,13 +239,16 @@ public class TelaProntuarios {
         return new Scene(layout, 1100, 750);
     }
 
-    private void salvarProntuario() {
+    private void salvarProntuario(Stage stage, Scene cenaAnterior) {
         try {
             String paciente = validarTexto(txtNomePaciente.getText(), "nome do paciente");
             String data = validarTexto(txtDataRegistro.getText(), "data registro");
             String alergias = txtAlergias.getText().trim();
             String medicamentos = txtMedicamentos.getText().trim();
             String obs = txtObservacoes.getText().trim();
+
+            // AUDITORIA: Captura textual e validação do preenchimento obrigatório para a nova entrada de Telefone
+            String tel = validarTexto(txtNovoTelefone.getText(), "telefone de contato");
 
             List<Prontuario> listaAtual = ProntuarioRepository.listarTodos();
 
@@ -239,16 +262,26 @@ public class TelaProntuarios {
                         p.setAlergias(alergias);
                         p.setMedicamentos(medicamentos);
                         p.setObservacoes(obs);
+
+                        // AUDITORIA: Atualização do atributo utilizando o método modificador setTxtNovoTelefone() do seu Model
+                        p.setTxtNovoTelefone(tel);
                         break;
                     }
                 }
+
+                btnSalvarProntuario.setUserData(null);
+                btnSalvarProntuario.setText("Confirmar Cadastro");
+
                 System.out.println("\n=== PRONTUÁRIO ALTERADO COM SUCESSO VIA OPERAÇÃO HÍBRIDA ===");
                 System.out.println("Paciente: " + paciente + " | ID: " + idEditar);
             } else {
                 //pra novos cadastros
                 int novoId = listaAtual.size() + 1;
-                Prontuario novo = new Prontuario(novoId, paciente, data, alergias, medicamentos, obs);
+
+                // AUDITORIA: CORREÇÃO: Seguindo a assinatura exata do construtor criado em Prontuario.java, a string 'tel' deve ir na segunda posição (logo após o ID)!
+                Prontuario novo = new Prontuario(novoId, tel, paciente, data, alergias, medicamentos, obs);
                 listaAtual.add(novo);
+
                 System.out.println("\n=== NOVO PRONTUÁRIO GRAVADO NO ARQUIVO .DAT ===");
                 System.out.println("Paciente: " + paciente + " | Novo ID Gerado: " + novoId);
             }
@@ -257,12 +290,12 @@ public class TelaProntuarios {
             dadosProntuarios.setAll(ProntuarioRepository.listarTodos());
             limparCampos();
 
+            // AUDITORIA: Redirecionamento automático e limpo para o menu inicial após concluir as alterações
+            stage.setScene(cenaAnterior);
 
         } catch (IllegalArgumentException e) {
-            // pega erros de validação e mostra o erro no terminal
             System.err.println("Erro de Validação de Prontuário: " + e.getMessage());
         } catch (Exception e) {
-            // pega falhas inesperadas e mostra o erro no termianl
             System.err.println("Erro inesperado do sistema ao processar prontuário: " + e.getMessage());
         }
     }
@@ -297,6 +330,9 @@ public class TelaProntuarios {
         txtMedicamentos.clear();
         txtObservacoes.clear();
         txtBuscaProntuario.clear();
+
+        // AUDITORIA: Adicionado o reset do campo de entrada textual de telefone
+        txtNovoTelefone.clear();
 
         btnSalvarProntuario.setUserData(null);
         btnSalvarProntuario.setText("Confirmar Cadastro");

@@ -1,5 +1,7 @@
 package elderia.com.elderia;
 
+import javafx.scene.control.TextField;
+
 import java.io.Serializable;
 
 // NOVO COMENTÁRIO: Classe de modelo Prontuario que representa o histórico clínico, implementando Serializable para persistência binária
@@ -13,8 +15,22 @@ public class Prontuario implements Serializable {
     private String medicamentos;
     private String observacoes;
 
-    // Construtor completo
-    public Prontuario(int idProntuario, String nomePaciente, String dataRegistro, String alergias, String medicamentos, String observacoes) {
+    // AUDITORIA
+    public String getTxtNovoTelefone() {
+        return txtNovoTelefone;
+    }
+    // AUDITORIA
+    public void setTxtNovoTelefone(String txtNovoTelefone) {
+        this.txtNovoTelefone = txtNovoTelefone;
+    }
+
+    // AUDITORIA
+    private String txtNovoTelefone; // INFO Q VAI SER ADD
+
+    // Construtor completo                 // AUDITORIA
+    public Prontuario(int idProntuario, String txtNovoTelefone ,String nomePaciente, String dataRegistro, String alergias, String medicamentos, String observacoes) {
+
+        this.txtNovoTelefone =  txtNovoTelefone; // AUTORIA
         this.idProntuario = idProntuario;
         this.nomePaciente = nomePaciente;
         this.dataRegistro = dataRegistro;

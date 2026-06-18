@@ -16,19 +16,22 @@ public class Idoso {
     private String necessidadesAcessibilidade;
 
 
-    // ISSO AQ É VOID? DEU ERRO SEM KKKKKK
 
-    public  void Idoso(int idIdoso, String nome, int cpf, LocalDate dataNascimento,
+    public Idoso() {
+    }
+
+    // CONSTRUTOR CORRIGIDO
+    public Idoso(int idIdoso, String nome, int cpf, LocalDate dataNascimento,
                  String alergias, String informacoesSaude, String necessidadesAcessibilidade) {
         this.idIdoso = idIdoso;
         this.nome = nome;
         this.cpf = cpf;
         this.dataNascimento = dataNascimento;
-        this.alergias = alergias;
-        this.informacoesSaude = informacoesSaude;
-        this.necessidadesAcessibilidade = necessidadesAcessibilidade;
+        this.alergias = alergias != null ? alergias : "";
+        this.informacoesSaude = informacoesSaude != null ? informacoesSaude : "";
+        this.necessidadesAcessibilidade = necessidadesAcessibilidade != null ? necessidadesAcessibilidade : "";
     }
-
+    
 //    MÉTODO 1: Calcula a idade exata com base na Data de Nascimento
 
     public int calcularIdade() {
