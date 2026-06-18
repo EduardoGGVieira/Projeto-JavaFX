@@ -1,0 +1,68 @@
+PASSO A PASSO NOVO ELEMENTO:
+
+
+ 1 Declare o novo atributo privado no topo da classe: PRONTUARIO OU USUARIO
+
+private String novoTelefone;
+
+ 1.1 Atualize o Construtor: Adicione o novo parâmetro no construtor para que o objeto já nasça com essa informação.
+
+ 1.2 Crie o Getter e o Setter
+
+ 2 Crie o componente de entrada (no topo do método start):
+
+ TextField txtNovoTelefone = new TextField();
+ txtNovoTelefone.setPromptText("Ex: (41) 99999-9999");
+
+ 2.1 dicione o campo ao formulário visual
+
+formularioCadastro.add(new Label("Telefone Novo:"), 0, 5); // coluna 0, linha 5
+formularioCadastro.add(txtNovoTelefone, 1, 5);             // coluna 1, linha 5
+
+ 2.2 Adicione a nova coluna na Tabela (TableView):
+
+TableColumn<Usuario, String> colNovoTel = new TableColumn<>("Telefone Novo");
+colNovoTel.setCellValueFactory(new PropertyValueFactory<>("novoTelefone")); // Deve ser idêntico ao nome da variável no Model
+tabelaUsuarios.getColumns().add(colNovoTel); // Adicione na listagem de colunas
+
+
+ 3 Atualizar o Fluxo Híbrido de Salvamento (Evento do Botão)
+
+String novoTel = txtNovoTelefone.getText().trim();
+
+ 3.1 No fluxo de Novo Cadastro (else): Passe a nova string como argumento na hora de dar o new Usuario(...).
+ 3.1 No fluxo de Edição (if): Adicione a linha que atualiza o objeto dentro do laço for:
+
+u.setNovoTelefone(novoTel);
+
+ 3.2 No fluxo do botão de Editar da Tabela: Certifique-se de que ao clicar em "Editar", o campo de texto seja preenchido:
+
+txtNovoTelefone.setText(usuarioSelecionado.getNovoTelefone());
+
+
+
+
+
+!!!!!!!!!!!! POSSIVEIS PEGADINHAS !!!!!!
+
+Pegadinha 3: A Lógica Híbrida do Botão e o setUserData
+
+ "Como um único botão visual consegue saber se ele deve cadastrar um usuário do zero ou atualizar um usuário que já existe?"
+
+"Nós implementamos um comportamento híbrido utilizando o método setUserData()
+do JavaFX. Quando o usuário clica no botão 'Editar' direto na linha da tabela, nós capturamos o ID daquele
+registro e o anexamos como um metadado oculto dentro do próprio botão de salvar. Na hora do clique, o algoritmo
+faz um teste: se o getUserData() for nulo, ele executa um cadastro comum (.add()); se houver um ID guardado ali,
+ ele roda um laço de repetição (for), localiza o objeto correspondente e atualiza os seus atributos,
+  limpando o metadado logo em seguida para o próximo clique."
+
+
+
+Pegadinha 4: A Lista Reativa (ObservableList)
+ "Por que você usa uma ObservableList vinculada à tabela ao invés de uma ArrayList comum?"
+
+Sua resposta simples: "A ArrayList comum do Java serve apenas para guardar dados na memória.
+Já a ObservableList do JavaFX é uma coleção reativa que possui um padrão de projeto do tipo Observer.
+ Ela fica escutando as mudanças: no momento em que adicionamos, alteramos ou removemos um item dela usando o método
+.setAll() ou .remove(), a tabela visual (TableView) é notificada imediatamente e se atualiza na tela de forma automática para o usuário,
+ sem precisarmos recarregar a janela."
